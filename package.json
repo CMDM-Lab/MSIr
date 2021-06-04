@@ -1,0 +1,12 @@
+{
+  "name": "MSI_Registrar_2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/linboj/MSI_Registrar_2.git",
+  "author": "linboj <spps2215@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "cd frontend && yarn start",
+    "server": "cd backend && yarn server"
+  }
+}

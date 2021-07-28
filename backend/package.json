@@ -2,5 +2,23 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv-defaults": "^2.0.2",
+    "express": "^4.17.1",
+    "sequelize": "^6.6.5",
+    "sequelize-cli": "^6.2.0",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.14.8",
+    "@babel/node": "^7.14.7",
+    "@babel/preset-env": "^7.14.8",
+    "nodemon": "^2.0.12"
+  },
+  "type": "module"
 }

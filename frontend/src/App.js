@@ -1,13 +1,17 @@
-import './App.css';
+//import './App.css';
 import './stylesheet/theme_responsive.css'
 import './stylesheet/theme_style.css'
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import Banner from './components/banner'
-import FooterCustom from './components/footer_custom'
-import NavHeader from './components/nav_header'
+import Banner from './components/Banner'
+import FooterCustom from './components/FooterCustom'
+import NavHeader from './components/NavHeader'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { useState } from 'react';
+import AppRoute from './components/AppRoute';
+import routes from './config/routes'
+import Home from './components/Home';
+
 
 function App() {
   const [currentState,setCurrentState]=useState('home')
@@ -18,6 +22,15 @@ function App() {
         <NavHeader userSignedIn={userSignedIn} currentState={currentState} setCurrentState={setCurrentState}/>
         <Banner currentState={currentState}/>
         <Switch>
+        {routes.map((route) => (
+            <AppRoute
+              key={route.path}
+              path={route.path}
+              component={route.component}
+              isPrivate={route.isPrivate}
+            />
+          ))}
+          <Route exact path='/' component={Home}/>
           {/* Project */}
           {/*
           <Route path='/projects/new' component={createProject}/>

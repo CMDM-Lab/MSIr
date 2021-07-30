@@ -1,4 +1,4 @@
-const ROOT_URL = '';
+const API_URL = '';
  
 export async function loginUser(dispatch, loginPayload) {
   const requestOptions = {
@@ -9,7 +9,7 @@ export async function loginUser(dispatch, loginPayload) {
  
   try {
     dispatch({ type: 'REQUEST_LOGIN' });
-    let response = await fetch(`${ROOT_URL}/login`, requestOptions);
+    let response = await fetch(`${API_URL}/login`, requestOptions);
     let data = await response.json();
  
     if (data.user) {

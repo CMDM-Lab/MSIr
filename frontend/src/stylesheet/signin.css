@@ -498,3 +498,8 @@ iframe {
     padding-right: 15px;
   }
 } 
+
+/*///////////////////////////////////////////////////////////////////*/
+.text-right {
+  text-align: right!important;
+}

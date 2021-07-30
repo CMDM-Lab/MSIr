@@ -1,4 +1,9 @@
 import React from "react";
-export default ()=>{
-    
+const Doc = (prop)=>{
+  return (
+      <>
+        
+      </>
+  )  
 }
+export default Doc

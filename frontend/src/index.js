@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from "react-router-dom";
+import {AuthProvider} from './services/auth_service'
 
 import './index.css';
 import App from './App';
@@ -8,9 +9,11 @@ import reportWebVitals from './reportWebVitals';
 
 
 ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <AuthProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </AuthProvider>,
   document.getElementById('root')
 );
 

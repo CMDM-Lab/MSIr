@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
  
-import { useAuthState } from '../context'
+import { useAuthState } from '../services/auth_service/context'
  
 const AppRoutes = ({ component: Component, path, isPrivate, ...rest }) => {
  
@@ -12,7 +12,7 @@ const AppRoutes = ({ component: Component, path, isPrivate, ...rest }) => {
             render={props =>
                 isPrivate && !Boolean(userDetails.token) ? (
                     <Redirect
-                        to={{ pathname: "/login" }}
+                        to={{ pathname: "/users/sign_in" }}
                     />
                 ) : (
                         <Component {...props} />

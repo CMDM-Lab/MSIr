@@ -1,5 +1,6 @@
 import React from "react";
-export default ()=>{
+const Contact = ()=>{
+  return(
     <section className="challange_area">
         <div className="container-fluid">
           <div className="row">
@@ -19,4 +20,7 @@ export default ()=>{
           </div>
         </div>
       </section>
+  )
+    
 }
+export default Contact

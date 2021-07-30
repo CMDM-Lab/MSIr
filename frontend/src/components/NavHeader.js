@@ -1,8 +1,12 @@
 import React from "react";
 import logo from '../stylesheet/logo.svg';
 import {NavLink} from 'react-router-dom'
+import { useAuthState } from '../services/auth_service/context'
 
-const navHeader = ({userSignedIn,currentState,setCurrentState})=>{
+const NavHeader = ({currentState,setCurrentState})=>{
+    
+    const userDetails = useAuthState()
+    
     return (
         <header className="main_menu_area">
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -22,7 +26,7 @@ const navHeader = ({userSignedIn,currentState,setCurrentState})=>{
                         <li className={`nav-item ${currentState==='Create a new project'?'active':''}`}>
                             <p ><NavLink to='/start'onClick={()=>setCurrentState('Create a new project')}>Start</NavLink></p>
                         </li>
-                        {userSignedIn?(
+                        {Boolean(userDetails.token)?(
                             <li className={`nav-item ${currentState==='Project'?'active':''}`}>
                                 <p ><NavLink to='/projects' onClick={()=>setCurrentState('Project')}>Project</NavLink></p>
                             </li>):''
@@ -33,7 +37,7 @@ const navHeader = ({userSignedIn,currentState,setCurrentState})=>{
                         <li className={`nav-item ${currentState==='Contact us'?'active':''}`}>
                             <p ><NavLink to='/contact' onClick={()=>setCurrentState('Contact us')}>Contact</NavLink></p>
                         </li>
-              {userSignedIn?(
+              {Boolean(userDetails.token)?(
                 <li className="nav-item dropdown submenu">
                     <a aria-expanded="false" aria-haspopup="true" className="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="navbarDropdown">
                         <i className="fad fa-user-circle fa-lg" />
@@ -46,7 +50,7 @@ const navHeader = ({userSignedIn,currentState,setCurrentState})=>{
                     </ul>
                 </li>):(
                 <li className={`nav-item ${currentState==='Sign in'?'active':''}`}>
-                    <p ><NavLink to='/signin' onClick={()=>setCurrentState('Sign in')}>Sign in</NavLink></p>
+                    <p ><NavLink to='/users/sign_in' onClick={()=>setCurrentState('Sign in')}>Sign in</NavLink></p>
                 </li>)
                 }
             </ul>
@@ -55,4 +59,4 @@ const navHeader = ({userSignedIn,currentState,setCurrentState})=>{
       </header>
     )
 }
-export default navHeader;
+export default NavHeader;

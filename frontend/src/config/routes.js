@@ -1,7 +1,8 @@
-import Signin from '../components/SignIn'
-import Signup from '../components/SignUp'
-import Doc from '../components/Doc'
-import Contact from '../components/Contact'
+import Signin from '../components/auth/SignIn'
+import Signup from '../components/auth/SignUp'
+import Doc from '../components/public/Doc'
+import Contact from '../components/public/Contact'
+import ProjectRender from '../components/project/ProjectRender'
 
 const routes =[
   {
@@ -35,6 +36,10 @@ const routes =[
   {
     path:'/projects/:projectId',
     component: ProjectRender
+  },
+  {
+    path:'/projects/:projectId/edit',
+    component: ProjectEdit
   },*/
   /*
   {

@@ -3,14 +3,14 @@ import './stylesheet/theme_responsive.css'
 import './stylesheet/theme_style.css'
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import Banner from './components/Banner'
-import FooterCustom from './components/FooterCustom'
-import NavHeader from './components/NavHeader'
+import Banner from './components/public/Banner'
+import FooterCustom from './components/public/FooterCustom'
+import NavHeader from './components/public/NavHeader'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { useState } from 'react';
 import AppRoute from './components/AppRoute';
 import routes from './config/routes'
-import Home from './components/Home';
+import Home from './components/public/Home';
 
 
 function App() {

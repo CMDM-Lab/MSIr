@@ -1,7 +1,7 @@
 import React from "react";
-import logo from '../stylesheet/logo.svg';
+import logo from '../../stylesheet/logo.svg';
 import {NavLink} from 'react-router-dom'
-import { useAuthState } from '../services/auth_service/context'
+import { useAuthState } from '../../services/auth_service/context'
 
 const NavHeader = ({currentState,setCurrentState})=>{
     

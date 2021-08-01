@@ -2,9 +2,9 @@ import React, { useState, useRef } from "react";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
-import { required, validEmail, validpassword } from '../utils/validation'
+import { required, validEmail, validpassword } from '../../utils/validation'
 
-import {register} from "../services/auth_service";
+import {register} from "../../services/auth_service";
 
 const Register = (props) => {
   const form = useRef();
@@ -155,7 +155,6 @@ const Register = (props) => {
                     </a>
                 </div>
             </div>
-          
         </div>
       </div>
     </div>

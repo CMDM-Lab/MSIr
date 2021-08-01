@@ -61,7 +61,14 @@ const Project = sequelize.define('project',{
         type: DataTypes.INTEGER,
         defaultValue: 0,
         allowNull: false
-    }
+    },
+    pixel_size_x: {
+        type: DataTypes.INTEGER,
+    },
+    pixel_size_y: {
+        type: DataTypes.INTEGER,
+    },
+    
 }, {
     freezeTableName: true
   })
@@ -207,6 +214,11 @@ const Extraction = sequelize.define('extraction',{
         type: DataTypes.INTEGER,
         //allowNull: false
     },*/
+    normalization: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false
+    },
     min_mz:{
         type: DataTypes.FLOAT
     },

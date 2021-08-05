@@ -1,5 +1,5 @@
 import React from 'react'
-import ProjectInform from './ProjectInform'
+import ProjectItem from './ProjectInform'
 
 const Projects = async (prop)=>{
 
@@ -40,7 +40,7 @@ const Projects = async (prop)=>{
               <thead>
                 <tr>
                   <th>Project name / Project info</th>
-                  <th>Parameters for noise removal</th>
+                  <th>MSI data Information</th>
                   <th>Operations</th>
                 </tr>
               </thead>

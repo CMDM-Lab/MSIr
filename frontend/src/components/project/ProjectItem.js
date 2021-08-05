@@ -1,7 +1,7 @@
 import React from "react"
 import { Button } from "bootstrap"
 
-const ProjectInform = ({data})=>{
+const ProjectItem = ({data})=>{
 
     if (!data){
         return (
@@ -63,4 +63,4 @@ const ProjectInform = ({data})=>{
         </>
     )
 }
-export default ProjectInform
+export default ProjectItem

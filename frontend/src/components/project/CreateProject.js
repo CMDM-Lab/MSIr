@@ -21,6 +21,16 @@ const CreateProject = (props) => {
         setYAxisSize(value)
     }
 
+    const handleReset = ()=>{
+        setName('')
+        setXAxisSize('')
+        setYAxisSize('')
+    }
+
+    const handleSubmit = () => {
+
+    }
+
     return (
     <section className="challange_area">
         <div className="container-fluid">
@@ -105,8 +115,8 @@ const CreateProject = (props) => {
             </div>
             <div className="form-group row py-2">
                 <div className="col-lg-5 col-3" />
-                <button onClick={''} className='btn btn-primary col-lg-1 col-1'>Submit</button>
-                <button onClick={''} className='btn btn-secondary col-lg-1 col-1'>Reset</button>
+                <button onClick={handleSubmit} className='btn btn-primary col-lg-1 col-1'>Submit</button>
+                <button onClick={handleReset} className='btn btn-secondary col-lg-1 col-1'>Reset</button>
             </div>
         </div>
       </section>

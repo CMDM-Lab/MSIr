@@ -1,15 +1,14 @@
-const API_URL = '';
+import instance from "../../api";
  
 export async function loginUser(dispatch, loginPayload) {
   const requestOptions = {
-    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(loginPayload),
   };
  
   try {
     dispatch({ type: 'REQUEST_LOGIN' });
-    let response = await fetch(`${API_URL}/login`, requestOptions);
+    let response = await instance.post('/login',requestOptions);
     let data = await response.json();
  
     if (data.user) {

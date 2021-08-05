@@ -28,7 +28,6 @@ const User = sequelize.define('user',{
         unique: true
     },
     reset_password_sent_at:DataTypes.DATE(6),
-    remember_created_at:DataTypes.DATE(6),
     role:{
         type: DataTypes.STRING,
         validate:{
@@ -39,10 +38,6 @@ const User = sequelize.define('user',{
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
-    remember_me:{
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-    }
 }, {
     freezeTableName: true
   })
@@ -57,16 +52,14 @@ const Project = sequelize.define('project',{
     //    type: DataTypes.INTEGER,
     //    allowNull: false
     //},
-    normalization: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-        allowNull: false
-    },
     pixel_size_x: {
         type: DataTypes.INTEGER,
     },
     pixel_size_y: {
         type: DataTypes.INTEGER,
+    },
+    bin_size: {
+        type: DataTypes.FLOAT
     },
     
 }, {
@@ -121,7 +114,7 @@ const MSIdata = sequelize.define('msidata',{
     },
     min_mz:DataTypes.FLOAT,
     max_mz:DataTypes.FLOAT,
-    mz_interval:DataTypes.FLOAT,
+    mz_bin_size:DataTypes.FLOAT,
     msi_h:DataTypes.INTEGER,
     msi_w:DataTypes.INTEGER,
     processed_data_file: {
@@ -151,6 +144,9 @@ const HistologyROI = sequelize.define('histologyroi',{
     points: {
         type: DataTypes.JSON,
         allowNull: false
+    },
+    blend_img_file: {
+        type: DataTypes.STRING
     }
 }, {
     freezeTableName: true
@@ -197,7 +193,7 @@ const Registration = sequelize.define('registration',{
             isIn: [['affine', 'b-spline']]
         }
     },
-    transformmatrix_file: {
+    transform_matrix_file: {
         type: DataTypes.STRING,
     },
     registered_index_file: {
@@ -218,15 +214,6 @@ const Extraction = sequelize.define('extraction',{
         type: DataTypes.INTEGER,
         defaultValue: 0,
         allowNull: false
-    },
-    min_mz:{
-        type: DataTypes.FLOAT
-    },
-    max_mz:{
-        type: DataTypes.FLOAT
-    },
-    mz_interval:{
-        type: DataTypes.FLOAT
     },
     extract_file:{
         type: DataTypes.STRING

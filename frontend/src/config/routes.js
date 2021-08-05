@@ -3,11 +3,16 @@ import Signup from '../components/auth/SignUp'
 import Doc from '../components/public/Doc'
 import Contact from '../components/public/Contact'
 import ProjectRender from '../components/project/ProjectRender'
+import CreateRegistration from '../components/registration/CreateRegistration'
+import CreateExtraction from '../components/extraction/CreateExtraction'
+import Registrations from '../components/registration/Registrations'
+import Extractions from '../components/extraction/Extractions'
+import RegistrationRender from '../components/registration/RegistrationRender'
 
 const routes =[
   {
     path:'/doc',
-    component: Doc,
+    component: Registrations,
     isPrivate: false,
   },
   {
@@ -40,7 +45,40 @@ const routes =[
   {
     path:'/projects/:projectId/edit',
     component: ProjectEdit
-  },*/
+  },
+  {
+    path:'/projects/:projectId/regs',
+    component: Registrations
+  },
+  {
+    path:'/projects/:projectId/regs/new',
+    component: CreateRegistration
+  },
+  {
+    path:'/projects/:projectId/regs/:regId',
+    component: RegistrationRender
+  },
+  {
+    path:'/projects/:projectId/extracts',
+    component: Extractions
+  },
+  {
+    path:'/projects/:projectId/extracts/new',
+    component: CreateExtraction
+  },
+  {
+    path:'/projects/:projectId/extracts/:extractId',
+    component: ExtractionRender
+  },
+  {
+    path:'/projects/:projectId/image',
+    component: 
+  },
+  {
+    path:'/projects/:projectId/image/roi',
+    component: Extractions
+  },
+  */
   /*
   {
     path:'/users/password/edit',

@@ -4,7 +4,7 @@ import { useAuthState } from '../../services/auth_service'
 
 const ProjectRender = (props) => {
 
-    //const {projectId} = useParams
+    //const {projectId} = useParams()
     //const userDetails = useAuthState()
 
     const data_project = ''

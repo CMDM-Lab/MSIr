@@ -16,7 +16,7 @@ import Home from './components/public/Home';
 function App() {
   const [currentState,setCurrentState]=useState('home')
   const [userSignedIn,setUserSignedIn]=useState(true)
-  const [userId,setUserId]=useState()
+  
   return (
       <div className="App">
         <NavHeader userSignedIn={userSignedIn} currentState={currentState} setCurrentState={setCurrentState}/>

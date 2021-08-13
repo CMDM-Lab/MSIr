@@ -1,4 +1,4 @@
 import { register } from './register'
-import { AuthProvider, useAuthState, useAuthDispatch, loginUser, logout } from './context'
+import { ContextProvider, useAuthState, useAuthDispatch, loginUser, logout, useInfoState } from './context'
 
-export {AuthProvider, useAuthState, useAuthDispatch, loginUser, logout, register }
+export {ContextProvider, useAuthState, useAuthDispatch, loginUser, logout, register, useInfoState }

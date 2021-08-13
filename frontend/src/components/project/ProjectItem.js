@@ -55,7 +55,7 @@ const ProjectItem = ({data})=>{
                                 <Button href=''>Edit</Button>
                             </td></tr>
                             <tr><td style={{width: '70%'}}>
-                                <Button onClick={}>Delete</Button>
+                                <Button >Delete</Button>
                             </td></tr>
                         </tbody></table>
                 </td>

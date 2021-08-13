@@ -1,23 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
-const CreateProject = (props) => {
+const EditMSI = (props) => {
 
     const MySwal = withReactContent(Swal)
 
-    const [name,setName] = useState('')
     const [axisSize, setAxisSize] = useState(-1)
     const [msiFiles, setMsiFiles] = useState([])
-    const [histFile, setHistFile] = useState()
     const [binSize, setBinSize] = useState(0.01)
-    const [msiId, setMsiId] = useState(null)
-    const [histId, setHistId] = useState(null)
+    const [msidata, setMsidata] = useState()
+    const [progressInfo, setProgressInfo] = useState()
+    const [message, setMessage] = useState('')
 
-    const onChangeName = (e)=>{
-        const value = e.target.value;
-        setName(value)
-    }
+    useEffect(()=>{
+        
+    },[])
 
     const onChangeAxis = (e)=>{
         const value = e.target.value;
@@ -30,40 +28,49 @@ const CreateProject = (props) => {
     }
 
     const onChangeMsiFiles = (e)=>{
-        if (e.target.files.length==2){
-            setMsiFiles([...e.target.files])
+        const files = [...e.target.files]
+        if (files.length==2){
+            if (files.some(e=>/\.imzML/.test(e.name)) && files.some(e=>/\.ibd/.test(e.name))){
+                setMsiFiles([...e.target.files])
+            }
+            else{
+                MySwal.fire('Upload error file type','Please upload .imzML and .ibd simultaneously','error')
+            }
+        }
+        else{
+            MySwal.fire('Upload error number of files','Please upload .imzML and .ibd simultaneously','error')
         }
 
     }
-    const onChangeHistFile = (e)=>{
-        setHistFile(e.target.files[0])
-    }
 
-    const onUploadMsiFiles = (e)=>{
+    const onUploadMsiFiles = async (e)=>{
         e.preventDefault()
         let formData = new FormData();
 
         for (const key of Object.keys(msiFiles)) {
             formData.append('msiFiles', msiFiles[key])
         }
-        /*axios post接後端回傳response*/
-        /*axios.post("http://localhost:8000/endpoint/multi-images-upload", formData, {
-        }).then(response => {
-            console.log((response.data))
-        })*/
-    }
+        let _progressInfo = {percentage: 0};
+        /*for (let i = 0; i < msiFiles.length; i++) {
+            _progressInfos.push({ percentage: 0, fileName: msiFiles[i].name });
+        }*/
+        setProgressInfo(_progressInfo)
 
-    const onUploadHistFile = (e)=>{
-        e.preventDefault()
-        let formData = new FormData();
-
-        formData.append('histFile', histFile)
-        
         /*axios post接後端回傳response*/
-        /*axios.post("http://localhost:8000/endpoint/multi-images-upload", formData, {
-        }).then(response => {
-            console.log((response.data))
-        })*/
+        /*try{
+           const response = await axios.post("http://localhost:8000/endpoint/multi-images-upload", formData, (event) => {
+                _progressInfo.percentage = Math.round((100 * event.loaded) / event.total);
+                setProgressInfo(_progressInfo)
+            })
+            setMsidata(response.data)
+            console.log(response.data)
+            setMessage("Uploaded the file successfully")
+        }
+        catch{
+            setProgressInfo({percentage:0})
+            setMessage("Upload the file unsuccessfully, please retry.")
+        }   
+        */
     }
 
     /*const handleReset = ()=>{
@@ -74,7 +81,11 @@ const CreateProject = (props) => {
     }*/
 
     const handleSubmit = () => {
-
+        if (!msidata){
+            MySwal.fire('Error','Please upload MSI data first or wait for finishing uploading','error')
+            return
+        }
+        /*axios post接後端回傳response*/
     }
 
     return (
@@ -90,31 +101,20 @@ const CreateProject = (props) => {
                         <li className="breadcrumb-item">
                             <a href='/projects'>Projects</a>
                         </li>
+                        <li className="breadcrumb-item">
+                            <a href='/projects'>Project name{}</a>
+                        </li>
                         <li className="breadcrumb-item active">
-                            <a href='/projects/new'>Create a new project</a>
+                            <p>Upload MSI data</p>
                         </li>
                     </ol></div></div>
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Project name*</label>
-                <div className="col-6">
-                    <input 
-                    type="text"
-                    name='name'
-                    value={name}
-                    className='form-control input100'
-                    placeholder='Type Project Name'
-                    id="name"
-                    onChange={onChangeName}
-                    />
-                </div></div>
-            <div className="form-group row py-2">
-                <div className="col-lg-2 col-3" />
                 <label className="col-3 col-form-label">Upload MSI files*</label>
                 <div className="col-6">
-                    <input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.idb"/>
+                    <input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.ibd"/>
                     <div className='btn btn-outline-secondary  col-lg-2 col-2'>
-                        <button onClick={onUploadMsiFiles}>Upload</button>
+                        <button onClick={onUploadMsiFiles} disabled={!msiFiles.some(e=>/\.imzML/.test(e.name)) || !msiFiles.some(e=>/\.ibd/.test(e.name))}>Upload</button>
                     </div> 
                 </div>
                 <div className="col-lg-5 col-3" />
@@ -123,17 +123,26 @@ const CreateProject = (props) => {
                 <small className="form-text text-muted col-7">In Analyze 7.5 data format, *.img, *.hdr, and *.t2m files should be uploaded </small>
                 */}
             </div>
-            <div className="form-group row py-2">
+            {progressInfo?
+            (<div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Upload Histology image file*</label>
+                <label className="col-3 col-form-label">Upload progress</label>
                 <div className="col-6">
-                    <input className='col-lg-10 col-10' type='file' name='HistFile' onChange={onChangeHistFile} accept=".png,.jpg,.jpeg,.tif,.tiff"/>
-                    <div className='btn btn-outline-secondary col-lg-2 col-2'>
-                        <button onClick={onUploadHistFile}>Upload</button>
-                    </div> 
-                    <small className="form-text text-muted">Only accept PNG, JPEG, TIFF image file formats</small>
+                    <div
+                        className="progress-bar progress-bar-info"
+                        role="progressbar"
+                        aria-valuenow={progressInfo.percentage}
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        style={{ width: progressInfo.percentage + "%" }}
+                    >
+                        {progressInfo.percentage}%
+                    </div>
+                    {message?
+                    (<div className="alert alert-secondary" role="alert">{message}</div>):null
+                    }
                 </div>
-            </div>
+            </div>):null}
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
                 <label className="col-3 col-form-label">MSI datacube bin size*</label>
@@ -153,7 +162,7 @@ const CreateProject = (props) => {
                     type='number'
                     name='axisSize'
                     value={axisSize}
-                    className='form-control input100'
+                    className='form-control input50'
                     placeholder='Type Pixel Size of MSI'
                     id="xAxisSize"
                     onChange={onChangeAxis}
@@ -172,4 +181,4 @@ const CreateProject = (props) => {
     )
 }
 
-export default CreateProject
+export default EditMSI

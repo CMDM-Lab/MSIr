@@ -1,11 +1,20 @@
-import React from 'react'
-import ProjectItem from './ProjectInform'
+import React, {useEffect} from 'react'
+import ProjectItem from './ProjectItem'
+import { useAuthState } from '../../services/auth_service'
 
-const Projects = async (prop)=>{
-
+const Projects = (prop)=>{
+  
   const userDetails = useAuthState()
+  useEffect(()=>{
+    
+  },[])
 
   //const data = await
+
+  const onClickExample = () =>{
+
+  }
+
 
   return (
     <section className="challange_area">
@@ -30,9 +39,8 @@ const Projects = async (prop)=>{
                 </span>*/}
                 <h6>Quick menu</h6>
                 <div className="btn-group-vertical">
-                  <a className='btn btn-warning' onClick={}>Import an example</a>
+                  <a className='btn btn-warning' onClick={onClickExample}>Import an example</a>
                   <a className='btn btn-primary' href=''>New Project</a>
-                  <a className='btn btn-danger' onClick={}>Delete All Projects</a>
                 </div></div></div></div>
           <div className="col-lg-10">
             {}
@@ -51,3 +59,5 @@ const Projects = async (prop)=>{
 
     )
 }
+
+export default Projects

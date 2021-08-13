@@ -3,16 +3,20 @@ import Signup from '../components/auth/SignUp'
 import Doc from '../components/public/Doc'
 import Contact from '../components/public/Contact'
 import ProjectRender from '../components/project/ProjectRender'
+import Projects from '../components/project/Projects'
 import CreateRegistration from '../components/registration/CreateRegistration'
 import CreateExtraction from '../components/extraction/CreateExtraction'
 import Registrations from '../components/registration/Registrations'
 import Extractions from '../components/extraction/Extractions'
 import RegistrationRender from '../components/registration/RegistrationRender'
+import CreateProject from '../components/project/CreateProject'
+import ProjectEdit from '../components/project/ProjectEdit'
+import UploadMSI from '../components/msidata/UploadMSI'
 
 const routes =[
   {
     path:'/doc',
-    component: Registrations,
+    component: UploadMSI,
     isPrivate: false,
   },
   {

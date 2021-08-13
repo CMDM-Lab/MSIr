@@ -3,7 +3,10 @@ const { Sequelize, DataTypes } = pkg;
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: './msiregistrar2_db.sqlite'
+    storage: './msiregistrar2_db.sqlite',
+    define: {
+        freezeTableName: true
+      }
   })
 
 const User = sequelize.define('user',{
@@ -53,20 +56,11 @@ const Project = sequelize.define('project',{
         defaultValue: '',
         allowNull: false
     },
+    description: DataTypes.STRING,
     //user_id: {
     //    type: DataTypes.INTEGER,
     //    allowNull: false
     //},
-    pixel_size_x: {
-        type: DataTypes.INTEGER,
-    },
-    pixel_size_y: {
-        type: DataTypes.INTEGER,
-    },
-    bin_size: {
-        type: DataTypes.FLOAT
-    },
-    
 }, {
     freezeTableName: true
   })
@@ -89,14 +83,6 @@ const MSIdata = sequelize.define('msidata',{
         type: DataTypes.INTEGER,
         allowNull: false,
     },*/
-    data_type: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: 'imzML',
-        validate:{
-            isIn: [['imzML', 'Analyze_7.5']]
-        }
-    },
     imzml_file: {
         type: DataTypes.STRING,
         allowNull: false
@@ -104,6 +90,14 @@ const MSIdata = sequelize.define('msidata',{
     ibd_file: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    /*data_type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'imzML',
+        validate:{
+            isIn: [['imzML', 'Analyze_7.5']]
+        }
     },
     hdr_file: {
         type: DataTypes.STRING,
@@ -116,12 +110,17 @@ const MSIdata = sequelize.define('msidata',{
     t2m_file: {
         type: DataTypes.STRING,
         //allowNull: false
-    },
+    },*/
     min_mz:DataTypes.FLOAT,
     max_mz:DataTypes.FLOAT,
-    mz_bin_size:DataTypes.FLOAT,
+    bin_size: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0.01,
+        allowNull: false
+    },
     msi_h:DataTypes.INTEGER,
     msi_w:DataTypes.INTEGER,
+    pixel_size: DataTypes.INTEGER,
     processed_data_file: {
         type: DataTypes.STRING,
     }

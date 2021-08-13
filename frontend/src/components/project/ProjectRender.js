@@ -5,7 +5,7 @@ import { useAuthState } from '../../services/auth_service'
 const ProjectRender = (props) => {
 
     //const {projectId} = useParams()
-    //const userDetails = useAuthState()
+    const userDetails = useAuthState()
 
     const data_project = ''
     const data_registration =''
@@ -30,7 +30,7 @@ const ProjectRender = (props) => {
               </ol></div></div>
         <div className="row">
             <div className="col-lg-1 col-1" />
-            <div className='col-lg-3 col-sm-12 project_info border-end'>
+            <div className='col-lg-5 col-sm-12 project_info border-end'>
                 <h3>
                     Project details {' '}
                     <div className='btn-group'>
@@ -40,8 +40,7 @@ const ProjectRender = (props) => {
                     </div>
                 </h3>
                 <ol>
-                    <li>X-axis pixel size:{}</li>
-                    <li>Y-axis pixel size:{}</li>
+                    <li>Pixel size:{} um</li>
                     <li>Normalization: {}</li>
                 </ol>
                 <h3>MSI data</h3>
@@ -52,7 +51,7 @@ const ProjectRender = (props) => {
                 <h3>Histological Image</h3>
                 <img></img>
             </div>
-            <div className='col-lg-4 col-sm-12 border-end'>
+            <div className='col-lg-3 col-sm-12 border-end'>
                 <h3>Registrations</h3>
                 <div className='btn-group'>
                     <a className='btn btn-info text-left' style={{'color':'white'}} href=''>
@@ -64,7 +63,7 @@ const ProjectRender = (props) => {
                 </div>
                 {data_registration?(<div></div>):(<p>No Registration Result</p>)}
             </div>
-            <div className='col-lg-4 col-sm-12'>
+            <div className='col-lg-3 col-sm-12'>
                 <h3>Data Extractions</h3>
                 <div className='btn-group'>
                     <a className='btn btn-info text-left' style={{'color':'white'}} href=''>

@@ -8,7 +8,7 @@ export const signup = (req, res) => {
   // Save User to Database
   const user = User.create({
     email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8)
+    encrypted_password: bcrypt.hashSync(req.body.password, 8)
   }).catch(err => {
     res.status(500).send({ message: err.message });
   });
@@ -33,7 +33,7 @@ export const signin = async (req, res) => {
     
     var passwordIsValid = bcrypt.compareSync(
         req.body.password,
-        user.password
+        user.encrypted_password
     );
 
     if (!passwordIsValid) {

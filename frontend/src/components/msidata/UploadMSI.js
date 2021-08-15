@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import {Line} from "rc-progress"
+import Uploady, { useItemProgressListener } from "@rpldy/uploady";
+import UploadButton from "@rpldy/upload-button";
 
 const UploadMSI = (props) => {
 
@@ -9,9 +12,10 @@ const UploadMSI = (props) => {
     const [axisSize, setAxisSize] = useState(-1)
     const [msiFiles, setMsiFiles] = useState([])
     const [binSize, setBinSize] = useState(0.01)
-    const [msidata, setMsidata] = useState()
+    const [msiRes, setMsiRes] = useState()
     const [progressInfo, setProgressInfo] = useState()
     const [message, setMessage] = useState('')
+    const [fileStatus, setfileStatus] = useState('init') //'init','uploading', 'finish', 'error'
 
     const onChangeAxis = (e)=>{
         const value = e.target.value;
@@ -23,7 +27,7 @@ const UploadMSI = (props) => {
         setBinSize(value)
     }
 
-    const onChangeMsiFiles = (e)=>{
+    /*const onChangeMsiFiles = (e)=>{
         const files = [...e.target.files]
         if (files.length==2){
             if (files.some(e=>/\.imzML/.test(e.name)) && files.some(e=>/\.ibd/.test(e.name))){
@@ -49,16 +53,16 @@ const UploadMSI = (props) => {
         let _progressInfo = {percentage: 0};
         /*for (let i = 0; i < msiFiles.length; i++) {
             _progressInfos.push({ percentage: 0, fileName: msiFiles[i].name });
-        }*/
+        }
         setProgressInfo(_progressInfo)
 
-        /*axios post接後端回傳response*/
-        /*try{
+        //axios post接後端回傳response
+        try{
            const response = await axios.post("http://localhost:8000/endpoint/multi-images-upload", formData, (event) => {
                 _progressInfo.percentage = Math.round((100 * event.loaded) / event.total);
                 setProgressInfo(_progressInfo)
             })
-            setMsidata(response.data)
+            setMsiRes(response.data)
             console.log(response.data)
             setMessage("Uploaded the file successfully")
         }
@@ -66,8 +70,28 @@ const UploadMSI = (props) => {
             setProgressInfo({percentage:0})
             setMessage("Upload the file unsuccessfully, please retry.")
         }   
-        */
-    }
+        
+    }*/
+
+    const UploadProgress = () => {
+        const [progress, setProgess] = useState(0);
+      
+        const progressData = useItemProgressListener();
+      
+        if (progressData && progressData.completed > progress) {
+          setProgess(() => progressData.completed);
+        }
+        return (
+            progressData && (
+              <Line
+                style={{ height: "10px", marginTop: "20px" }}
+                strokeWidth={2}
+                strokeColor={progress === 100 ? "#00a626" : "#2db7f5"}
+                percent={progress}
+              />
+            )
+          );
+    };
 
     /*const handleReset = ()=>{
         setName('')
@@ -77,7 +101,7 @@ const UploadMSI = (props) => {
     }*/
 
     const handleSubmit = () => {
-        if (!msidata){
+        if (!msiRes){
             MySwal.fire('Error','Please upload MSI data first or wait for finishing uploading','error')
             return
         }
@@ -108,10 +132,23 @@ const UploadMSI = (props) => {
                 <div className="col-lg-2 col-3" />
                 <label className="col-3 col-form-label">Upload MSI files*</label>
                 <div className="col-6">
-                    <input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.ibd"/>
+                    {/*<input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.ibd"/>
                     <div className='btn btn-outline-secondary  col-lg-2 col-2'>
                         <button onClick={onUploadMsiFiles} disabled={!msiFiles.some(e=>/\.imzML/.test(e.name)) || !msiFiles.some(e=>/\.ibd/.test(e.name))}>Upload</button>
-                    </div> 
+                    </div>*/}
+                    <Uploady
+                        destination={{ url: "" , headers:{}}}
+                        accept=".imzML,.ibd"
+                        fileFilter={(file)=>{return file.size < 1e+7}}
+                        params = {{}}
+                        sendWithFormData = {true}
+                        grouped = {true}
+                        maxGroupSize = {2}
+                    >
+                        <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>Select Files & Upload </UploadButton> 
+                        <UploadProgress />
+                    </Uploady>
+
                 </div>
                 <div className="col-lg-5 col-3" />
                 <small className="form-text text-muted col-7">In imzML data format, *.imzML and *.ibd files should be uploaded simultaneously </small>
@@ -119,7 +156,7 @@ const UploadMSI = (props) => {
                 <small className="form-text text-muted col-7">In Analyze 7.5 data format, *.img, *.hdr, and *.t2m files should be uploaded </small>
                 */}
             </div>
-            {progressInfo?
+            {/*progressInfo?
             (<div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
                 <label className="col-3 col-form-label">Upload progress</label>
@@ -138,7 +175,7 @@ const UploadMSI = (props) => {
                     (<div className="alert alert-secondary" role="alert">{message}</div>):null
                     }
                 </div>
-            </div>):null}
+                </div>):null*/}
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
                 <label className="col-3 col-form-label">MSI datacube bin size*</label>

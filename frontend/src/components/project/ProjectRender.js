@@ -4,8 +4,9 @@ import { useAuthState } from '../../services/auth_service'
 
 const ProjectRender = (props) => {
 
-    //const {projectId} = useParams()
+    const {projectId} = useParams()
     const userDetails = useAuthState()
+    
 
     const data_project = ''
     const data_registration =''
@@ -40,15 +41,29 @@ const ProjectRender = (props) => {
                     </div>
                 </h3>
                 <ol>
-                    <li>Pixel size:{} um</li>
-                    <li>Normalization: {}</li>
+                    <li>Project Name:{}</li>
+                    <li>Project Description:{}</li>
                 </ol>
-                <h3>MSI data</h3>
+                <h3>
+                    MSI data
+                    <div className='btn-group'>
+                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href=''>
+                            Edit
+                        </a>
+                    </div>
+                </h3>
                 <ol>
                     <li>imzML:{}</li>
                     <li>ibd:{}</li>
                 </ol>
-                <h3>Histological Image</h3>
+                <h3>
+                    Histological Image
+                    <div className='btn-group'>
+                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href=''>
+                            Edit
+                        </a>
+                    </div>
+                </h3>
                 <img></img>
             </div>
             <div className='col-lg-3 col-sm-12 border-end'>

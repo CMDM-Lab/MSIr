@@ -2,7 +2,7 @@ import { User } from "../db/db";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt'
 
-const Op = db.Sequelize.Op;
+//const Op = db.Sequelize.Op;
 
 export const signup = (req, res) => {
   // Save User to Database

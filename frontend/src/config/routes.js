@@ -80,7 +80,15 @@ const routes =[
   },
   {
     path:'/projects/:projectId/image/roi',
-    component: Extractions
+    component: 
+  },
+  {
+    path:'/projects/:projectId/msi/new',
+    component: UploadMSI
+  },
+  {
+    path:'/projects/:projectId/msi/edit',
+    component: EditMSI
   },
   */
   /*

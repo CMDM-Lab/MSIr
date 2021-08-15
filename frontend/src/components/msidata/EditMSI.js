@@ -9,9 +9,10 @@ const EditMSI = (props) => {
     const [axisSize, setAxisSize] = useState(-1)
     const [msiFiles, setMsiFiles] = useState([])
     const [binSize, setBinSize] = useState(0.01)
-    const [msidata, setMsidata] = useState()
+    const [msiRes, setMsiRes] = useState()
     const [progressInfo, setProgressInfo] = useState()
     const [message, setMessage] = useState('')
+    const [fileStatus, setfileStatus] = useState('finish') //'init','uploading', 'finish', 'error'
 
     useEffect(()=>{
         
@@ -62,7 +63,7 @@ const EditMSI = (props) => {
                 _progressInfo.percentage = Math.round((100 * event.loaded) / event.total);
                 setProgressInfo(_progressInfo)
             })
-            setMsidata(response.data)
+            setMsiRes(response.data)
             console.log(response.data)
             setMessage("Uploaded the file successfully")
         }
@@ -81,7 +82,7 @@ const EditMSI = (props) => {
     }*/
 
     const handleSubmit = () => {
-        if (!msidata){
+        if (!msiRes){
             MySwal.fire('Error','Please upload MSI data first or wait for finishing uploading','error')
             return
         }

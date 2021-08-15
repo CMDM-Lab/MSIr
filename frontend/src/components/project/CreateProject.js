@@ -7,50 +7,18 @@ const CreateProject = (props) => {
     const MySwal = withReactContent(Swal)
 
     const [name,setName] = useState('')
-    const [axisSize, setAxisSize] = useState(-1)
-    const [msiFiles, setMsiFiles] = useState([])
+    const [description, setDescription] = useState('')
     const [histFile, setHistFile] = useState()
-    const [binSize, setBinSize] = useState(0.01)
-    const [msiId, setMsiId] = useState(null)
-    const [histId, setHistId] = useState(null)
+    
 
     const onChangeName = (e)=>{
         const value = e.target.value;
         setName(value)
     }
 
-    const onChangeAxis = (e)=>{
+    const onChangeDescription = (e)=>{
         const value = e.target.value;
-        setAxisSize(value)
-    }
-
-    const onChangeBinSize = (e)=>{
-        const value = e.target.value;
-        setBinSize(value)
-    }
-
-    const onChangeMsiFiles = (e)=>{
-        if (e.target.files.length==2){
-            setMsiFiles([...e.target.files])
-        }
-
-    }
-    const onChangeHistFile = (e)=>{
-        setHistFile(e.target.files[0])
-    }
-
-    const onUploadMsiFiles = (e)=>{
-        e.preventDefault()
-        let formData = new FormData();
-
-        for (const key of Object.keys(msiFiles)) {
-            formData.append('msiFiles', msiFiles[key])
-        }
-        /*axios post接後端回傳response*/
-        /*axios.post("http://localhost:8000/endpoint/multi-images-upload", formData, {
-        }).then(response => {
-            console.log((response.data))
-        })*/
+        setDescription(value)
     }
 
     const onUploadHistFile = (e)=>{
@@ -110,20 +78,20 @@ const CreateProject = (props) => {
                 </div></div>
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Upload MSI files*</label>
+                <label className="col-3 col-form-label">Project Description</label>
                 <div className="col-6">
-                    <input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.idb"/>
-                    <div className='btn btn-outline-secondary  col-lg-2 col-2'>
-                        <button onClick={onUploadMsiFiles}>Upload</button>
-                    </div> 
+                    <input 
+                    type='text'
+                    name='description'
+                    value={description}
+                    className='form-control input100'
+                    placeholder='Type Project Description'
+                    id="description"
+                    onChange={onChangeDescription}
+                    />
                 </div>
-                <div className="col-lg-5 col-3" />
-                <small className="form-text text-muted col-7">In imzML data format, *.imzML and *.ibd files should be uploaded simultaneously </small>
-                {/*<div className="col-lg-5 col-3" />
-                <small className="form-text text-muted col-7">In Analyze 7.5 data format, *.img, *.hdr, and *.t2m files should be uploaded </small>
-                */}
             </div>
-            <div className="form-group row py-2">
+            {/*<div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
                 <label className="col-3 col-form-label">Upload Histology image file*</label>
                 <div className="col-6">
@@ -133,34 +101,7 @@ const CreateProject = (props) => {
                     </div> 
                     <small className="form-text text-muted">Only accept PNG, JPEG, TIFF image file formats</small>
                 </div>
-            </div>
-            <div className="form-group row py-2">
-                <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">MSI datacube bin size*</label>
-                <div className="col-6">
-                    <select value={binSize} onChange={onChangeBinSize}>
-                        <option value={0.01}>0.01 m/z</option>
-                        <option value={0.1}>0.1 m/z</option>
-                        <option value={1}>1 m/z</option>
-                    </select>
-                </div>
-            </div>
-            <div className="form-group row py-2">
-                <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Pixel size of MSI</label>
-                <div className="col-6">
-                    <input 
-                    type='number'
-                    name='axisSize'
-                    value={axisSize}
-                    className='form-control input100'
-                    placeholder='Type Pixel Size of MSI'
-                    id="xAxisSize"
-                    onChange={onChangeAxis}
-                    />
-                    <small className="form-text text-muted">Please fill the pixel resolution of MSI in x-axis.</small>
-                </div>
-            </div>
+            </div>*/}
             
             <div className="form-group row py-2">
                 <div className="col-lg-5 col-3" />

@@ -235,6 +235,11 @@ const Extraction = sequelize.define('extraction',{
   })
 
 Project.belongsTo(User)
+HistologyImage.belongsTo(User)
+MSIdata.belongsTo(User)
+HistologyROI.belongsTo(User)
+Registration.belongsTo(User)
+Extraction.belongsTo(User)
 HistologyImage.belongsTo(Project)
 MSIdata.belongsTo(Project)
 HistologyROI.belongsTo(HistologyROI)

@@ -1,4 +1,6 @@
-checkDuplicateEmail = (req, res, next) => {
+import { User } from "../db/db";
+
+const checkDuplicateEmail = (req, res, next) => {
     // Email
     User.findOne({
         where: {
@@ -17,7 +19,7 @@ checkDuplicateEmail = (req, res, next) => {
 };
   
 const verifySignUp = {
-    checkDuplicateEmail: checkDuplicateUsernameOrEmail,
+    checkDuplicateEmail: checkDuplicateEmail,
   };
   
 export default verifySignUp;

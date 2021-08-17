@@ -18,9 +18,9 @@
 
 ## MSI DATA
 
-- post /api/msi/upload/new?projectid= (上傳file)
-- post /api/msi/upload/update?projectid= (上傳其他file，原file刪除並覆寫資料庫)
-- post /api/msi/upload/sumbit?projectid= (編輯)
+- post /api/msi/new?projectid= (上傳file)
+- post /api/msi/update?projectid= (上傳其他file，原file刪除並覆寫資料庫)
+- post /api/msi/sumbit?projectid= (編輯)
 
 ## Histology Image
 

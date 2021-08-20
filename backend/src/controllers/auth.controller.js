@@ -12,10 +12,8 @@ export const signup = (req, res) => {
   }).catch(err => {
     res.status(500).send({ message: err.message });
   });
-
-  if (!user){
-    res.send({ message: "User was registered successfully!" }); 
-  }
+  
+  res.send({ message: "User was registered successfully!" }); 
 };
 
 export const signin = async (req, res) => {

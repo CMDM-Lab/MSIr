@@ -78,7 +78,7 @@ const HistologyImage = sequelize.define('histologyImage',{
     freezeTableName: true
   })
 
-const MSIdata = sequelize.define('msidata',{
+const MSI = sequelize.define('msi',{
     /*project_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -200,9 +200,9 @@ const Registration = sequelize.define('registration',{
     transform_matrix_file: {
         type: DataTypes.STRING,
     },
-    registered_index_file: {
+    /*registered_index_file: {
         type: DataTypes.STRING
-    }
+    }*/
 })
 
 const Extraction = sequelize.define('extraction',{
@@ -236,20 +236,21 @@ const Extraction = sequelize.define('extraction',{
 
 Project.belongsTo(User)
 HistologyImage.belongsTo(User)
-MSIdata.belongsTo(User)
+MSI.belongsTo(User)
 HistologyROI.belongsTo(User)
 Registration.belongsTo(User)
 Extraction.belongsTo(User)
 HistologyImage.belongsTo(Project)
-MSIdata.belongsTo(Project)
-HistologyROI.belongsTo(HistologyROI)
+MSI.belongsTo(Project)
+HistologyROI.belongsTo(HistologyImage)
 Project.hasMany(Registration)
 Project.hasMany(Extraction)
 HistologyImage.hasMany(Registration)
-MSIdata.hasMany(Registration)
-HistologyROI.hasMany(Registration)
-MSIdata.hasMany(Extraction)
+MSI.hasMany(Registration)
+MSI.hasMany(Extraction)
 HistologyROI.hasMany(Extraction)
 
+sequelize.sync({force: true})
 
-export {User, Project, Registration, Extraction, HistologyImage, HistologyROI, MSIdata}
+
+export {User, Project, Registration, Extraction, HistologyImage, HistologyROI, MSI}

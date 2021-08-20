@@ -1,14 +1,14 @@
 import { MSIdata } from "../db/db";
 
-const newMSI = (req, res) {
+const newMSI = (req, res) => {
 
 }
 
-const updateMSI = (req, res) {
+const updateMSI = (req, res) => {
     
 }
 
-const submitMSI = (req, res) {
+const submitMSI = (req, res) => {
     
 }
 

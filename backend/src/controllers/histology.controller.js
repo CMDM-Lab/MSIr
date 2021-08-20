@@ -1,14 +1,14 @@
 import { HistologyImage } from "../db/db";
 
-const newHistologyImg = (req, res) {
+const newHistologyImg = (req, res) => {
     
 }
 
-const update = (req, res) {
+const update = (req, res) => {
     
 }
 
-const show = (req, res) {
+const show = (req, res) => {
     
 }
 

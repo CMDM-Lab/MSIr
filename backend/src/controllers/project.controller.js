@@ -14,15 +14,15 @@ const all = async (req, res) => {
         })
         if (projects){
             if (projects[0].userId !== req.userId){
-                return res.status(401).send({
+                return res.status(401).json({
                     message: "Unauthorized!"
                 });
             }
         }
-        res.send({data:projects})
+        res.json({data:projects})
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message }); 
+        res.status(500).json({ message: error.message }); 
     }
 }
 
@@ -36,14 +36,14 @@ const show = async (req, res) => {
             //attributes: ['id', 'name','description',]
         })
         if (project.userId !== req.userId){
-            return res.status(401).send({
+            return res.status(401).json({
                 message: "Unauthorized!"
             });
         }
-        res.send({data:project})
+        res.json({data:project})
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message }); 
+        res.status(500).json({ message: error.message }); 
     }
 }
 
@@ -56,21 +56,21 @@ const edit = async (req, res) => {
     try {
         const project = await Project.findByPk(req.projectId)
         if (!project){
-            res.status(404).send({message:'Project not found'})
+            res.status(404).json({message:'Project not found'})
         }
         if (project.userId !== req.userId){
-            return res.status(401).send({
+            return res.status(401).json({
                 message: "Unauthorized!"
             });
         }
         project.name = data.name
         project.description = data.description
         await project.save()
-        res.send({message: "Project was updated successfully!"})
+        res.json({message: "Project was updated successfully!"})
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
     
 }
@@ -84,11 +84,11 @@ const newProject = async (req, res) => {
             userId:req.userId
         })
         fs.mkdir(path.join(fileDir,project.id))
-        res.send({message: "Project was created successfully!"})
+        res.json({message: "Project was created successfully!"})
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 }
 
@@ -97,10 +97,10 @@ const deleteProject = (req, res) => {
     try {
         const project = await Project.findByPk(req.projectId)
         if (!project){
-            return res.status(404).send({message:'Project not found'})
+            return res.status(404).json({message:'Project not found'})
         }
         if (project.userId !== req.userId){
-            return res.status(401).send({
+            return res.status(401).json({
                 message: "Unauthorized!"
             });
         }
@@ -110,7 +110,7 @@ const deleteProject = (req, res) => {
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
     
 }

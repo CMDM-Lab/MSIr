@@ -1,7 +1,7 @@
-import { Registration } from "../db/db";
+import { HistologyImage, HistologyROI, MSI, Registration } from "../db/db";
 import fs from 'fs'
 
-const newRegistration = (req, res) => {
+const newRegistration = async (req, res) => {
     const data = req.body
     try {
         const project = await Project.findByPk(data.projectId)
@@ -13,13 +13,13 @@ const newRegistration = (req, res) => {
             histologyImageId: project.histologyImageId,
             histologyroiId: project.histologyroiId
         })
-        res.send({message: "Registration was created successfully!"})
+        res.json({message: "Registration was created successfully!"})
 
         // run script
         
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 }
 
@@ -28,10 +28,10 @@ const deleteRegistration = async (req, res) => {
     try {
         const registration = await Registration.findByPk(data.registrationId)
         if (registration.userId !== req.userId){
-            return res.status(401).send({message: "Unauthorized!"})
+            return res.status(401).json({message: "Unauthorized!"})
         }
         if (registration.status==='running'){
-            return res.status(404).send({message:'This registration is being implement, please retry after a while.'})
+            return res.status(404).json({message:'This registration is being implement, please retry after a while.'})
         }
         if (registration.transform_matrix_file){
             fs.unlink(registration.transform_matrix_file, function (err) {
@@ -41,57 +41,116 @@ const deleteRegistration = async (req, res) => {
             });
         }
         registration.destroy()
-        res.send({message:'Delete Registration successfully!'})
+        res.json({message:'Delete Registration successfully!'})
         
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 
 }
 
-const all = (req, res) => {
+const all = async (req, res) => {
     const data = req.body
     try {
-        const registrations = Registration.findAll({
+        const registrations = await Registration.findAll({
             where: {
                 projectId: data.projectId,
             },
         })
         if (registrations){
             if (registrations[0].userId !== req.userId){
-                return res.status(401).send({
+                return res.status(401).json({
                     message: "Unauthorized!"
                 })
             }
         }
-        res.send({data:registrations})
+        res.json({data:registrations})
         
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 }
 
-const show = (req, res) => {
+const show = async (req, res) => {
     const data = req.body
     try {
-        const registration = Registration.findOne({
+        const registration = await Registration.findOne({
             where: {
                 id: data.registrationId,
             },
             //attributes: { exclude: ['userId',]}
         })
         if (registration.userId !== req.userId){
-            return res.status(401).send({
+            return res.status(401).json({
                 message: "Unauthorized!"
             });
         }
-        res.send({data:registration})
+        res.json({data:registration})
         
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
+    }
+}
+
+const getParameter = async (req, res) => {
+    const data = req.body
+    try {
+        const registration = await Registration.findByPk(data.id)
+        const image = await HistologyImage.findByPk(registration.histologyImageId)
+        const msi = await MSI.findByPk(registration.msiId)
+        if (registration.histologyroiId){
+            const roi = await HistologyROI.findByPk(registration.histologyroiId)
+            res.json({
+                perform_type: registration.perform_type,
+                transform_type: registration.transform_type,
+                image_file: image.file,
+                msi_file: msi.imzml_file,
+                roi: roi.points
+            })
+        }else{
+            res.json({
+                perform_type: registration.perform_type,
+                transform_type: registration.transform_type,
+                image_file: image.file,
+                msi_file: msi.imzml_file,
+                roi: undefined
+            })
+        }
+        registration.status = 'running'
+        registration.save()
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ message: error.message });
+    }
+    
+}
+
+const setParameter = async (req, res) => {
+    const data = req.body
+    try {
+        const registration = await Registration.findByPk(data.id)
+        const msi = await MSI.findByPk(registration.msiId)
+        if (data.status == 'SUCCESS'){    
+            registration.status = 'finished'
+            registration.transform_matrix_file = data.transform_matrix_file
+            registration.save()
+            msi.min_mz = data.min_mz
+            msi.max_mz = data.max_mz
+            msi.msi_h = data.msi_h
+            msi.msi_w = data.msi_w
+            msi.processed_data_file = data.processed_data_file
+            msi.save()
+        }else{
+            //handle status ERROR
+            registration.status = 'error'
+        }
+        
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ message: error.message });
     }
 }
 
@@ -107,4 +166,4 @@ const idxFile = (req, res) => {
     
 }
 
-export default {newRegistration, deleteRegistration, all, show, resultImg, matrixFile, idxFile}
+export default {newRegistration, deleteRegistration, all, show, getParameter, setParameter, resultImg, matrixFile, idxFile}

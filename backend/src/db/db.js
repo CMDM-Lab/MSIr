@@ -178,7 +178,7 @@ const Registration = sequelize.define('registration',{
         allowNull: false,
         defaultValue: 'created',
         validate: {
-            isIn: [['created', 'waiting', 'running', 'finished']]
+            isIn: [['created', 'waiting', 'running', 'finished', 'error']]
         }
     },
     perform_type:{
@@ -227,7 +227,7 @@ const Extraction = sequelize.define('extraction',{
         allowNull: false,
         defaultValue: 'created',
         validate: {
-            isIn: [['created', 'waiting', 'running', 'finished']]
+            isIn: [['created', 'waiting', 'running', 'finished', 'error']]
         }
     },
 }, {

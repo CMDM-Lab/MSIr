@@ -10,10 +10,10 @@ export const signup = (req, res) => {
     email: req.body.email,
     encrypted_password: bcrypt.hashSync(req.body.password, 8)
   }).catch(err => {
-    res.status(500).send({ message: err.message });
+    res.status(500).json({ message: err.message });
   });
   
-  res.send({ message: "User was registered successfully!" }); 
+  res.json({ message: "User was registered successfully!" }); 
 };
 
 export const signin = async (req, res) => {
@@ -22,11 +22,11 @@ export const signin = async (req, res) => {
             email: req.body.email
         }
     }).catch(err => {
-        res.status(500).send({ message: err.message });
+        res.status(500).json({ message: err.message });
     });
 
     if (!user) {
-        return res.status(404).send({ message: "User Not found." });
+        return res.status(404).json({ message: "User Not found." });
     }
     
     var passwordIsValid = bcrypt.compareSync(
@@ -35,7 +35,7 @@ export const signin = async (req, res) => {
     );
 
     if (!passwordIsValid) {
-        return res.status(401).send({
+        return res.status(401).json({
           accessToken: null,
           message: "Invalid Password!"
         });
@@ -48,7 +48,7 @@ export const signin = async (req, res) => {
     user.token = token
     user.save()
     
-    res.status(200).send({
+    res.status(200).json({
         id: user.id,
         email: user.email,
         accessToken: token

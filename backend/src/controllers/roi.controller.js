@@ -1,4 +1,4 @@
-import { HistologyROI } from "../db/db";
+import { HistologyImage, HistologyROI } from "../db/db";
 
 const newROI = (req, res) => {
     const data = req.body
@@ -9,13 +9,13 @@ const newROI = (req, res) => {
             points: data.points,
             histologyImageId: data.histologyImageId 
         })
-        res.send({message:'ROI was created successfully!'})
+        res.json({message:'ROI was created successfully!'})
         // run draw roi script
 
         
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 
 }
@@ -34,16 +34,16 @@ const all = (req, res) => {
         })
         if (rois){
             if (rois[0].userId !== req.userId){
-                return res.status(401).send({
+                return res.status(401).json({
                     message: "Unauthorized!"
                 });
             }
         }
-        return res.send({data:rois})
+        return res.json({data:rois})
         
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 }
 
@@ -58,16 +58,16 @@ const allmask = (req, res) => {
         })
         if (masks){
             if (masks[0].userId !== req.userId){
-                return res.status(401).send({
+                return res.status(401).json({
                     message: "Unauthorized!"
                 });
             }
         }
-        return res.send({data:masks})
+        return res.json({data:masks})
         
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 
 }
@@ -83,17 +83,51 @@ const allROI = (req, res) => {
         })
         if (rois){
             if (rois[0].userId !== req.userId){
-                return res.status(401).send({
+                return res.status(401).json({
                     message: "Unauthorized!"
                 });
             }
         }
-        return res.send({data:rois})
+        return res.json({data:rois})
         
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 }
 
-export default  {newROI, show, all, allmask, allROI}
+const getParameter = async (req, res) => {
+    const data = req.body
+    try {
+        const roi = await HistologyROI.findByPk(data.id)
+        const image = await HistologyImage.findByPk(roi.histologyImageId)
+        res.json({
+            id: data.id,
+            image_id:image.id,
+            image_file: image.file,
+            points: roi.points,
+        })
+
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ message: error.message }); 
+    }
+    
+}
+
+const setParameter = async (req, res) => {
+    const data = req.body
+    try {
+        const roi = await HistologyROI.findByPk(data.id)
+        if (data.status == "SUCCESS"){    
+            roi.blend_img_file = data.result_file
+            roi.save()
+        }
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ message: error.message }); 
+    }
+    
+}
+
+export default  {newROI, show, all, allmask, allROI, getParameter, setParameter}

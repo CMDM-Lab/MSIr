@@ -1,4 +1,4 @@
-import { Extraction, Project } from "../db/db";
+import { Extraction, HistologyROI, MSI, Project } from "../db/db";
 import fs from 'fs'
 
 const newExtraction = async (req, res) => {
@@ -14,7 +14,7 @@ const newExtraction = async (req, res) => {
 
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message }); 
+        res.status(500).json({ message: error.message }); 
     }
     
 }
@@ -24,10 +24,10 @@ const deleteExtraction = (req, res) => {
     try {
         const extract = Extraction.findByPk(data.extractId)
         if (!extract){
-            return res.status(404).send({message:'Extraction not found'})
+            return res.status(404).json({message:'Extraction not found'})
         }
         if (extract.userId !== req.userId){
-            return res.status(401).send({
+            return res.status(401).json({
                 message: "Unauthorized!"
             });
         }
@@ -37,11 +37,11 @@ const deleteExtraction = (req, res) => {
             console.log('File deleted!');
         });
         extract.destroy()
-        res.send({message:'Delete Extraction successfully!'})
+        res.json({message:'Delete Extraction successfully!'})
         
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message }); 
+        res.status(500).json({ message: error.message }); 
     }
     
 }
@@ -57,15 +57,15 @@ const all = (req, res) => {
         })
         if (extracts){
             if (extracts[0].userId !== req.userId){
-                return res.status(401).send({
+                return res.status(401).json({
                     message: "Unauthorized!"
                 });
             }
         }
-        res.send({data: extracts})
+        res.json({data: extracts})
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message }); 
+        res.status(500).json({ message: error.message }); 
     }
 }
 
@@ -77,21 +77,60 @@ const show = (req, res) => {
             //attributes: { exclude: ['userId',]}
         })
         if (extract.userId !== req.userId){
-            return res.status(401).send({
+            return res.status(401).json({
                 message: "Unauthorized!"
             });
         }
-        res.send({data:extract})
+        res.json({data:extract})
         
     } catch (error) {
         console.log(error.message)
-        res.status(500).send({ message: error.message }); 
+        res.status(500).json({ message: error.message }); 
     }
     
+}
+
+const getParameter = async (req, res) => {
+    const data = req.body
+    try {
+        const extract = await Extraction.findByPk(data.extractId)
+        const msi = await MSI.findByPk(extract.msiId)
+        const roi = await HistologyROI.findByPk(extract.histologyroiId)
+        res.json({
+            id: extract.id,
+            normalization: extract.normalization,
+            msi: msi,
+            roi: roi
+        })   
+        extract.status = 'running'
+        extract.save()
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ message: error.message }); 
+    }
+}
+
+const setParameter = (req, res) => {
+    const data = req.body
+    try {
+        const extract = await Extraction.findByPk(data.extractId)
+        if (data.status == 'SUCCESS'){    
+            extract.extract_file = data.extract_file
+            extract.status = 'finished'
+            extract.save()
+        }else{
+            //handle extract
+            extract.status = 'error'
+            extract.save()
+        }
+        
+    } catch (error) {
+        
+    }
 }
 
 const resultFile = (req, res) => {
     
 }
 
-export default {newExtraction, deleteExtraction, all, show, resultFile}
+export default {newExtraction, deleteExtraction, all, show, getParameter, setParameter, resultFile}

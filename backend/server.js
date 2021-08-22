@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import auth from './routes/auth.routes'
+import auth from './src/routes/auth.routes'
 
 const app = express();
 
@@ -12,6 +12,9 @@ var corsOptions = {
   };
   
 app.use(cors(corsOptions));
+
+//set static path 
+app.use('',express.static(__dirname + ''))
 
 app.use('/api/auth',auth)
 app.use('/api/project')

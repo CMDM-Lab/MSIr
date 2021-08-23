@@ -1,12 +1,13 @@
 import express from 'express'
-import uploadController from '../controllers/uploadFile.controller'
+import controller from '../controllers/histology.controller'
+import {authJwt} from '../middleware'
 
 let router = express.Router();
 
-router.post('/new',uploadController.uploadHistology)
+router.post('/new', authJwt.verifyToken ,controller.newHistologyImg)
 
-router.post('/update')
+router.post('/update',authJwt.verifyToken, controller.update)
 
-router.get('/show')
+router.get('/show', authJwt.verifyToken, controller.show)
 
 export default router

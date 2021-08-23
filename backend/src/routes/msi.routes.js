@@ -1,12 +1,13 @@
 import express from 'express'
-import uploadController from '../controllers/uploadFile.controller'
+import controller from '../controllers/msi.controller'
+import {authJwt} from '../middleware'
 
 let router = express.Router();
 
-router.post('/new', uploadController.uploadMSI)
+router.post('/new', authJwt.verifyToken, controller.newMSI)
 
-router.post('/update')
+router.post('/update', authJwt.verifyToken, controller.updateMSI)
 
-router.post('/sumbit')
+router.post('/sumbit', authJwt.verifyToken, controller.submitMSI)
 
 export default router

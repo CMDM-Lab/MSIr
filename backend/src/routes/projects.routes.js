@@ -1,16 +1,19 @@
 import express from 'express'
+import controller from '../controllers/project.controller'
+import {authJwt} from '../middleware'
+
 let router = express.Router();
 
-router.get('/all')
+router.get('/all', authJwt.verifyToken, controller.all)
 
-router.get('/show')
+router.get('/show', authJwt.verifyToken, controller.show)
 
-router.post('/example')
+router.post('/example', authJwt.verifyToken, controller.example)
 
-router.post('/edit')
+router.post('/edit', authJwt.verifyToken, controller.edit)
 
-router.post('/new')
+router.post('/new', authJwt.verifyToken, controller.newProject)
 
-router.post('/delete')
+router.post('/delete', authJwt.verifyToken, controller.deleteProject)
 
 export default router

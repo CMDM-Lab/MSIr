@@ -200,6 +200,9 @@ const Registration = sequelize.define('registration',{
     transform_matrix_file: {
         type: DataTypes.STRING,
     },
+    result_file: {
+        type: DataTypes.STRING, 
+    }
     /*registered_index_file: {
         type: DataTypes.STRING
     }*/

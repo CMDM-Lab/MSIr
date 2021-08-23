@@ -5,7 +5,7 @@ import fs from 'fs'
 
 const DIR_MSI = process.env.DIR_MSI
 
-const newMSI = (req, res) => {
+const newMSI = async (req, res) => {
     const imzml_file = req.files.filter(file=> file.toLowerCase().endsWith('imzml'))
     const ibd_file = req.files.filter(file=> file.toLowerCase().endsWith('ibd'))
     const data = req.body
@@ -44,7 +44,7 @@ const newMSI = (req, res) => {
     }
 }
 
-const updateMSI = (req, res) => {
+const updateMSI = async (req, res) => {
     const imzml_file = req.files.filter(file=> file.toLowerCase().endsWith('imzml'))
     const ibd_file = req.files.filter(file=> file.toLowerCase().endsWith('ibd'))
     const data = req.body

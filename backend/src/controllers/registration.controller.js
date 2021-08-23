@@ -136,6 +136,7 @@ const setParameter = async (req, res) => {
         if (data.status == 'SUCCESS'){    
             registration.status = 'finished'
             registration.transform_matrix_file = data.transform_matrix_file
+            registration.result_file = data.result_file
             registration.save()
             msi.min_mz = data.min_mz
             msi.max_mz = data.max_mz

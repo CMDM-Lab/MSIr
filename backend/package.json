@@ -15,11 +15,18 @@
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.14.8",
-    "@babel/core": "^7.14.8",
-    "@babel/node": "^7.14.7",
-    "@babel/preset-env": "^7.14.8",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/node": "^7.8.7",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.6",
+    "@babel/plugin-transform-arrow-functions": "^7.8.3",
+    "@babel/preset-env": "^7.9.6",
     "nodemon": "^2.0.12"
   },
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "server": "nodemon server.js --ext js --exec babel-node --experimental-modules --es-module-specifier-resolution=node"
+  }
 }

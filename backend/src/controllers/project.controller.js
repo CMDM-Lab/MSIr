@@ -2,7 +2,7 @@ import { Project } from "../db/db";
 import fs from 'fs'
 import path from 'path'
 
-fileDir = process.env.FILEDIR
+const fileDir = process.env.FILEDIR
 
 const all = async (req, res) => {
     try {
@@ -92,7 +92,7 @@ const newProject = async (req, res) => {
     }
 }
 
-const deleteProject = (req, res) => {
+const deleteProject = async (req, res) => {
     const data = req.body
     try {
         const project = await Project.findByPk(req.projectId)

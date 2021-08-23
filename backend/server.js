@@ -1,6 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import auth from './src/routes/auth.routes'
+import histology from './src/routes/histology.routes'
+import project from './src/routes/projects.routes'
+import msi from './src/routes/msi.routes'
+import extract from './src/routes/extractions.routes'
+import registration from './src/routes/registrations.routes'
+import roi from './src/routes/roi.routes'
 
 const app = express();
 
@@ -12,17 +18,17 @@ var corsOptions = {
   };
   
 app.use(cors(corsOptions));
-
+/*
 //set static path 
 app.use('',express.static(__dirname + ''))
-
-app.use('/api/auth',auth)
-app.use('/api/project')
-app.use('/api/msi')
-app.use('/api/histology')
-app.use('/api/roi')
-app.use('/api/registration')
-app.use('/api/extraction')
+*/
+app.use('/api/auth', auth)
+app.use('/api/project', project)
+app.use('/api/msi', msi)
+app.use('/api/histology', histology)
+app.use('/api/roi', roi)
+app.use('/api/registration', registration)
+app.use('/api/extraction', extract)
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });

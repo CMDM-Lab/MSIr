@@ -1,5 +1,6 @@
+import express from 'express'
 import { verifySignUp } from "../middleware"
-import controller from "../controllers/auth.controller"
+import {signin, signup} from "../controllers/auth.controller"
 /*
 export default (app) => {
   app.use(function(req, res, next) {
@@ -36,9 +37,9 @@ router.post(
   [
     verifySignUp.checkDuplicateEmail,
   ],
-  controller.signup
+  signup
 );
 
-router.post("/signin", controller.signin);
+router.post("/signin", signin);
 
 export default router

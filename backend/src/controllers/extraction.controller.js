@@ -19,10 +19,10 @@ const newExtraction = async (req, res) => {
     
 }
 
-const deleteExtraction = (req, res) => {
+const deleteExtraction = async (req, res) => {
     const data = req.body
     try {
-        const extract = Extraction.findByPk(data.extractId)
+        const extract = await Extraction.findByPk(data.extractId)
         if (!extract){
             return res.status(404).json({message:'Extraction not found'})
         }
@@ -46,10 +46,10 @@ const deleteExtraction = (req, res) => {
     
 }
 
-const all = (req, res) => {
+const all = async (req, res) => {
     const data = req.body
     try {
-        const extracts = Extraction.findAll({
+        const extracts = await Extraction.findAll({
             where: {
                 projectId: data.projectId,
             },
@@ -69,10 +69,10 @@ const all = (req, res) => {
     }
 }
 
-const show = (req, res) => {
+const show = async (req, res) => {
     const data = req.body
     try {
-        const extract = Extraction.findOne({
+        const extract = await Extraction.findOne({
             where:{id:data.extractId},
             //attributes: { exclude: ['userId',]}
         })
@@ -110,7 +110,7 @@ const getParameter = async (req, res) => {
     }
 }
 
-const setParameter = (req, res) => {
+const setParameter = async (req, res) => {
     const data = req.body
     try {
         const extract = await Extraction.findByPk(data.extractId)

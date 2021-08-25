@@ -11,3 +11,7 @@ const submit = async (payload) => {
         console.log(error)
     }
 }
+
+const msi_service = {submit}
+
+export default msi_service

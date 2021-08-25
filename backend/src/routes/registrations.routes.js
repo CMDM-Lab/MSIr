@@ -6,7 +6,7 @@ let router = express.Router();
 
 router.post('/new', authJwt.verifyToken, controller.newRegistration)
 
-router.post('/delete', authJwt.verifyToken, controller.deleteRegistration)
+router.delete('/delete', authJwt.verifyToken, controller.deleteRegistration)
 
 router.get('/all', authJwt.verifyToken, controller.all)
 

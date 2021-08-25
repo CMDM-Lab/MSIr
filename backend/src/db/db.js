@@ -253,7 +253,6 @@ MSI.hasMany(Registration)
 MSI.hasMany(Extraction)
 HistologyROI.hasMany(Extraction)
 
-sequelize.sync({force: true})
-
 
 export {User, Project, Registration, Extraction, HistologyImage, HistologyROI, MSI}
+export default sequelize

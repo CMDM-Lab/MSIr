@@ -6,7 +6,7 @@ let router = express.Router();
 
 router.post('/new', authJwt.verifyToken, controller.newExtraction)
 
-router.post('/delete', authJwt.verifyToken, controller.deleteExtraction)
+router.delete('/delete', authJwt.verifyToken, controller.deleteExtraction)
 
 router.get('/all', authJwt.verifyToken, controller.all)
 

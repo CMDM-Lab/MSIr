@@ -7,6 +7,7 @@ import msi from './src/routes/msi.routes'
 import extract from './src/routes/extractions.routes'
 import registration from './src/routes/registrations.routes'
 import roi from './src/routes/roi.routes'
+import db from './src/db/db'
 
 const app = express();
 
@@ -33,6 +34,8 @@ app.use('/api/extraction', extract)
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });
+
+db.sync({force: true})
 
 const server = app.listen(process.env.PORT || 8080, function () {
     console.log('Listening on port ' + server.address().port);

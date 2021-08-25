@@ -8,7 +8,7 @@ router.post('/new', authJwt.verifyToken, controller.newROI)
 
 router.get('/show', authJwt.verifyToken, controller.show)
 
-router.get('/points', authJwt.verifyToken, controller.all)
+router.get('/all', authJwt.verifyToken, controller.all)
 
 router.get('/allmask', authJwt.verifyToken, controller.allmask)
 

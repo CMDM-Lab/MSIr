@@ -10,10 +10,10 @@ router.get('/show', authJwt.verifyToken, controller.show)
 
 router.post('/example', authJwt.verifyToken, controller.example)
 
-router.post('/edit', authJwt.verifyToken, controller.edit)
+router.put('/edit', authJwt.verifyToken, controller.edit)
 
 router.post('/new', authJwt.verifyToken, controller.newProject)
 
-router.post('/delete', authJwt.verifyToken, controller.deleteProject)
+router.delete('/delete', authJwt.verifyToken, controller.deleteProject)
 
 export default router

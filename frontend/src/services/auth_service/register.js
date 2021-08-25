@@ -12,7 +12,7 @@ const register = async (email, password) => {
   }
   return response
 };
-/*
+
 const login = async (email, password) => {
     const response = await axios.post(API_URL + "signin", {
             email,
@@ -37,8 +37,4 @@ export default {
   login,
   logout,
   getCurrentUser,
-};*/
-
-export {
-  register,
 };

@@ -4,7 +4,7 @@ import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import { required, validEmail, validpassword } from '../../utils/validation'
 
-import {register} from "../../services/auth_service";
+import {registerUser} from "../../services/auth_service";
 
 const Register = (props) => {
   const form = useRef();
@@ -45,7 +45,7 @@ const Register = (props) => {
     }
 
     if (checkBtn.current.context._errors.length === 0) {
-      register(email, password).then(
+      registerUser({email, password}).then(
         (response) => {
           setMessage(response.data.message);
           setSuccessful(true);

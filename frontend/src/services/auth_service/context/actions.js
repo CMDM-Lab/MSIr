@@ -8,7 +8,7 @@ export async function loginUser(dispatch, loginPayload) {
  
   try {
     dispatch({ type: 'REQUEST_LOGIN' });
-    let response = await instance.post('/login',requestOptions);
+    let response = await instance.post('/auth/signin',requestOptions);
     let data = await response.json();
  
     if (data.user) {
@@ -28,4 +28,21 @@ export async function logout(dispatch) {
   dispatch({ type: 'LOGOUT' });
   localStorage.removeItem('currentUser');
   localStorage.removeItem('token');
+}
+
+export async function registerUser (signUpPayload) {
+  const requestOptions = {
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(signUpPayload),
+  };
+
+  try {
+    let response = await instance.post('/auth/signup',requestOptions);
+    let data = await response.json();
+
+    return data
+
+  } catch (error) {
+    return error
+  }
 }

@@ -95,7 +95,7 @@ const newProject = async (req, res) => {
 const deleteProject = async (req, res) => {
     const data = req.body
     try {
-        const project = await Project.findByPk(req.projectId)
+        const project = await Project.findByPk(data.projectId)
         if (!project){
             return res.status(404).json({message:'Project not found'})
         }

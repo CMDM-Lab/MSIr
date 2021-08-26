@@ -40,7 +40,7 @@ const Projects = (prop)=>{
                 <h6>Quick menu</h6>
                 <div className="btn-group-vertical">
                   <a className='btn btn-warning' onClick={onClickExample}>Import an example</a>
-                  <a className='btn btn-primary' href=''>New Project</a>
+                  <a className='btn btn-primary' href='/projects/new'>New Project</a>
                 </div></div></div></div>
           <div className="col-lg-10">
             {}

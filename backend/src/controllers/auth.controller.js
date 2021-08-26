@@ -10,10 +10,10 @@ export const signup = (req, res) => {
     email: req.body.email,
     encrypted_password: bcrypt.hashSync(req.body.password, 8)
   }).catch(err => {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   });
   
-  res.json({ message: "User was registered successfully!" }); 
+  return res.json({ message: "User was registered successfully!" }); 
 };
 
 export const signin = async (req, res) => {

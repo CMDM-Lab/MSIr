@@ -33,7 +33,7 @@ const ProjectRender = (props) => {
             <div className="col-lg-1 col-1" />
             <div className='col-lg-5 col-sm-12 project_info border-end'>
                 <h3>
-                    Project details {' '}
+                    Project details {' '}{projectId}
                     <div className='btn-group'>
                         <a className='btn btn-secondary text-left' style={{'color':'white'}} href=''>
                             Edit

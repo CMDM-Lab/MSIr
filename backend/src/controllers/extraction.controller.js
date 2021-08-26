@@ -22,7 +22,7 @@ const newExtraction = async (req, res) => {
 const deleteExtraction = async (req, res) => {
     const data = req.body
     try {
-        const extract = await Extraction.findByPk(data.extractId)
+        const extract = await Extraction.findByPk(data.extractionId)
         if (!extract){
             return res.status(404).json({message:'Extraction not found'})
         }
@@ -73,7 +73,7 @@ const show = async (req, res) => {
     const data = req.body
     try {
         const extract = await Extraction.findOne({
-            where:{id:data.extractId},
+            where:{id:data.extractionId},
             //attributes: { exclude: ['userId',]}
         })
         if (extract.userId !== req.userId){
@@ -93,7 +93,7 @@ const show = async (req, res) => {
 const getParameter = async (req, res) => {
     const data = req.body
     try {
-        const extract = await Extraction.findByPk(data.extractId)
+        const extract = await Extraction.findByPk(data.extractionId)
         const msi = await MSI.findByPk(extract.msiId)
         const roi = await HistologyROI.findByPk(extract.histologyroiId)
         res.json({
@@ -113,7 +113,7 @@ const getParameter = async (req, res) => {
 const setParameter = async (req, res) => {
     const data = req.body
     try {
-        const extract = await Extraction.findByPk(data.extractId)
+        const extract = await Extraction.findByPk(data.extractionId)
         if (data.status == 'SUCCESS'){    
             extract.extract_file = data.extract_file
             extract.status = 'finished'

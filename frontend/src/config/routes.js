@@ -1,7 +1,3 @@
-import Signin from '../components/auth/SignIn'
-import Signup from '../components/auth/SignUp'
-import Doc from '../components/public/Doc'
-import Contact from '../components/public/Contact'
 import ProjectRender from '../components/project/ProjectRender'
 import Projects from '../components/project/Projects'
 import CreateRegistration from '../components/registration/CreateRegistration'
@@ -12,85 +8,93 @@ import RegistrationRender from '../components/registration/RegistrationRender'
 import CreateProject from '../components/project/CreateProject'
 import ProjectEdit from '../components/project/ProjectEdit'
 import UploadMSI from '../components/msidata/UploadMSI'
+import EditMSI from '../components/msidata/EditMSI'
 
 const routes =[
-  {
-    path:'/doc',
-    component: UploadMSI,
-    isPrivate: false,
-  },
-  {
-    path:'/contact',
-    component: Contact,
-    isPrivate: false,
-  },
-  {
-    path:'/users/sign_in',
-    component: Signin,
-    isPrivate: false,
-  },
-  {
-    path:'/users/sign_up',
-    component: Signup,
-    isPrivate: false,
-  },
-/*  {
+  /*{
     path:'/projects',
-    component: Projects
-  },
+    component: Projects,
+    //isPrivate: true,
+    isExact: true
+  },*/
   {
     path:'/projects/new',
-    component: CreateProject
+    component: CreateProject,
+    //isPrivate: true,
+    isExact: true
+  }, 
+  {
+    path:'/projects/:projectId/edit',
+    component: ProjectEdit,
+    //isPrivate: true,
+    isExact: true
   },
   {
     path:'/projects/:projectId',
-    component: ProjectRender
+    component: ProjectRender,
+    //isPrivate: true,
+    isExact: true
   },
-  {
-    path:'/projects/:projectId/edit',
-    component: ProjectEdit
-  },
+ 
   {
     path:'/projects/:projectId/regs',
-    component: Registrations
+    component: Registrations,
+    //isPrivate: true,
+    isExact: true
   },
   {
     path:'/projects/:projectId/regs/new',
-    component: CreateRegistration
+    component: CreateRegistration,
+    //isPrivate: true,
+    isExact: true
   },
   {
     path:'/projects/:projectId/regs/:regId',
-    component: RegistrationRender
+    component: RegistrationRender,
+    //isPrivate: true,
+    isExact: true
   },
   {
     path:'/projects/:projectId/extracts',
-    component: Extractions
+    component: Extractions,
+    //isPrivate: true,
+    isExact: true
   },
   {
     path:'/projects/:projectId/extracts/new',
-    component: CreateExtraction
+    component: CreateExtraction,
+    //isPrivate: true,
+    isExact: true
   },
-  {
+  /*{
     path:'/projects/:projectId/extracts/:extractId',
     component: ExtractionRender
-  },
-  {
+  },*/
+  /*{
     path:'/projects/:projectId/image',
-    component: 
+    component: ,
+    isPrivate: true,
+    isExact: true
   },
   {
     path:'/projects/:projectId/image/roi',
-    component: 
-  },
+    component: ,
+    isPrivate: true,
+    isExact: true
+  },*/
   {
     path:'/projects/:projectId/msi/new',
-    component: UploadMSI
+    component: UploadMSI,
+    //isPrivate: true,
+    isExact: true
   },
   {
     path:'/projects/:projectId/msi/edit',
-    component: EditMSI
+    component: EditMSI,
+    //isPrivate: true,
+    isExact: true
   },
-  */
+  
   /*
   {
     path:'/users/password/edit',

@@ -1,6 +1,9 @@
 import React from 'react'
+import { useParams } from 'react-router'
 
 const RegistrationRender = () => {
+
+  const {projectId} = useParams()
 
     return (
     <section className="challange_area">
@@ -11,9 +14,9 @@ const RegistrationRender = () => {
               <ol className="breadcrumb">
                 <li className="breadcrumb-item"><a href="/">Home</a></li>
                 <li className="breadcrumb-item"><a href="/projects">Projects</a></li>
-                <li className="breadcrumb-item"><a href={''}>{''}</a></li>
-                <li className="breadcrumb-item"><a href="/registrations">Registrations</a></li>
-                <li className="breadcrumb-item active"><a href="/registrations">{/*RegistrationId*/}</a></li>
+                <li className="breadcrumb-item"><a href={`/projects/${projectId}`}>{''}Project Name</a></li>
+                <li className="breadcrumb-item"><a href={`/projects/${projectId}/registrations`}>Registrations</a></li>
+                <li className="breadcrumb-item active"><a>{/*RegistrationId*/}</a></li>
               </ol>
             </div>
           </div>
@@ -23,15 +26,15 @@ const RegistrationRender = () => {
                 <div className="l_title">
                   <h6>Quick menu</h6>
                   <div className="btn-group-vertical">
-                    <a className="btn btn-primary" href={''}>New Registration</a>
-                    <a className="btn btn-secondary" href={''}>Registration List</a>
-                    <a className="btn btn-secondary" href={''}>Back to project</a>
+                    <a className="btn btn-primary" href={`/projects/${projectId}/registrations/new`}>New Registration</a>
+                    <a className="btn btn-secondary" href={`/projects/${projectId}/registrations`}>Registration List</a>
+                    <a className="btn btn-secondary" href={`/projects/${projectId}`}>Back to Project</a>
                   </div>
                 </div>
               </div>
             </div>
             <div className="col-lg-3 col-md-9">
-              
+              <br />
               <button className="btn btn-outline-primary">
                 <i className="fad fa-cloud-download" />
                 Download

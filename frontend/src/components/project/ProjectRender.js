@@ -26,7 +26,7 @@ const ProjectRender = (props) => {
                 <a href='/projects'>Projects</a>
               </li>
               <li className="breadcrumb-item">
-                <a href={`/projects/${'as'}`}>{}</a>
+                <a>{}Project Name</a>
               </li>
               </ol></div></div>
         <div className="row">
@@ -35,7 +35,7 @@ const ProjectRender = (props) => {
                 <h3>
                     Project details {' '}{projectId}
                     <div className='btn-group'>
-                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href=''>
+                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/projects/${projectId}/edit`}>
                             Edit
                         </a>
                     </div>
@@ -69,10 +69,10 @@ const ProjectRender = (props) => {
             <div className='col-lg-3 col-sm-12 border-end'>
                 <h3>Registrations</h3>
                 <div className='btn-group'>
-                    <a className='btn btn-info text-left' style={{'color':'white'}} href=''>
+                    <a className='btn btn-info text-left' style={{'color':'white'}} href={`/projects/${projectId}/registrations/new`}>
                         New Registration
                     </a>
-                    <a className='btn btn-secondary text-left' style={{'color':'white'}} href=''>
+                    <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/projects/${projectId}/registrations`}>
                         All Registrations
                     </a>
                 </div>
@@ -81,10 +81,10 @@ const ProjectRender = (props) => {
             <div className='col-lg-3 col-sm-12'>
                 <h3>Data Extractions</h3>
                 <div className='btn-group'>
-                    <a className='btn btn-info text-left' style={{'color':'white'}} href=''>
+                    <a className='btn btn-info text-left' style={{'color':'white'}} href={`/projects/${projectId}/extractions/new`}>
                         New Extraction
                     </a>
-                    <a className='btn btn-secondary text-left' style={{'color':'white'}} href=''>
+                    <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/projects/${projectId}/extractions`}>
                         <i className='fad fa-th-list fa-lg'></i>
                         All Extractions
                     </a>

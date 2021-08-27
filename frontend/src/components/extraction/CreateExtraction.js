@@ -45,10 +45,10 @@ const CreateExtraction = () =>{
                     <a href='/projects'>Projects</a>
                 </li>
                 <li className="breadcrumb-item">
-                    <a href={'/'/*`/projects/${projectId}`*/}>{}</a>
+                    <a href={`/projects/${projectId}`}>{}Project Name</a>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">
-                    <div>Create an Extraction</div>
+                    <a>Create an Extraction</a>
                 </li>
               </ol>
             </div>
@@ -70,7 +70,7 @@ const CreateExtraction = () =>{
                 <div className="col-9">
                     <small className="form-text text-muted">
                             If there are not satisfying ROI, you can manually draw.
-                    </small>
+                    </small><br />
                     <select value={roiId} onChange={onChangeRoiId}>    
                         {}
                     </select>

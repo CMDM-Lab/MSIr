@@ -39,10 +39,10 @@ const CreateRegistration = () =>{
                     <a href='/projects'>Projects</a>
                 </li>
                 <li className="breadcrumb-item">
-                    <a href={'/'/*`/projects/${projectId}`*/}>Projects</a>
+                    <a href={`/projects/${projectId}`}>Project Name</a>
                 </li>
                 <li className="breadcrumb-item active">
-                    <div>Create a Registration</div>
+                    <a>Create a Registration</a>
                 </li>
               </ol>
             </div>
@@ -66,7 +66,7 @@ const CreateRegistration = () =>{
                     <small className="form-text text-muted">
                             If there is not any mask to select, mask would be generated automatically.
                             If there are not satisfying mask, you can manually draw.
-                    </small>
+                    </small><br />
                     <select value={maskId} onChange={onChangeMaskId}>    
                         {}
                     </select>

@@ -4,6 +4,7 @@ import { useParams } from 'react-router'
 const ProjectEdit = () => {
     const [name,setName] = useState('')
     const [description, setDescription] = useState('')
+    const {projectId} = useParams()
 
     const onChangeName = (e)=>{
         const value = e.target.value;
@@ -33,10 +34,10 @@ const ProjectEdit = () => {
                             <a href='/projects'>Projects</a>
                         </li>
                         <li className="breadcrumb-item">
-                            <a href='/projects'>{}</a>
+                            <a href={`/projects/${projectId}`}>{}Project Name</a>
                         </li>
                         <li className="breadcrumb-item active">
-                            <p>Edit the project</p>
+                            <a>Edit this project</a>
                         </li>
                     </ol></div></div>
             <div className="form-group row py-2">

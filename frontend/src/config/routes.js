@@ -11,88 +11,75 @@ import UploadMSI from '../components/msidata/UploadMSI'
 import EditMSI from '../components/msidata/EditMSI'
 
 const routes =[
-  /*{
-    path:'/projects',
-    component: Projects,
-    //isPrivate: true,
-    isExact: true
-  },*/
-  {
-    path:'/projects/new',
-    component: CreateProject,
-    //isPrivate: true,
-    isExact: true
-  }, 
-  {
-    path:'/projects/:projectId/edit',
-    component: ProjectEdit,
-    //isPrivate: true,
-    isExact: true
-  },
-  {
-    path:'/projects/:projectId',
-    component: ProjectRender,
-    //isPrivate: true,
-    isExact: true
-  },
- 
-  {
-    path:'/projects/:projectId/regs',
-    component: Registrations,
-    //isPrivate: true,
-    isExact: true
-  },
-  {
-    path:'/projects/:projectId/regs/new',
-    component: CreateRegistration,
-    //isPrivate: true,
-    isExact: true
-  },
-  {
-    path:'/projects/:projectId/regs/:regId',
-    component: RegistrationRender,
-    //isPrivate: true,
-    isExact: true
-  },
-  {
-    path:'/projects/:projectId/extracts',
-    component: Extractions,
-    //isPrivate: true,
-    isExact: true
-  },
-  {
-    path:'/projects/:projectId/extracts/new',
-    component: CreateExtraction,
-    //isPrivate: true,
-    isExact: true
-  },
-  /*{
-    path:'/projects/:projectId/extracts/:extractId',
-    component: ExtractionRender
-  },*/
-  /*{
-    path:'/projects/:projectId/image',
-    component: ,
-    isPrivate: true,
-    isExact: true
-  },
-  {
-    path:'/projects/:projectId/image/roi',
-    component: ,
-    isPrivate: true,
-    isExact: true
-  },*/
   {
     path:'/projects/:projectId/msi/new',
     component: UploadMSI,
     //isPrivate: true,
-    isExact: true
   },
   {
     path:'/projects/:projectId/msi/edit',
     component: EditMSI,
     //isPrivate: true,
-    isExact: true
+  },
+  /*{
+    path:'/projects/:projectId/image',
+    component: ,
+    isPrivate: true,
+  },
+  {
+    path:'/projects/:projectId/image/roi',
+    component: ,
+    isPrivate: true,
+  },*/
+  {
+    path:'/projects/:projectId/extractions/new',
+    component: CreateExtraction,
+    //isPrivate: true,
+  },
+  {
+    path:'/projects/:projectId/registrations/new',
+    component: CreateRegistration,
+    //isPrivate: true,
+  },
+  {
+    path:'/projects/:projectId/registrations/:regId',
+    component: RegistrationRender,
+    //isPrivate: true,
+  },
+  /*{
+    path:'/projects/:projectId/extracts/:extractId',
+    component: ExtractionRender
+  },*/
+  {
+    path:'/projects/:projectId/edit',
+    component: ProjectEdit,
+    //isPrivate: true,
+  },
+  {
+    path:'/projects/:projectId/registrations',
+    component: Registrations,
+    //isPrivate: true,
+  },
+  {
+    path:'/projects/:projectId/extractions',
+    component: Extractions,
+    //isPrivate: true,
+  },
+  {
+    path:'/projects/new',
+    component: CreateProject,
+    //isPrivate: true,
+  },
+  {
+    path:'/projects/:projectId',
+    component: ProjectRender,
+    //isPrivate: true,
+  },
+  
+  {
+    path:'/projects',
+    component: Projects,
+    //isPrivate: true,
   },
   
   /*

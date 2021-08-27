@@ -27,7 +27,7 @@ const Projects = (prop)=>{
                 <a href='/'>Home</a>
               </li>
               <li className="breadcrumb-item">
-                <a href='/projects'>Projects</a>
+                <a>Projects</a>
               </li></ol></div></div>
         <div className="row">
           <div className="col-lg-2">

@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react'
 import ProjectItem from './ProjectItem'
 import { useAuthState } from '../../services/auth_service'
+import Banner from '../public/Banner'
 
 const Projects = (prop)=>{
   
@@ -17,6 +18,8 @@ const Projects = (prop)=>{
 
 
   return (
+    <>
+    <Banner title = {'Project List'} />
     <section className="challange_area">
       <div className="container-fluid">
         <div className="row">
@@ -56,6 +59,7 @@ const Projects = (prop)=>{
                 {}
               </tbody>
               </table></div></div></div></section>
+              </>
 
     )
 }

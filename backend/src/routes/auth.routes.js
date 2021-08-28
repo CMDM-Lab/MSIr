@@ -44,6 +44,6 @@ router.post("/signin", signin);
 
 router.post('/reset_req')
 
-router.reset('/reset')
+router.post('/reset')
 
 export default router

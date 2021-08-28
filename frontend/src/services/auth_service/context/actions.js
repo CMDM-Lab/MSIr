@@ -1,15 +1,12 @@
 import instance from "../../api";
  
 export async function loginUser(dispatch, loginPayload) {
-  const requestOptions = {
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(loginPayload),
-  };
- 
   try {
     dispatch({ type: 'REQUEST_LOGIN' });
-    let response = await instance.post('/auth/signin',requestOptions);
-    let data = await response.json();
+    let response = await instance.post('/auth/signin',loginPayload, { 'Content-Type': 'application/json' });
+    let {data} = response
+    console.log(data)
+    //let data = await response.json();
  
     if (data.user) {
       dispatch({ type: 'LOGIN_SUCCESS', payload: data });
@@ -25,22 +22,19 @@ export async function loginUser(dispatch, loginPayload) {
 }
  
 export async function logout(dispatch) {
-  dispatch({ type: 'LOGOUT' });
   localStorage.removeItem('currentUser');
   localStorage.removeItem('token');
+  dispatch({ type: 'LOGOUT' });
 }
 
 export async function registerUser (signUpPayload) {
-  const requestOptions = {
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(signUpPayload),
-  };
-
   try {
-    let response = await instance.post('/auth/signup',requestOptions);
-    let data = await response.json();
+    
+    let response = await instance.post('/auth/signup',signUpPayload, { 'Content-Type': 'application/json' });
+    console.log(response)
+    //let data = await response.json();
 
-    return data
+    return response
 
   } catch (error) {
     return error

@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { useParams } from "react-router-dom"
+import Banner from "../public/Banner"
 
 const CreateExtraction = () =>{
     
@@ -32,6 +33,8 @@ const CreateExtraction = () =>{
     }
 
     return (
+    <>
+    <Banner title={'Create an Extraction'} />
     <section className="challange_area">
         <div className="container-fluid">
           <div className="row">
@@ -94,6 +97,7 @@ const CreateExtraction = () =>{
           </div>
         </div>
       </section>
+      </>
     )
 }
 

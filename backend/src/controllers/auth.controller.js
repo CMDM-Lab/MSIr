@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt'
 //const Op = db.Sequelize.Op;
 
 export const signup = (req, res) => {
+    console.log(req.body)
   // Save User to Database
   const user = User.create({
     email: req.body.email,
@@ -36,12 +37,12 @@ export const signin = async (req, res) => {
 
     if (!passwordIsValid) {
         return res.status(401).json({
-          accessToken: null,
+          auth_token: null,
           message: "Invalid Password!"
         });
     }
 
-    var token = jwt.sign({ id: user.id }, process.env.SECRET, {
+    var token = jwt.sign({ id: user.id, email:user.email }, process.env.SECRET, {
         expiresIn: 3600 // 24 hours
     });
 
@@ -49,9 +50,11 @@ export const signin = async (req, res) => {
     user.save()
     
     res.status(200).json({
-        id: user.id,
-        email: user.email,
-        accessToken: token
+        user: {
+            id: user.id,
+            email: user.email
+        },
+        auth_token: token
     });
     
 };

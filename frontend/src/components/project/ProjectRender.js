@@ -1,6 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router'
 import { useAuthState } from '../../services/auth_service'
+import Banner from '../public/Banner'
 
 const ProjectRender = (props) => {
 
@@ -13,6 +14,8 @@ const ProjectRender = (props) => {
     const data_extraction = ''
 
     return (
+    <>
+    <Banner title={'Project Name'} />
     <section className="challange_area">
       <div className="container-fluid">
         <div className="row">
@@ -94,6 +97,7 @@ const ProjectRender = (props) => {
         </div>
       </div>
     </section>
+    </>
     )
 }
 

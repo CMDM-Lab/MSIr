@@ -4,6 +4,7 @@ import withReactContent from 'sweetalert2-react-content'
 import {Line} from "rc-progress"
 import Uploady, { useItemProgressListener } from "@rpldy/uploady";
 import UploadButton from "@rpldy/upload-button";
+import Banner from "../public/Banner";
 
 const UploadMSI = (props) => {
 
@@ -109,6 +110,8 @@ const UploadMSI = (props) => {
     }
 
     return (
+    <>
+    <Banner title={'Upload MSI data'} />
     <section className="challange_area">
         <div className="container-fluid">
             <div className="row">
@@ -211,6 +214,7 @@ const UploadMSI = (props) => {
             </div>
         </div>
       </section>
+      </>
     )
 }
 

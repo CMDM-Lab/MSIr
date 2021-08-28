@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import Banner from "../public/Banner";
 
 const EditMSI = (props) => {
 
@@ -90,6 +91,8 @@ const EditMSI = (props) => {
     }
 
     return (
+    <>
+    <Banner title={'Edit MSI data'} />
     <section className="challange_area">
         <div className="container-fluid">
             <div className="row">
@@ -179,6 +182,7 @@ const EditMSI = (props) => {
             </div>
         </div>
       </section>
+      </>
     )
 }
 

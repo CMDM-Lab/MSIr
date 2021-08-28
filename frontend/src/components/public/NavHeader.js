@@ -1,11 +1,12 @@
 import React from "react";
 import logo from '../../stylesheet/logo.svg';
 import {NavLink} from 'react-router-dom'
-import { useAuthState } from '../../services/auth_service/context'
+import { logout, useAuthState, useAuthDispatch } from '../../services/auth_service/context'
 
 const NavHeader = ({currentState,setCurrentState})=>{
     
     const userDetails = useAuthState()
+    const dispatch = useAuthDispatch()
     
     return (
         <header className="main_menu_area">
@@ -24,7 +25,7 @@ const NavHeader = ({currentState,setCurrentState})=>{
                             <p ><NavLink to='/home' onClick={()=>{setCurrentState('home');}}>Home</NavLink></p>
                         </li>
                         <li className={`nav-item ${currentState==='Create a new project'?'active':''}`}>
-                            <p ><NavLink to='/start'onClick={()=>setCurrentState('Create a new project')}>Start</NavLink></p>
+                            <p ><NavLink to='/projects/new'onClick={()=>setCurrentState('Create a new project')}>Start</NavLink></p>
                         </li>
                         {Boolean(userDetails.token)?(
                             <li className={`nav-item ${currentState==='Project'?'active':''}`}>
@@ -45,7 +46,9 @@ const NavHeader = ({currentState,setCurrentState})=>{
                     </a>
                     <ul aria-labelledby="navbarDropdown" className="dropdown-menu">
                         <li className="nav-item">
-                            <p ><NavLink to='/home' onClick={()=>{setCurrentState('home');}}>Logout</NavLink></p>
+                            <p ><NavLink to='/home' onClick={()=>{
+                                logout(dispatch)
+                                setCurrentState('home');}}>Logout</NavLink></p>
                         </li>
                     </ul>
                 </li>):(

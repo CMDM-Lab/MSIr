@@ -1,11 +1,14 @@
 import React from 'react'
 import { useParams } from 'react-router'
+import Banner from '../public/Banner'
 
 const RegistrationRender = () => {
 
   const {projectId} = useParams()
 
     return (
+    <>
+    <Banner title={'Registration Result'} />
     <section className="challange_area">
         <div className="container-fluid">
           <div className="row">
@@ -67,6 +70,7 @@ const RegistrationRender = () => {
           </div>
         </div>
       </section>
+      </>
     )
 }
 

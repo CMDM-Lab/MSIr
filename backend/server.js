@@ -8,14 +8,17 @@ import extract from './src/routes/extractions.routes'
 import registration from './src/routes/registrations.routes'
 import roi from './src/routes/roi.routes'
 import db from './src/db/db'
+import dotenv from 'dotenv-defaults'
 
 const app = express();
+
+dotenv.config()
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 var corsOptions = {
-    origin: "http://localhost:8081"
+    origin: "http://localhost:3000"
   };
   
 app.use(cors(corsOptions));
@@ -35,7 +38,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });
 
-db.sync({force: true})
+db.sync()
 
 const server = app.listen(process.env.PORT || 8080, function () {
     console.log('Listening on port ' + server.address().port);

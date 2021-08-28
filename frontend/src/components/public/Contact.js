@@ -1,6 +1,9 @@
 import React from "react";
+import Banner from "./Banner";
 const Contact = ()=>{
   return(
+    <>
+    <Banner title={'Contact'} subtitle={null} />
     <section className="challange_area">
         <div className="container-fluid">
           <div className="row">
@@ -20,6 +23,7 @@ const Contact = ()=>{
           </div>
         </div>
       </section>
+      </>
   )
     
 }

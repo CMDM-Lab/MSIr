@@ -5,6 +5,7 @@ import CheckButton from "react-validation/build/button";
 import { required, validEmail, validpassword } from '../../utils/validation'
 
 import {registerUser} from "../../services/auth_service";
+import Banner from "../public/Banner";
 
 const Register = (props) => {
   const form = useRef();
@@ -32,7 +33,7 @@ const Register = (props) => {
     setPassword(password);
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     setMessage("");
@@ -45,13 +46,15 @@ const Register = (props) => {
     }
 
     if (checkBtn.current.context._errors.length === 0) {
-      registerUser({email, password}).then(
-        (response) => {
-          setMessage(response.data.message);
-          setSuccessful(true);
-        },
-        (error) => {
-          const resMessage =
+      console.log(email)
+      console.log(password)
+      try {
+        const res = await registerUser({email, password})
+        console.log(res)
+        setMessage(res.data.message);
+        setSuccessful(true);
+      } catch (error) {
+        const resMessage =
             (error.response &&
               error.response.data &&
               error.response.data.message) ||
@@ -60,12 +63,13 @@ const Register = (props) => {
 
           setMessage(resMessage);
           setSuccessful(false);
-        }
-      );
+      }
     }
   };
 
   return (
+    <>
+    <Banner title={'Sign Up'} />
     <div className="limiter">
       <div className="container-login100">
         <div className='wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54'>
@@ -158,6 +162,7 @@ const Register = (props) => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

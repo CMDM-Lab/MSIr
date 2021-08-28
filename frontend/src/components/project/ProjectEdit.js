@@ -1,5 +1,6 @@
 import React, { useEffect,useState } from "react"
 import { useParams } from 'react-router'
+import Banner from "../public/Banner"
 
 const ProjectEdit = () => {
     const [name,setName] = useState('')
@@ -21,6 +22,8 @@ const ProjectEdit = () => {
     }
 
     return (
+    <>
+    <Banner title = {'Edit this project'} />
     <section className="challange_area">
         <div className="container-fluid">
             <div className="row">
@@ -77,6 +80,7 @@ const ProjectEdit = () => {
             </div>
         </div>
       </section>
+      </>
     )
 }
 

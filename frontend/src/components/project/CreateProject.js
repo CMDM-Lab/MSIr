@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import Banner from "../public/Banner";
 
 const CreateProject = (props) => {
 
@@ -46,6 +47,8 @@ const CreateProject = (props) => {
     }
 
     return (
+    <>
+    <Banner title = {"Create a new project"} />
     <section className="challange_area">
         <div className="container-fluid">
             <div className="row">
@@ -110,6 +113,7 @@ const CreateProject = (props) => {
             </div>
         </div>
       </section>
+      </>
     )
 }
 

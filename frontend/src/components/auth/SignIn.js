@@ -6,6 +6,7 @@ import CheckButton from "react-validation/build/button";
 import { required, validEmail, validpassword } from '../../utils/validation'
 
 import {useAuthDispatch, useAuthState, loginUser} from "../../services/auth_service";
+import Banner from '../public/Banner';
 
 const SignIn = (props) => {
   const form = useRef();
@@ -45,6 +46,8 @@ const SignIn = (props) => {
   };
 
   return (
+    <>
+    <Banner title={'Login'} />
     <div className="limiter">
       <div className="container-login100">
         <div className='wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54'>
@@ -122,6 +125,7 @@ const SignIn = (props) => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

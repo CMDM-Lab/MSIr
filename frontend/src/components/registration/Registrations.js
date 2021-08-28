@@ -1,11 +1,14 @@
 import React from "react"
 import { useParams } from "react-router"
+import Banner from "../public/Banner"
 
 const Registrations = () => {
 
     const {projectId} = useParams()
 
     return (
+      <>
+      <Banner title={'Registration List'} />
         <section className="challange_area">
         <div className="container-fluid">
           <div className="row">
@@ -72,6 +75,7 @@ const Registrations = () => {
           </div>
         </div>
       </section>
+      </>
     )
 }
 

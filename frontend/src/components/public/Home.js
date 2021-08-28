@@ -1,6 +1,9 @@
 import React from "react";
+import Banner from "./Banner";
 const Home = (prop) =>{
   return(
+    <>
+    <Banner title={'MSI Registrar II'} subtitle={null}/>
     <section class="challange_area">
       <div class="container-fluid">
         <div class="row">
@@ -21,6 +24,7 @@ const Home = (prop) =>{
         </div>
       </div>
     </section>
+    </>
   )
 
 }

@@ -3,7 +3,7 @@ import './stylesheet/theme_responsive.css'
 import './stylesheet/theme_style.css'
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import Banner from './components/public/Banner'
+//import Banner from './components/public/Banner'
 import FooterCustom from './components/public/FooterCustom'
 import NavHeader from './components/public/NavHeader'
 import { Redirect, Route, Switch } from 'react-router-dom'
@@ -28,7 +28,6 @@ function App() {
   return (
       <div className="App">
         <NavHeader userSignedIn={userSignedIn} currentState={currentState} setCurrentState={setCurrentState}/>
-        <Banner currentState={currentState}/>
         <Switch>
           <Route exact path='/' component={Home}/>
           <Route path='/doc' component={Doc} />

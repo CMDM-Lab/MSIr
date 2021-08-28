@@ -1,6 +1,7 @@
 import { User } from "../db/db";
 
 const checkDuplicateEmail = (req, res, next) => {
+    console.log(req.body)
     // Email
     User.findOne({
         where: {

@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { useParams } from "react-router-dom"
+import Banner from "../public/Banner"
 
 const CreateRegistration = () =>{
     
@@ -26,6 +27,8 @@ const CreateRegistration = () =>{
     }
 
     return (
+    <>
+    <Banner title = {"Create a new Registration"} />
     <section className="challange_area">
         <div className="container-fluid">
           <div className="row">
@@ -81,6 +84,7 @@ const CreateRegistration = () =>{
           </div>
         </div>
       </section>
+      </>
     )
 }
 

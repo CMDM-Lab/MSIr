@@ -3,20 +3,23 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import { required, validEmail, validpassword } from '../../utils/validation'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 import {registerUser} from "../../services/auth_service";
 import Banner from "../public/Banner";
 
 const Register = (props) => {
+  const MySwal = withReactContent(Swal)
+
   const form = useRef();
   const checkBtn = useRef();
-
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [successful, setSuccessful] = useState(false);
-  const [message, setMessage] = useState("");
+  //const [successful, setSuccessful] = useState(false);
+  //const [message, setMessage] = useState("");
 
   const onChangePasswordConfirmation = (e) => {
     const passwordConfirmation = e.target.value;
@@ -36,33 +39,56 @@ const Register = (props) => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    setMessage("");
-    setSuccessful(false);
+    //setMessage("");
+    //setSuccessful(false);
 
     form.current.validateAll();
 
     if (password !== passwordConfirmation) {
-      setMessage('Password and password confirmation are different, please check !')
+      MySwal.fire({icon: 'error',
+      title: 'Oops...',
+      text: 'Password and password confirmation are different, please check!',
+      })
+      return
     }
 
     if (checkBtn.current.context._errors.length === 0) {
-      console.log(email)
-      console.log(password)
       try {
         const res = await registerUser({email, password})
-        console.log(res)
-        setMessage(res.data.message);
-        setSuccessful(true);
+        if (res.status >= 200 && res.status <300){
+          //setSuccessful(true);
+          MySwal.fire({
+            icon: 'success',
+            title: res.data.message,
+            text: 'Please sign in!',
+            confirmButtonText: '<a href="/users/sign_in">OK</a>'
+          })
+        }
+        else{
+          if (res.status >= 400 && res.status <500){
+            MySwal.fire({
+              icon: 'error',
+              title: res.data.message,
+              text: 'Please check again or try to reset password.',
+              footer: '<a href="/users/password/reset">Reset your password?</a>'
+            })
+          }else{
+            if (res.status >= 500){
+              MySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong! Please retry after a while.',
+              })
+            }
+          }
+        }
+        
       } catch (error) {
-        const resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-
-          setMessage(resMessage);
-          setSuccessful(false);
+        MySwal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
+        })
       }
     }
   };
@@ -74,7 +100,7 @@ const Register = (props) => {
       <div className="container-login100">
         <div className='wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54'>
           <Form onSubmit={handleRegister} ref={form} className='login100-form validate-form'>
-            {!successful && (
+            {(
               <>
                 <div className="wrap-input100 validate-input m-b-23">
                   <label htmlFor="email" className='label-input100'>Email</label>
@@ -135,17 +161,6 @@ const Register = (props) => {
               </div>
               </>
           )}
-
-            {message && (
-              <div className="form-group">
-                <div
-                  className={ successful ? "alert alert-success" : "alert alert-danger" }
-                  role="alert"
-                >
-                  {message}
-                </div>
-              </div>
-            )}
             <CheckButton style={{ display: "none" }} ref={checkBtn} />
             <div className='flex-col-c p-t-155'>
                 <span className='txt1 p-b-17'>Or Log In Using</span>

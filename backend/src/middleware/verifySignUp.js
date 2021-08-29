@@ -9,8 +9,8 @@ const checkDuplicateEmail = (req, res, next) => {
         }
       }).then(user => {
         if (user) {
-          res.status(400).send({
-            message: "Failed! Email is already in use!"
+          res.status(400).json({
+            message: "Failed! This email has been used to sign up!"
           });
           return;
         }

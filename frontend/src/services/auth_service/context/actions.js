@@ -5,7 +5,6 @@ export async function loginUser(dispatch, loginPayload) {
     dispatch({ type: 'REQUEST_LOGIN' });
     let response = await instance.post('/auth/signin',loginPayload, { 'Content-Type': 'application/json' });
     let {data} = response
-    console.log(data)
     //let data = await response.json();
  
     if (data.user) {
@@ -13,11 +12,11 @@ export async function loginUser(dispatch, loginPayload) {
       localStorage.setItem('currentUser', JSON.stringify(data));
       return data
     }
- 
-    dispatch({ type: 'LOGIN_ERROR', error: data.errors[0] });
+    dispatch({ type: 'LOGIN_ERROR', error: data.error[0].response.data.message });
     return;
   } catch (error) {
-    dispatch({ type: 'LOGIN_ERROR', error: error });
+    dispatch({ type: 'LOGIN_ERROR', error: error.response.data.message });
+    return error.response
   }
 }
  
@@ -31,12 +30,12 @@ export async function registerUser (signUpPayload) {
   try {
     
     let response = await instance.post('/auth/signup',signUpPayload, { 'Content-Type': 'application/json' });
-    console.log(response)
     //let data = await response.json();
 
     return response
 
   } catch (error) {
-    return error
+
+    return error.response
   }
 }

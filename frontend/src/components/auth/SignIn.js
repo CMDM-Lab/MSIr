@@ -4,11 +4,15 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import { required, validEmail, validpassword } from '../../utils/validation'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 import {useAuthDispatch, useAuthState, loginUser} from "../../services/auth_service";
 import Banner from '../public/Banner';
 
 const SignIn = (props) => {
+  const MySwal = withReactContent(Swal)
+
   const form = useRef();
   const checkBtn = useRef();
 
@@ -35,14 +39,28 @@ const SignIn = (props) => {
     if (checkBtn.current.context._errors.length === 0) {
       try {
         let response = await loginUser(dispatch, { email, password })
-        if (!response.user) return
-        props.history.push('/home')
-      } catch (error) {
-          console.log(error)
+        if (!response.user) {
+          MySwal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: response.data.message,
+          })
+          return
         }
-    } //else {
-      //setLoading(false);
-    //}
+        MySwal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Signed in successfully.',
+          confirmButtonText: '<a href="/home">OK</a>'
+        })
+      } catch (error) {
+          MySwal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: error,
+          })
+        }
+    }
   };
 
   return (
@@ -102,13 +120,6 @@ const SignIn = (props) => {
                 </div>
               </div>
 
-              {errorMessage && (
-                <div className="form-group">
-                  <div className="alert alert-danger" role="alert">
-                    {errorMessage}
-                  </div>
-                </div>
-              )}
               <CheckButton style={{ display: "none" }} ref={checkBtn} />
             </Form>
             <div className='flex-col-c p-t-155'>

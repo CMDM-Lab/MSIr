@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt'
 //const Op = db.Sequelize.Op;
 
 export const signup = (req, res) => {
-    console.log(req.body)
   // Save User to Database
   const user = User.create({
     email: req.body.email,
@@ -27,7 +26,7 @@ export const signin = async (req, res) => {
     });
 
     if (!user) {
-        return res.status(404).json({ message: "User Not found." });
+        return res.status(404).json({ message: "Invalid mail. Please sign up first." });
     }
     
     var passwordIsValid = bcrypt.compareSync(

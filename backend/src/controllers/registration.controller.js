@@ -4,14 +4,14 @@ import fs from 'fs'
 const newRegistration = async (req, res) => {
     const data = req.body
     try {
-        const project = await Project.findByPk(data.projectId)
+        const dataset = await Dataset.findByPk(data.datasetId)
         const registration = await Registration.create({
             perform_type: data.perform_type,
             transform_type: data.transform_type,
-            projectId: data.projectId,
-            msiId: project.msiId,
-            histologyImageId: project.histologyImageId,
-            histologyroiId: project.histologyroiId
+            datasetId: data.datasetId,
+            msiId: dataset.msiId,
+            histologyImageId: dataset.histologyImageId,
+            histologyroiId: dataset.histologyroiId
         })
         res.json({message: "Registration was created successfully!"})
 
@@ -55,7 +55,7 @@ const all = async (req, res) => {
     try {
         const registrations = await Registration.findAll({
             where: {
-                projectId: data.projectId,
+                datasetId: data.datasetId,
             },
         })
         if (registrations){

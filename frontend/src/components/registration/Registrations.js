@@ -4,7 +4,7 @@ import Banner from "../public/Banner"
 
 const Registrations = () => {
 
-    const {projectId} = useParams()
+    const {datasetId} = useParams()
 
     return (
       <>
@@ -16,8 +16,8 @@ const Registrations = () => {
             <div className="col-lg-6 col-6" style={{paddingLeft: 0}}>
               <ol className="breadcrumb">
                 <li className="breadcrumb-item"><a href="/">Home</a></li>
-                <li className="breadcrumb-item"><a href="/projects">Projects</a></li>
-                <li className="breadcrumb-item"><a href={`/projects/${projectId}`}>{''}Project Name</a></li>
+                <li className="breadcrumb-item"><a href="/datasets">Datasets</a></li>
+                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>{''}Dataset Name</a></li>
                 <li className="breadcrumb-item active"><a>Registrations</a></li>
               </ol>
             </div>
@@ -28,8 +28,8 @@ const Registrations = () => {
                 <div className="l_title">
                   <h6>Quick menu</h6>
                   <div className="btn-group-vertical">
-                    <a className="btn btn-primary" href={`/projects/${projectId}/registrations/new`}>New Registration</a>
-                    <a className="btn btn-secondary" href={`/projects/${projectId}`}>Back to project</a>
+                    <a className="btn btn-primary" href={`/datasets/${datasetId}/registrations/new`}>New Registration</a>
+                    <a className="btn btn-secondary" href={`/datasets/${datasetId}`}>Back to dataset</a>
                   </div>
                 </div>
               </div>
@@ -46,7 +46,7 @@ const Registrations = () => {
                   </tr></thead>
                 <tbody><tr>
                     <td>
-                      <a className="btn btn-success" href={`/projects/${projectId}/registrations/`}>
+                      <a className="btn btn-success" href={`/datasets/${datasetId}/registrations/`}>
                         ID: {}
                       </a><br />
                       <br />

@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import auth from './src/routes/auth.routes'
 import histology from './src/routes/histology.routes'
-import project from './src/routes/projects.routes'
+import dataset from './src/routes/datasets.routes'
 import msi from './src/routes/msi.routes'
 import extract from './src/routes/extractions.routes'
 import registration from './src/routes/registrations.routes'
@@ -27,7 +27,7 @@ app.use(cors(corsOptions));
 app.use('',express.static(__dirname + ''))
 */
 app.use('/api/auth', auth)
-app.use('/api/project', project)
+app.use('/api/dataset', dataset)
 app.use('/api/msi', msi)
 app.use('/api/histology', histology)
 app.use('/api/roi', roi)

@@ -24,12 +24,12 @@ const NavHeader = ({currentState,setCurrentState})=>{
                         <li className={`nav-item ${currentState==='home'?'active':''}`}>
                             <p ><NavLink to='/home' onClick={()=>{setCurrentState('home');}}>Home</NavLink></p>
                         </li>
-                        <li className={`nav-item ${currentState==='Create a new project'?'active':''}`}>
-                            <p ><NavLink to='/projects/new'onClick={()=>setCurrentState('Create a new project')}>Start</NavLink></p>
+                        <li className={`nav-item ${currentState==='Create a new dataset'?'active':''}`}>
+                            <p ><NavLink to='/datasets/new'onClick={()=>setCurrentState('Create a new dataset')}>Start</NavLink></p>
                         </li>
                         {Boolean(userDetails.token)?(
-                            <li className={`nav-item ${currentState==='Project'?'active':''}`}>
-                                <p ><NavLink to='/projects' onClick={()=>setCurrentState('Project')}>Project</NavLink></p>
+                            <li className={`nav-item ${currentState==='dataset'?'active':''}`}>
+                                <p ><NavLink to='/datasets' onClick={()=>setCurrentState('dataset')}>Dataset</NavLink></p>
                             </li>):''
                         }
                         <li className={`nav-item ${currentState==='Document'?'active':''}`}>

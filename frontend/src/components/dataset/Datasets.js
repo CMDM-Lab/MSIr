@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react'
-import ProjectItem from './ProjectItem'
+import DatasetItem from './DatasetItem'
 import { useAuthState } from '../../services/auth_service'
 import Banner from '../public/Banner'
 
-const Projects = (prop)=>{
+const Datasets = (prop)=>{
   
   const userDetails = useAuthState()
   useEffect(()=>{
@@ -19,7 +19,7 @@ const Projects = (prop)=>{
 
   return (
     <>
-    <Banner title = {'Project List'} />
+    <Banner title = {'Dataset List'} />
     <section className="challange_area">
       <div className="container-fluid">
         <div className="row">
@@ -30,7 +30,7 @@ const Projects = (prop)=>{
                 <a href='/'>Home</a>
               </li>
               <li className="breadcrumb-item">
-                <a>Projects</a>
+                <a>Datasets</a>
               </li></ol></div></div>
         <div className="row">
           <div className="col-lg-2">
@@ -43,14 +43,14 @@ const Projects = (prop)=>{
                 <h6>Quick menu</h6>
                 <div className="btn-group-vertical">
                   <a className='btn btn-warning' onClick={onClickExample}>Import an example</a>
-                  <a className='btn btn-primary' href='/projects/new'>New Project</a>
+                  <a className='btn btn-primary' href='/datasets/new'>New Dataset</a>
                 </div></div></div></div>
           <div className="col-lg-10">
             {}
             <table className="table object_list">
               <thead>
                 <tr>
-                  <th>Project name / Project info</th>
+                  <th>Dataset name / Dataset info</th>
                   <th>MSI data Information</th>
                   <th>Operations</th>
                 </tr>
@@ -64,4 +64,4 @@ const Projects = (prop)=>{
     )
 }
 
-export default Projects
+export default Datasets

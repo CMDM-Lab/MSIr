@@ -7,7 +7,7 @@ const CreateRegistration = () =>{
     const [maskId, setMaskId] = useState()
     const [regType, setRegType] = useState('intensity')
 
-    const {projectId} = useParams()
+    const {datasetId} = useParams()
 
     const onChangeRegType = (e) => {
         setRegType(e.target.value)
@@ -39,10 +39,10 @@ const CreateRegistration = () =>{
                     <a href='/'>Home</a>
                 </li>
                 <li className="breadcrumb-item">
-                    <a href='/projects'>Projects</a>
+                    <a href='/datasets'>Datasets</a>
                 </li>
                 <li className="breadcrumb-item">
-                    <a href={`/projects/${projectId}`}>Project Name</a>
+                    <a href={`/datasets/${datasetId}`}>Dataset Name</a>
                 </li>
                 <li className="breadcrumb-item active">
                     <a>Create a Registration</a>

@@ -22,7 +22,7 @@ const newMSI = async (req, res) => {
             data_type:'imzML',
             imzml_file:path.join(DIR_MSI,imzml_file),
             ibd_file:path.join(DIR_MSI,ibd_file),
-            projectId: data.projectId,
+            datasetId: data.datasetId,
             userId: data.userId
         });
         res.status(201).json({

@@ -1,4 +1,4 @@
-import { Project } from "../db/db";
+import { Dataset } from "../db/db";
 import fs from 'fs'
 import path from 'path'
 
@@ -6,20 +6,20 @@ const fileDir = process.env.FILEDIR
 
 const all = async (req, res) => {
     try {
-        const projects = await Project.findAll({
+        const datasets = await Dataset.findAll({
             where: {
                 userId: req.userId
               },
             //attributes: ['id', 'name','description',]
         })
-        if (projects){
-            if (projects[0].userId !== req.userId){
+        if (datasets){
+            if (datasets[0].userId !== req.userId){
                 return res.status(401).json({
                     message: "Unauthorized!"
                 });
             }
         }
-        res.json({data:projects})
+        res.json({data:datasets})
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: error.message }); 
@@ -29,18 +29,18 @@ const all = async (req, res) => {
 const show = async (req, res) => {
     const data = req.body
     try {
-        const project = await Project.findOne({
+        const dataset = await Dataset.findOne({
             where:{
-                id:data.projectId
+                id:data.datasetId
             },
             //attributes: ['id', 'name','description',]
         })
-        if (project.userId !== req.userId){
+        if (dataset.userId !== req.userId){
             return res.status(401).json({
                 message: "Unauthorized!"
             });
         }
-        res.json({data:project})
+        res.json({data:dataset})
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: error.message }); 
@@ -54,19 +54,19 @@ const example = (req, res) => {
 const edit = async (req, res) => {
     const data = req.body
     try {
-        const project = await Project.findByPk(req.projectId)
-        if (!project){
-            res.status(404).json({message:'Project not found'})
+        const dataset = await Dataset.findByPk(req.datasetId)
+        if (!dataset){
+            res.status(404).json({message:'Dataset not found'})
         }
-        if (project.userId !== req.userId){
+        if (dataset.userId !== req.userId){
             return res.status(401).json({
                 message: "Unauthorized!"
             });
         }
-        project.name = data.name
-        project.description = data.description
-        await project.save()
-        res.json({message: "Project was updated successfully!"})
+        dataset.name = data.name
+        dataset.description = data.description
+        await dataset.save()
+        res.json({message: "Dataset was updated successfully!"})
 
     } catch (error) {
         console.log(error.message)
@@ -75,16 +75,16 @@ const edit = async (req, res) => {
     
 }
 
-const newProject = async (req, res) => {
+const newDataset = async (req, res) => {
     const data = req.body
     try {
-        const project = await Project.create({
+        const dataset = await Dataset.create({
             name:data.name,
             description:data.description,
             userId:req.userId
         })
-        fs.mkdir(path.join(fileDir,project.id))
-        res.json({message: "Project was created successfully!"})
+        fs.mkdir(path.join(fileDir,dataset.id))
+        res.json({message: "Dataset was created successfully!"})
 
     } catch (error) {
         console.log(error.message)
@@ -92,21 +92,21 @@ const newProject = async (req, res) => {
     }
 }
 
-const deleteProject = async (req, res) => {
+const deleteDataset = async (req, res) => {
     const data = req.body
     try {
-        const project = await Project.findByPk(data.projectId)
-        if (!project){
-            return res.status(404).json({message:'Project not found'})
+        const dataset = await Dataset.findByPk(data.datasetId)
+        if (!dataset){
+            return res.status(404).json({message:'Dataset not found'})
         }
-        if (project.userId !== req.userId){
+        if (dataset.userId !== req.userId){
             return res.status(401).json({
                 message: "Unauthorized!"
             });
         }
         /* Need to remove relation record from db */
 
-        project.drop()
+        dataset.drop()
 
     } catch (error) {
         console.log(error.message)
@@ -115,4 +115,4 @@ const deleteProject = async (req, res) => {
     
 }
 
-export default {all, show, example, edit, newProject, deleteProject}
+export default {all, show, example, edit, newDataset, deleteDataset}

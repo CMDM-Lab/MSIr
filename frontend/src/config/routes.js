@@ -1,84 +1,84 @@
-import ProjectRender from '../components/project/ProjectRender'
-import Projects from '../components/project/Projects'
+import DatasetRender from '../components/dataset/DatasetRender'
+import Datasets from '../components/dataset/Datasets'
 import CreateRegistration from '../components/registration/CreateRegistration'
 import CreateExtraction from '../components/extraction/CreateExtraction'
 import Registrations from '../components/registration/Registrations'
 import Extractions from '../components/extraction/Extractions'
 import RegistrationRender from '../components/registration/RegistrationRender'
-import CreateProject from '../components/project/CreateProject'
-import ProjectEdit from '../components/project/ProjectEdit'
+import CreateDataset from '../components/dataset/CreateDataset'
+import DatasetEdit from '../components/dataset/DatasetEdit'
 import UploadMSI from '../components/msidata/UploadMSI'
 import EditMSI from '../components/msidata/EditMSI'
 
 const routes =[
   {
-    path:'/projects/:projectId/msi/new',
+    path:'/datasets/:datasetId/msi/new',
     component: UploadMSI,
     //isPrivate: true,
   },
   {
-    path:'/projects/:projectId/msi/edit',
+    path:'/datasets/:datasetId/msi/edit',
     component: EditMSI,
     //isPrivate: true,
   },
   /*{
-    path:'/projects/:projectId/image',
+    path:'/datasets/:datasetId/image',
     component: ,
     isPrivate: true,
   },
   {
-    path:'/projects/:projectId/image/roi',
+    path:'/datasets/:datasetId/image/roi',
     component: ,
     isPrivate: true,
   },*/
   {
-    path:'/projects/:projectId/extractions/new',
+    path:'/datasets/:datasetId/extractions/new',
     component: CreateExtraction,
     //isPrivate: true,
   },
   {
-    path:'/projects/:projectId/registrations/new',
+    path:'/datasets/:datasetId/registrations/new',
     component: CreateRegistration,
     //isPrivate: true,
   },
   {
-    path:'/projects/:projectId/registrations/:regId',
+    path:'/datasets/:datasetId/registrations/:regId',
     component: RegistrationRender,
     //isPrivate: true,
   },
   /*{
-    path:'/projects/:projectId/extracts/:extractId',
+    path:'/datasets/:datasetId/extracts/:extractId',
     component: ExtractionRender
   },*/
   {
-    path:'/projects/:projectId/edit',
-    component: ProjectEdit,
+    path:'/datasets/:datasetId/edit',
+    component: DatasetEdit,
     //isPrivate: true,
   },
   {
-    path:'/projects/:projectId/registrations',
+    path:'/datasets/:datasetId/registrations',
     component: Registrations,
     //isPrivate: true,
   },
   {
-    path:'/projects/:projectId/extractions',
+    path:'/datasets/:datasetId/extractions',
     component: Extractions,
     //isPrivate: true,
   },
   {
-    path:'/projects/new',
-    component: CreateProject,
+    path:'/datasets/new',
+    component: CreateDataset,
     //isPrivate: true,
   },
   {
-    path:'/projects/:projectId',
-    component: ProjectRender,
+    path:'/datasets/:datasetId',
+    component: DatasetRender,
     //isPrivate: true,
   },
   
   {
-    path:'/projects',
-    component: Projects,
+    path:'/datasets',
+    component: Datasets,
     //isPrivate: true,
   },
   

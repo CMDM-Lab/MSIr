@@ -8,7 +8,7 @@ const CreateExtraction = () =>{
     const [roiId, setRoiId] = useState()
     const [norm, setNorm] = useState('none')
 
-    const {projectId} = useParams()
+    const {datasetId} = useParams()
 
     const onChangeRegId = (e) => {
         setRegId(e.target.value)
@@ -45,10 +45,10 @@ const CreateExtraction = () =>{
                     <a href='/'>Home</a>
                 </li>
                 <li className="breadcrumb-item">
-                    <a href='/projects'>Projects</a>
+                    <a href='/datasets'>Datasets</a>
                 </li>
                 <li className="breadcrumb-item">
-                    <a href={`/projects/${projectId}`}>{}Project Name</a>
+                    <a href={`/datasets/${datasetId}`}>{}dataset Name</a>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">
                     <a>Create an Extraction</a>

@@ -3,19 +3,19 @@ import { useParams } from 'react-router'
 import { useAuthState } from '../../services/auth_service'
 import Banner from '../public/Banner'
 
-const ProjectRender = (props) => {
+const DatasetRender = (props) => {
 
-    const {projectId} = useParams()
+    const {datasetId} = useParams()
     const userDetails = useAuthState()
     
 
-    const data_project = ''
+    const data_dataset = ''
     const data_registration =''
     const data_extraction = ''
 
     return (
     <>
-    <Banner title={'Project Name'} />
+    <Banner title={'Dataset Name'} />
     <section className="challange_area">
       <div className="container-fluid">
         <div className="row">
@@ -26,26 +26,26 @@ const ProjectRender = (props) => {
                 <a href='/'>Home</a>
               </li>
               <li className="breadcrumb-item">
-                <a href='/projects'>Projects</a>
+                <a href='/datasets'>Datasets</a>
               </li>
               <li className="breadcrumb-item">
-                <a>{}Project Name</a>
+                <a>{}Dataset Name</a>
               </li>
               </ol></div></div>
         <div className="row">
             <div className="col-lg-1 col-1" />
-            <div className='col-lg-5 col-sm-12 project_info border-end'>
+            <div className='col-lg-5 col-sm-12 dataset_info border-end'>
                 <h3>
-                    Project details {' '}{projectId}
+                    Dataset details {' '}{datasetId}
                     <div className='btn-group'>
-                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/projects/${projectId}/edit`}>
+                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/edit`}>
                             Edit
                         </a>
                     </div>
                 </h3>
                 <ol>
-                    <li>Project Name:{}</li>
-                    <li>Project Description:{}</li>
+                    <li>Dataset Name:{}</li>
+                    <li>Dataset Description:{}</li>
                 </ol>
                 <h3>
                     MSI data
@@ -72,10 +72,10 @@ const ProjectRender = (props) => {
             <div className='col-lg-3 col-sm-12 border-end'>
                 <h3>Registrations</h3>
                 <div className='btn-group'>
-                    <a className='btn btn-info text-left' style={{'color':'white'}} href={`/projects/${projectId}/registrations/new`}>
+                    <a className='btn btn-info text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/registrations/new`}>
                         New Registration
                     </a>
-                    <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/projects/${projectId}/registrations`}>
+                    <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/registrations`}>
                         All Registrations
                     </a>
                 </div>
@@ -84,10 +84,10 @@ const ProjectRender = (props) => {
             <div className='col-lg-3 col-sm-12'>
                 <h3>Data Extractions</h3>
                 <div className='btn-group'>
-                    <a className='btn btn-info text-left' style={{'color':'white'}} href={`/projects/${projectId}/extractions/new`}>
+                    <a className='btn btn-info text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/extractions/new`}>
                         New Extraction
                     </a>
-                    <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/projects/${projectId}/extractions`}>
+                    <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/extractions`}>
                         <i className='fad fa-th-list fa-lg'></i>
                         All Extractions
                     </a>
@@ -101,4 +101,4 @@ const ProjectRender = (props) => {
     )
 }
 
-export default ProjectRender
+export default DatasetRender

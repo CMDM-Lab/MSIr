@@ -15,10 +15,10 @@ import Doc from './components/public/Doc';
 import Contact from './components/public/Contact';
 import SignIn from './components/auth/SignIn';
 import Signup from './components/auth/SignUp'
-import Projects from './components/project/Projects';
-import CreateProject from './components/project/CreateProject';
-import ProjectRender from './components/project/ProjectRender';
-import ProjectEdit from './components/project/ProjectEdit';
+import Datasets from './components/dataset/Datasets';
+import CreateDataset from './components/dataset/CreateDataset';
+import DatasetRender from './components/dataset/DatasetRender';
+import DatasetEdit from './components/dataset/DatasetEdit';
 
 
 function App() {
@@ -34,10 +34,10 @@ function App() {
           <Route path='/contact' component={Contact} />
           <Route path='/users/sign_in' component={SignIn} />
           <Route path='/users/sign_up' component={Signup} />
-          {/*<Route exact path='/projects' component={Projects} />
-          <Route exact path='/projects/new' component={CreateProject} />
-          <Route exact path='/projects/:projectId' component={ProjectRender} />
-  <Route exact path='/projects/:projectId/edit' component={ProjectEdit} />*/}
+          {/*<Route exact path='/datasets' component={Datasets} />
+          <Route exact path='/datasets/new' component={CreateDataset} />
+          <Route exact path='/datasets/:datasetId' component={DatasetRender} />
+  <Route exact path='/datasets/:datasetId/edit' component={DatasetEdit} />*/}
         {routes.map((route) => (
             <AppRoute
               key={route.path}
@@ -48,11 +48,11 @@ function App() {
             />
           ))}
           
-          {/* Project */}
+          {/* Dataset */}
           {/*
-          <Route path='/projects/new' component={createProject}/>
-          <Route path='/projects' component={projects}/>
-          <Route path='/projects/:projectId' component={projectRender}/>
+          <Route path='/datasets/new' component={createDataset}/>
+          <Route path='/datasets' component={Datasets}/>
+          <Route path='/datasets/:datasetId' component={datasetRender}/>
           
           <Route path='/doc' component={doc}/>
           <Route path='/contact' component={contact}/>
@@ -63,7 +63,7 @@ function App() {
           <Route path='/users/sign_up' component={createUser}/>
           <Route path='/users/password/edit' component={editUserPassword}/>
           <Route path='/users/password/reset' component={resetUserPassword}/>
-          <Redirect exact from='/projects' to={userId?`/projects/${userId}`:'/signin'} />
+          <Redirect exact from='/datasets' to={userId?`/datasets/${userId}`:'/signin'} />
           */}
           <Redirect from='/home' to='/' />
         </Switch>

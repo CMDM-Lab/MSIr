@@ -4,7 +4,7 @@ import Banner from "../public/Banner"
 
 const Extractions = () => {
 
-  const {projectId} = useParams()
+  const {datasetId} = useParams()
   
 
     return (
@@ -17,8 +17,8 @@ const Extractions = () => {
             <div className="col-lg-6 col-6" style={{paddingLeft: 0}}>
               <ol className="breadcrumb">
                 <li className="breadcrumb-item"><a href="/">Home</a></li>
-                <li className="breadcrumb-item"><a href="/projects">Projects</a></li>
-                <li className="breadcrumb-item"><a href={`/projects/${projectId}`}>{''}Project Name</a></li>
+                <li className="breadcrumb-item"><a href="/datasets">Datasets</a></li>
+                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>{''}Dataset Name</a></li>
                 <li className="breadcrumb-item active"><a>Extractions</a></li>
               </ol>
             </div>
@@ -29,8 +29,8 @@ const Extractions = () => {
                 <div className="l_title">
                   <h6>Quick menu</h6>
                   <div className="btn-group-vertical">
-                    <a className="btn btn-primary" href={`/projects/${projectId}/extractions/new`}>New Extraction</a>
-                    <a className="btn btn-secondary" href={`/projects/${projectId}`}>Back to Project</a>
+                    <a className="btn btn-primary" href={`/datasets/${datasetId}/extractions/new`}>New Extraction</a>
+                    <a className="btn btn-secondary" href={`/datasets/${datasetId}`}>Back to Dataset</a>
                   </div>
                 </div>
               </div>

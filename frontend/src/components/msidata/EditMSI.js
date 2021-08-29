@@ -103,10 +103,10 @@ const EditMSI = (props) => {
                             <a href='/'>Home</a>
                         </li>
                         <li className="breadcrumb-item">
-                            <a href='/projects'>Projects</a>
+                            <a href='/datasets'>Datasets</a>
                         </li>
                         <li className="breadcrumb-item">
-                            <a href='/projects'>Project name{}</a>
+                            <a href='/datasets'>Dataset name{}</a>
                         </li>
                         <li className="breadcrumb-item active">
                             <p>Upload MSI data</p>

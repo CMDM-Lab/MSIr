@@ -47,7 +47,7 @@ export const ContextProvider = ({ children }) => {
     const [info, setInfo] = useState({
       page:'', //show banner
       pageInfo:'', //show banner detail
-      projectName:'',
+      datasetName:'',
     })
    
     return (

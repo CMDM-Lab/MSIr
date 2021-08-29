@@ -19,7 +19,7 @@ const newHistologyImg = async (req, res) => {
 
         const histologyImage = await HistologyImage.create({
             file: path.join(DIR_HIST,req.files[0]),
-            projectId: data.projectId,
+            datasetId: data.datasetId,
             userId: data.userId
         })
         res.status(201).json({

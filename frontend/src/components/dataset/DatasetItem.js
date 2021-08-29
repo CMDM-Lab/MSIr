@@ -1,14 +1,14 @@
 import React from "react"
 import { Button } from "bootstrap"
 
-const ProjectItem = ({data})=>{
+const DatasetItem = ({data})=>{
 
     if (!data){
         return (
             <>
                 <tr>
                     <td colSpan={3}>
-                      <b>No projects.</b>
+                      <b>No datasets.</b>
                       <i className="fad fa-arrow-right" />
                       <a href=''></a>
                     </td>
@@ -37,7 +37,7 @@ const ProjectItem = ({data})=>{
                             </tr>
                         </tbody></table>
                 </td>
-                <td className="project_info">
+                <td className="dataset_info">
                     <table className="table" style={{fontSize: '1em'}}>
                         <tbody><tr>
                             <td style={{width: '70%'}}>Normalization:</td>
@@ -63,4 +63,4 @@ const ProjectItem = ({data})=>{
         </>
     )
 }
-export default ProjectItem
+export default DatasetItem

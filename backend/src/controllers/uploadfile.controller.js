@@ -20,7 +20,7 @@ const uploadMSI = async (req, res, next) => {
             data_type:'imzML',
             imzml_file:path.join(DIR,imzml_file),
             ibd_file:path.join(DIR,ibd_file),
-            projectId: data.projectId,
+            datasetId: data.datasetId,
             userId: data.userId
         });
         res.status(201).json({
@@ -56,7 +56,7 @@ const uploadHistology = async (req, res, next) => {
 
         const histologyImage = await HistologyImage.create({
             file: path.join(DIR,req.files[0]),
-            projectId: data.projectId,
+            datasetId: data.datasetId,
             userId: data.userId
         })
         res.status(201).json({

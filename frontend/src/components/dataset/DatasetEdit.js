@@ -2,10 +2,10 @@ import React, { useEffect,useState } from "react"
 import { useParams } from 'react-router'
 import Banner from "../public/Banner"
 
-const ProjectEdit = () => {
+const DatasetEdit = () => {
     const [name,setName] = useState('')
     const [description, setDescription] = useState('')
-    const {projectId} = useParams()
+    const {datasetId} = useParams()
 
     const onChangeName = (e)=>{
         const value = e.target.value;
@@ -23,7 +23,7 @@ const ProjectEdit = () => {
 
     return (
     <>
-    <Banner title = {'Edit this project'} />
+    <Banner title = {'Edit this Dataset'} />
     <section className="challange_area">
         <div className="container-fluid">
             <div className="row">
@@ -34,39 +34,39 @@ const ProjectEdit = () => {
                             <a href='/'>Home</a>
                         </li>
                         <li className="breadcrumb-item">
-                            <a href='/projects'>Projects</a>
+                            <a href='/datasets'>Datasets</a>
                         </li>
                         <li className="breadcrumb-item">
-                            <a href={`/projects/${projectId}`}>{}Project Name</a>
+                            <a href={`/datasets/${datasetId}`}>{}Dataset Name</a>
                         </li>
                         <li className="breadcrumb-item active">
-                            <a>Edit this project</a>
+                            <a>Edit this dataset</a>
                         </li>
                     </ol></div></div>
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Project name*</label>
+                <label className="col-3 col-form-label">Dataset name*</label>
                 <div className="col-6">
                     <input 
                     type="text"
                     name='name'
                     value={name}
                     className='form-control input100'
-                    placeholder='Type Project Name'
+                    placeholder='Type Dataset Name'
                     id="name"
                     onChange={onChangeName}
                     />
                 </div></div>
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Project Description</label>
+                <label className="col-3 col-form-label">Dataset Description</label>
                 <div className="col-6">
                     <input 
                     type='text'
                     name='description'
                     value={description}
                     className='form-control input100'
-                    placeholder='Type Project Description'
+                    placeholder='Type Dataset Description'
                     id="description"
                     onChange={onChangeDescription}
                     />
@@ -84,4 +84,4 @@ const ProjectEdit = () => {
     )
 }
 
-export default ProjectEdit
+export default DatasetEdit

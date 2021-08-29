@@ -4,7 +4,7 @@ import Banner from '../public/Banner'
 
 const RegistrationRender = () => {
 
-  const {projectId} = useParams()
+  const {datasetId} = useParams()
 
     return (
     <>
@@ -16,9 +16,9 @@ const RegistrationRender = () => {
             <div className="col-lg-6 col-6" style={{paddingLeft: 0}}>
               <ol className="breadcrumb">
                 <li className="breadcrumb-item"><a href="/">Home</a></li>
-                <li className="breadcrumb-item"><a href="/projects">Projects</a></li>
-                <li className="breadcrumb-item"><a href={`/projects/${projectId}`}>{''}Project Name</a></li>
-                <li className="breadcrumb-item"><a href={`/projects/${projectId}/registrations`}>Registrations</a></li>
+                <li className="breadcrumb-item"><a href="/datasets">Datasets</a></li>
+                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>{''}Dataset Name</a></li>
+                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}/registrations`}>Registrations</a></li>
                 <li className="breadcrumb-item active"><a>{/*RegistrationId*/}</a></li>
               </ol>
             </div>
@@ -29,9 +29,9 @@ const RegistrationRender = () => {
                 <div className="l_title">
                   <h6>Quick menu</h6>
                   <div className="btn-group-vertical">
-                    <a className="btn btn-primary" href={`/projects/${projectId}/registrations/new`}>New Registration</a>
-                    <a className="btn btn-secondary" href={`/projects/${projectId}/registrations`}>Registration List</a>
-                    <a className="btn btn-secondary" href={`/projects/${projectId}`}>Back to Project</a>
+                    <a className="btn btn-primary" href={`/datasets/${datasetId}/registrations/new`}>New Registration</a>
+                    <a className="btn btn-secondary" href={`/datasets/${datasetId}/registrations`}>Registration List</a>
+                    <a className="btn btn-secondary" href={`/datasets/${datasetId}`}>Back to Dataset</a>
                   </div>
                 </div>
               </div>
@@ -47,7 +47,7 @@ const RegistrationRender = () => {
               <h2>Detail information</h2>
               <table className="table">
                 <tbody><tr>
-                    <td>Project:</td>
+                    <td>Dataset:</td>
                     <td>{}<br /></td>
                   </tr>
                   <tr>

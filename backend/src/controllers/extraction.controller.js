@@ -1,14 +1,14 @@
-import { Extraction, HistologyROI, MSI, Project } from "../db/db";
+import { Extraction, HistologyROI, MSI, Dataset } from "../db/db";
 import fs from 'fs'
 
 const newExtraction = async (req, res) => {
     const data = req.body
     try {
-        const project = await Project.findByPk(data.projectId)
+        const dataset = await Dataset.findByPk(data.datasetId)
         const extract = await Extraction.create({
             normalization: data.normalization,
-            projectId: data.projectId,
-            msiId: project.msiId
+            datasetId: data.datasetId,
+            msiId: dataset.msiId
         })
         //run extraction script
 
@@ -51,7 +51,7 @@ const all = async (req, res) => {
     try {
         const extracts = await Extraction.findAll({
             where: {
-                projectId: data.projectId,
+                datasetId: data.datasetId,
             },
             //attributes: { exclude: ['userId',]}
         })

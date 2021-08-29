@@ -50,7 +50,7 @@ const User = sequelize.define('user',{
     freezeTableName: true
   })
 
-const Project = sequelize.define('project',{
+const Dataset = sequelize.define('dataset',{
     name: {
         type: DataTypes.STRING,
         defaultValue: '',
@@ -66,7 +66,7 @@ const Project = sequelize.define('project',{
   })
 
 const HistologyImage = sequelize.define('histologyImage',{
-    //project_id:{
+    //dataset_id:{
     //    type: DataTypes.INTEGER,
     //    allowNull: false,
     //},
@@ -79,7 +79,7 @@ const HistologyImage = sequelize.define('histologyImage',{
   })
 
 const MSI = sequelize.define('msi',{
-    /*project_id: {
+    /*dataset_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },*/
@@ -157,7 +157,7 @@ const HistologyROI = sequelize.define('histologyroi',{
   })
 
 const Registration = sequelize.define('registration',{
-    /*project_id: {
+    /*dataset_id: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
@@ -237,22 +237,22 @@ const Extraction = sequelize.define('extraction',{
     freezeTableName: true
   })
 
-Project.belongsTo(User)
+Dataset.belongsTo(User)
 HistologyImage.belongsTo(User)
 MSI.belongsTo(User)
 HistologyROI.belongsTo(User)
 Registration.belongsTo(User)
 Extraction.belongsTo(User)
-HistologyImage.belongsTo(Project)
-MSI.belongsTo(Project)
+HistologyImage.belongsTo(Dataset)
+MSI.belongsTo(Dataset)
 HistologyROI.belongsTo(HistologyImage)
-Project.hasMany(Registration)
-Project.hasMany(Extraction)
+Dataset.hasMany(Registration)
+Dataset.hasMany(Extraction)
 HistologyImage.hasMany(Registration)
 MSI.hasMany(Registration)
 MSI.hasMany(Extraction)
 HistologyROI.hasMany(Extraction)
 
 
-export {User, Project, Registration, Extraction, HistologyImage, HistologyROI, MSI}
+export {User, Dataset, Registration, Extraction, HistologyImage, HistologyROI, MSI}
 export default sequelize

@@ -3,7 +3,7 @@ import authHeader from "./auth-header";
 
 const create = async (payload) => {
     try {
-        const res = await instance.post('/projects/new',payload, {
+        const res = await instance.post('/datasets/new',payload, {
             headers: authHeader(),
         })
         return res
@@ -15,7 +15,7 @@ const create = async (payload) => {
 
 const remove = async (payload) => {
     try {
-        const res = await instance.delete('/projects/delete', {
+        const res = await instance.delete('/datasets/delete', {
             headers: authHeader(),
             data: payload
         })
@@ -27,7 +27,7 @@ const remove = async (payload) => {
 
 const example = async (payload) => {
     try {
-        const res = await instance.post('/projects/example',payload, {
+        const res = await instance.post('/datasets/example',payload, {
             headers: authHeader(),
         })
         return res
@@ -39,7 +39,7 @@ const example = async (payload) => {
 
 const all = async (payload) => {
     try {
-        const res = await instance.get('/projects/all', {
+        const res = await instance.get('/datasets/all', {
             headers: authHeader(),
             params: payload
         })
@@ -52,7 +52,7 @@ const all = async (payload) => {
 
 const show = async (payload) => {
     try {
-        const res = await instance.get('/projects/show', {
+        const res = await instance.get('/datasets/show', {
             headers: authHeader(),
             params: payload
         })
@@ -65,7 +65,7 @@ const show = async (payload) => {
 
 const edit = async (payload) => {
     try {
-        const res = await instance.put('/projects/edit',payload,{
+        const res = await instance.put('/datasets/edit',payload,{
             headers: authHeader()})
         return res
     } catch (error) {
@@ -73,8 +73,8 @@ const edit = async (payload) => {
     }
 }
 
-const projectService = {
+const datasetService = {
     edit, show, all, example, remove, create
 }
 
-export default projectService
+export default datasetService

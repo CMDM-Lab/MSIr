@@ -8,6 +8,7 @@ import withReactContent from 'sweetalert2-react-content'
 
 import {registerUser} from "../../services/auth_service";
 import Banner from "../public/Banner";
+import { useHistory } from "react-router-dom";
 
 const Register = (props) => {
   const MySwal = withReactContent(Swal)
@@ -18,8 +19,7 @@ const Register = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  //const [successful, setSuccessful] = useState(false);
-  //const [message, setMessage] = useState("");
+  const history = useHistory()
 
   const onChangePasswordConfirmation = (e) => {
     const passwordConfirmation = e.target.value;
@@ -61,7 +61,9 @@ const Register = (props) => {
             icon: 'success',
             title: res.data.message,
             text: 'Please sign in!',
-            confirmButtonText: '<a href="/users/sign_in">OK</a>'
+            confirmButtonText: 'OK'
+          }).then(()=>{
+            history.push("/users/sign_in"); 
           })
         }
         else{

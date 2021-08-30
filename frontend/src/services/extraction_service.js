@@ -52,8 +52,8 @@ const show = async (payload) => {
     
 }
 
-const extraction_service = {
+const extractionService = {
     show, all, remove, create
 }
 
-export default extraction_service
+export default extractionService

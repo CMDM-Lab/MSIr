@@ -1,8 +1,12 @@
 import { Dataset } from "../db/db";
 import fs from 'fs'
 import path from 'path'
+import dotenv from 'dotenv-defaults'
 
-const fileDir = process.env.FILEDIR
+dotenv.config()
+
+const histDir = process.env.DIR_HIST
+const msiDir = process.env.DIR_MSI
 
 const all = async (req, res) => {
     try {
@@ -27,7 +31,7 @@ const all = async (req, res) => {
 }
 
 const show = async (req, res) => {
-    const data = req.body
+    const data = req.query
     try {
         const dataset = await Dataset.findOne({
             where:{
@@ -35,6 +39,12 @@ const show = async (req, res) => {
             },
             //attributes: ['id', 'name','description',]
         })
+        if (!dataset){
+            return res.status(404).json({
+                message: "Not Found"
+            })
+        }
+
         if (dataset.userId !== req.userId){
             return res.status(401).json({
                 message: "Unauthorized!"
@@ -54,9 +64,9 @@ const example = (req, res) => {
 const edit = async (req, res) => {
     const data = req.body
     try {
-        const dataset = await Dataset.findByPk(req.datasetId)
+        const dataset = await Dataset.findByPk(data.datasetId)
         if (!dataset){
-            res.status(404).json({message:'Dataset not found'})
+            return res.status(404).json({message:'Dataset not found'})
         }
         if (dataset.userId !== req.userId){
             return res.status(401).json({
@@ -83,8 +93,14 @@ const newDataset = async (req, res) => {
             description:data.description,
             userId:req.userId
         })
-        fs.mkdir(path.join(fileDir,dataset.id))
-        res.json({message: "Dataset was created successfully!"})
+        console.log(histDir)
+        fs.mkdir(path.join(histDir,dataset.id.toString()),{ recursive: true }, (err) => {
+            if (err) throw err;
+          });
+        fs.mkdir(path.join(msiDir,dataset.id.toString()),{ recursive: true }, (err) => {
+            if (err) throw err;
+          })
+        res.json({message: "Dataset was created successfully!", datasetId: dataset.id})
 
     } catch (error) {
         console.log(error.message)

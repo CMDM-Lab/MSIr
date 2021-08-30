@@ -1,17 +1,131 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
+import { useHistory } from 'react-router-dom'
 import { useAuthState } from '../../services/auth_service'
 import Banner from '../public/Banner'
+import datasetService from '../../services/datasets_service'
+import registrationService from '../../services/registration_service'
+import extractionService from '../../services/extraction_service'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 const DatasetRender = (props) => {
+    const MySwal = withReactContent(Swal)
 
     const {datasetId} = useParams()
-    const userDetails = useAuthState()
+    const {user} = useAuthState()
+    const history = useHistory()
     
+    const [dataset, setDataset] = useState() 
+    const [registrations,setRegistrations] = useState([])
+    const [extractions,setExtractions] = useState([])
 
-    const data_dataset = ''
-    const data_registration =''
-    const data_extraction = ''
+    const getData = async()=>{
+        const res_dataset = await datasetService.show({datasetId})
+        if (res_dataset.status >= 200 && res_dataset.status <300){
+            setDataset(res_dataset.data.data)
+        } else{
+            switch(res_dataset.status){
+                case 404:
+                case 401:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res_dataset.data.message}`,
+                    }).then(()=>{
+                        history.goBack()
+                    })
+                    break
+                case 403:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res_dataset.data.message}`,
+                    }).then(()=>{
+                        history.push('/users/sign_in')
+                    })
+                    break
+                case 500:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res_dataset.data.message}`,
+                        text: `Please retry after a while. (${res_dataset.data.message})`,
+                      }).then(()=>{
+                        history.goBack()
+                    })
+                    break
+            }
+        }
+        const res_regist = await registrationService.all({datasetId})
+        if (res_regist.status >= 200 && res_regist.status <300){
+            setRegistrations([...res_regist.data.data])
+        } else{
+            switch(res_regist.status){
+                case 404:
+                case 401:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res_regist.data.message}`,
+                    }).then(()=>{
+                        history.goBack()
+                    })
+                    break
+                case 403:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res_regist.data.message}`,
+                    }).then(()=>{
+                        history.push('/users/sign_in')
+                    })
+                    break
+                case 500:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res_regist.data.message}`,
+                        text: `Please retry after a while. (${res_regist.data.message})`,
+                      }).then(()=>{
+                        history.goBack()
+                    })
+                    break
+            }
+        }
+        const res_extract = await extractionService.all({datasetId})
+        if (res_extract.status >= 200 && res_extract.status <300){
+            setExtractions([...res_extract.data.data])
+        } else{
+            switch(res_extract.status){
+                case 404:
+                case 401:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res_extract.data.message}`,
+                    }).then(()=>{
+                        history.goBack()
+                    })
+                    break
+                case 403:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res_extract.data.message}`,
+                    }).then(()=>{
+                        history.push('/users/sign_in')
+                    })
+                    break
+                case 500:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res_extract.data.message}`,
+                        text: `Please retry after a while. (${res_extract.data.message})`,
+                      }).then(()=>{
+                        history.goBack()
+                    })
+                    break
+            }
+        }
+
+    }
+
+    useEffect(()=>{
+        getData()
+    },[])
 
     return (
     <>
@@ -29,14 +143,14 @@ const DatasetRender = (props) => {
                 <a href='/datasets'>Datasets</a>
               </li>
               <li className="breadcrumb-item">
-                <a>{}Dataset Name</a>
+                <a>{dataset? dataset.name : null}</a>
               </li>
               </ol></div></div>
         <div className="row">
             <div className="col-lg-1 col-1" />
             <div className='col-lg-5 col-sm-12 dataset_info border-end'>
                 <h3>
-                    Dataset details {' '}{datasetId}
+                    Dataset details
                     <div className='btn-group'>
                         <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/edit`}>
                             Edit
@@ -44,8 +158,8 @@ const DatasetRender = (props) => {
                     </div>
                 </h3>
                 <ol>
-                    <li>Dataset Name:{}</li>
-                    <li>Dataset Description:{}</li>
+                    <li>Dataset Name:{dataset? dataset.name : null}</li>
+                    <li>Dataset Description:{dataset? dataset.description : null}</li>
                 </ol>
                 <h3>
                     MSI data
@@ -79,7 +193,7 @@ const DatasetRender = (props) => {
                         All Registrations
                     </a>
                 </div>
-                {data_registration?(<div></div>):(<p>No Registration Result</p>)}
+                {registrations.length>0?(<div></div>):(<p>No Registration Result</p>)}
             </div>
             <div className='col-lg-3 col-sm-12'>
                 <h3>Data Extractions</h3>
@@ -92,7 +206,7 @@ const DatasetRender = (props) => {
                         All Extractions
                     </a>
                 </div>
-                {data_extraction?(<div></div>):(<p>No Extraction Result</p>)}
+                {extractions.length>0?(<div></div>):(<p>No Extraction Result</p>)}
             </div>
         </div>
       </div>

@@ -15,10 +15,6 @@ import Doc from './components/public/Doc';
 import Contact from './components/public/Contact';
 import SignIn from './components/auth/SignIn';
 import Signup from './components/auth/SignUp'
-import Datasets from './components/dataset/Datasets';
-import CreateDataset from './components/dataset/CreateDataset';
-import DatasetRender from './components/dataset/DatasetRender';
-import DatasetEdit from './components/dataset/DatasetEdit';
 
 
 function App() {

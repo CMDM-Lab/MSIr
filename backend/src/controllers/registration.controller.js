@@ -51,14 +51,16 @@ const deleteRegistration = async (req, res) => {
 }
 
 const all = async (req, res) => {
-    const data = req.body
+    const data = req.query
     try {
         const registrations = await Registration.findAll({
             where: {
                 datasetId: data.datasetId,
             },
         })
-        if (registrations){
+        if (registrations.length===0){
+            return res.json({data:[]})
+        }else{
             if (registrations[0].userId !== req.userId){
                 return res.status(401).json({
                     message: "Unauthorized!"

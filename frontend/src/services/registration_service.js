@@ -36,6 +36,7 @@ const all = async (payload) => {
         return res
     } catch (error) {
         console.log(error)
+        return error.response
     }
     
 }
@@ -54,6 +55,6 @@ const show = async (payload) => {
     
 }
 
-const registration_service = {show, all, remove, create}
+const registrationService = {show, all, remove, create}
 
-export default registration_service
+export default registrationService

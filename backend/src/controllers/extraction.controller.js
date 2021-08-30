@@ -47,7 +47,7 @@ const deleteExtraction = async (req, res) => {
 }
 
 const all = async (req, res) => {
-    const data = req.body
+    const data = req.query
     try {
         const extracts = await Extraction.findAll({
             where: {
@@ -55,7 +55,10 @@ const all = async (req, res) => {
             },
             //attributes: { exclude: ['userId',]}
         })
-        if (extracts){
+        if (extracts.length===0){
+            console.log('1')
+            return res.json({data:[]})
+        }else{
             if (extracts[0].userId !== req.userId){
                 return res.status(401).json({
                     message: "Unauthorized!"

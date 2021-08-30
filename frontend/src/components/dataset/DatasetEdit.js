@@ -1,11 +1,59 @@
-import React, { useEffect,useState } from "react"
+import React, { useCallback, useEffect,useState } from "react"
 import { useParams } from 'react-router'
+import { useHistory } from "react-router-dom"
 import Banner from "../public/Banner"
+import datasetService from "../../services/datasets_service"
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 const DatasetEdit = () => {
+    const MySwal = withReactContent(Swal)
+
     const [name,setName] = useState('')
     const [description, setDescription] = useState('')
     const {datasetId} = useParams()
+    const history = useHistory()
+
+    const getData = async()=>{
+        const res = await datasetService.show({datasetId})
+        if (res.status >= 200 && res.status <300){
+            setName(res.data.data.name)
+            setDescription(res.data.data.description)
+        } else{
+            switch(res.status){
+                case 404:
+                case 401:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res.data.message}`,
+                    }).then(()=>{
+                        history.goBack()
+                    })
+                    break
+                case 403:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res.data.message}`,
+                    }).then(()=>{
+                        history.push('/users/sign_in')
+                    })
+                    break
+                case 500:
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res.data.message}`,
+                        text: `Please retry after a while. (${res.data.message})`,
+                      }).then(()=>{
+                        history.goBack()
+                    })
+                    break
+            }
+        }
+    }
+
+    useEffect( async ()=>{
+        getData()
+    },[])
 
     const onChangeName = (e)=>{
         const value = e.target.value;
@@ -17,8 +65,62 @@ const DatasetEdit = () => {
         setDescription(value)
     }
 
-    const handleSubmit = () => {
-
+    const handleSubmit = async () => {
+        if (name.length<1){
+            MySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please type a dataset name !',
+            })
+            return 
+        }
+        try {
+            const res = await datasetService.edit({name, description, datasetId})
+            if (res.status >= 200 && res.status <300){
+                MySwal.fire({
+                    icon: 'success',
+                    title: res.data.message,
+                    confirmButtonText: 'OK'
+                  }).then(()=>{
+                    history.push(`/datasets/${datasetId}`); 
+                  })
+            }else{
+                switch(res.status){
+                    case 404:
+                    case 401:
+                        MySwal.fire({
+                            icon: 'error',
+                            title: `${res.data.message}`,
+                        }).then(()=>{
+                            history.goBack()
+                        })
+                        break
+                    case 403:
+                        MySwal.fire({
+                            icon: 'error',
+                            title: `${res.data.message}`,
+                        }).then(()=>{
+                            history.push('/users/sign_in')
+                        })
+                        break
+                    case 500:
+                        MySwal.fire({
+                            icon: 'error',
+                            title: `${res.data.message}`,
+                            text: `Please retry after a while. (${res.data.message})`,
+                          }).then(()=>{
+                            history.goBack()
+                        })
+                        break
+                }
+            }
+        } catch (error) {
+            MySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error,
+              })
+        }
     }
 
     return (
@@ -76,7 +178,6 @@ const DatasetEdit = () => {
             <div className="form-group row py-2">
                 <div className="col-lg-5 col-3" />
                 <button onClick={handleSubmit} className='btn btn-primary col-lg-1 col-1'>Save</button>
-                {/*<button onClick={handleReset} className='btn btn-secondary col-lg-1 col-1'>Reset</button>*/}
             </div>
         </div>
       </section>

@@ -8,7 +8,7 @@ const create = async (payload) => {
         })
         return res
     } catch (error) {
-        console.log(error)
+        return error.response
     }
     
 }
@@ -21,7 +21,7 @@ const remove = async (payload) => {
         })
         return res
     } catch (error) {
-        console.log(error)
+        return error.response
     }
 }
 
@@ -32,7 +32,7 @@ const example = async (payload) => {
         })
         return res
     } catch (error) {
-        console.log(error)
+        return error.response
     }
     
 }
@@ -45,7 +45,7 @@ const all = async (payload) => {
         })
         return res
     } catch (error) {
-        console.log(error)
+        return error.response
     }
     
 }
@@ -58,7 +58,7 @@ const show = async (payload) => {
         })
         return res
     } catch (error) {
-        console.log(error)
+        return error.response
     }
     
 }
@@ -69,7 +69,7 @@ const edit = async (payload) => {
             headers: authHeader()})
         return res
     } catch (error) {
-        console.log(error)
+        return error.response
     }
 }
 

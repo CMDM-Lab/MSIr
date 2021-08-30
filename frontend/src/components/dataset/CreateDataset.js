@@ -2,15 +2,18 @@ import React, { useState } from "react";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import Banner from "../public/Banner";
+import { useAuthState } from "../../services/auth_service";
+import datasetService from "../../services/datasets_service";
+import { useHistory } from "react-router-dom";
 
 const CreateDataset = (props) => {
 
     const MySwal = withReactContent(Swal)
+    const history = useHistory()
 
     const [name,setName] = useState('')
     const [description, setDescription] = useState('')
-    const [histFile, setHistFile] = useState()
-    
+    const { user } = useAuthState()
 
     const onChangeName = (e)=>{
         const value = e.target.value;
@@ -22,28 +25,47 @@ const CreateDataset = (props) => {
         setDescription(value)
     }
 
-    const onUploadHistFile = (e)=>{
-        e.preventDefault()
-        let formData = new FormData();
-
-        formData.append('histFile', histFile)
-        
-        /*axios post接後端回傳response*/
-        /*axios.post("http://localhost:8000/endpoint/multi-images-upload", formData, {
-        }).then(response => {
-            console.log((response.data))
-        })*/
+    const handleReset = ()=>{
+        setName('')
+        setDescription('')
     }
 
-    /*const handleReset = ()=>{
-        setName('')
-        setAxisSize(0)
-        setMsiFiles([])
-        setHistFile()
-    }*/
+    const handleSubmit = async () => {
 
-    const handleSubmit = () => {
-
+        if (name.length<1){
+            MySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please type a dataset name !',
+            })
+            return 
+        }
+        try {
+            const res = await datasetService.create({name, description})
+            if (res.status >= 200 && res.status <300){
+                MySwal.fire({
+                    icon: 'success',
+                    title: res.data.message,
+                    confirmButtonText: 'OK'
+                  }).then(()=>{
+                    history.push(`/datasets/${res.data.datasetId}`); 
+                  })
+            }else{
+                if (res.status >= 400){
+                    MySwal.fire({
+                      icon: 'error',
+                      title: 'Oops... Something went wrong!',
+                      text: `Please retry after a while. (${res.data.message})`,
+                    })
+                }
+            }
+        } catch (error) {
+            MySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error,
+              })
+        }
     }
 
     return (
@@ -94,22 +116,10 @@ const CreateDataset = (props) => {
                     />
                 </div>
             </div>
-            {/*<div className="form-group row py-2">
-                <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Upload Histology image file*</label>
-                <div className="col-6">
-                    <input className='col-lg-10 col-10' type='file' name='HistFile' onChange={onChangeHistFile} accept=".png,.jpg,.jpeg,.tif,.tiff"/>
-                    <div className='btn btn-outline-secondary col-lg-2 col-2'>
-                        <button onClick={onUploadHistFile}>Upload</button>
-                    </div> 
-                    <small className="form-text text-muted">Only accept PNG, JPEG, TIFF image file formats</small>
-                </div>
-            </div>*/}
-            
             <div className="form-group row py-2">
                 <div className="col-lg-5 col-3" />
                 <button onClick={handleSubmit} className='btn btn-primary col-lg-1 col-1'>Submit</button>
-                {/*<button onClick={handleReset} className='btn btn-secondary col-lg-1 col-1'>Reset</button>*/}
+                <button onClick={handleReset} className='btn btn-secondary col-lg-1 col-1'>Reset</button>
             </div>
         </div>
       </section>

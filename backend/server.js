@@ -27,12 +27,12 @@ app.use(cors(corsOptions));
 app.use('',express.static(__dirname + ''))
 */
 app.use('/api/auth', auth)
-app.use('/api/dataset', dataset)
+app.use('/api/datasets', dataset)
 app.use('/api/msi', msi)
 app.use('/api/histology', histology)
 app.use('/api/roi', roi)
-app.use('/api/registration', registration)
-app.use('/api/extraction', extract)
+app.use('/api/registrations', registration)
+app.use('/api/extractions', extract)
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });

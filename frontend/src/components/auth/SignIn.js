@@ -9,12 +9,15 @@ import withReactContent from 'sweetalert2-react-content'
 
 import {useAuthDispatch, useAuthState, loginUser} from "../../services/auth_service";
 import Banner from '../public/Banner';
+import { useHistory } from 'react-router-dom';
 
 const SignIn = (props) => {
   const MySwal = withReactContent(Swal)
 
   const form = useRef();
   const checkBtn = useRef();
+
+  const history = useHistory()
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,7 +54,9 @@ const SignIn = (props) => {
           icon: 'success',
           title: 'Success!',
           text: 'Signed in successfully.',
-          confirmButtonText: '<a href="/home">OK</a>'
+          confirmButtonText: 'OK'
+        }).then(()=>{
+          history.push("/home"); 
         })
       } catch (error) {
           MySwal.fire({

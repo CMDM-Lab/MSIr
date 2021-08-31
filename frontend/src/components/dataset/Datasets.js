@@ -1,18 +1,111 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import DatasetItem from './DatasetItem'
 import { useAuthState } from '../../services/auth_service'
 import Banner from '../public/Banner'
+import datasetService from '../../services/datasets_service'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import path from 'path'
+import { useHistory } from 'react-router-dom'
 
 const Datasets = (prop)=>{
   
+  const MySwal = withReactContent(Swal)
+
   const userDetails = useAuthState()
+  const history = useHistory()
+  const [datasets, setDatasets] = useState([])
+
+  const getData = async()=>{
+    const res_dataset = await datasetService.all()
+    const {data} = res_dataset.data
+    console.log(data)
+    if (res_dataset.status >= 200 && res_dataset.status <300){
+        setDatasets(data)
+        //console.log({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
+    } else{
+        switch(res_dataset.status){
+            case 404:
+            case 401:
+                MySwal.fire({
+                    icon: 'error',
+                    title: `${res_dataset.data.message}`,
+                }).then(()=>{
+                    history.goBack()
+                })
+                break
+            case 403:
+                MySwal.fire({
+                    icon: 'error',
+                    title: `${res_dataset.data.message}`,
+                }).then(()=>{
+                    history.push('/users/sign_in')
+                })
+                break
+            case 500:
+                MySwal.fire({
+                    icon: 'error',
+                    title: `${res_dataset.data.message}`,
+                    text: `Please retry after a while. (${res_dataset.data.message})`,
+                  }).then(()=>{
+                    history.goBack()
+                })
+                break
+        }
+    }
+    }
+
   useEffect(()=>{
-    
+    getData()
   },[])
 
   //const data = await
 
-  const onClickExample = () =>{
+  const onClickExample = async () =>{
+    try {
+      const res = await datasetService.example()
+      if (res.status >= 200 && res.status <300){
+        MySwal.fire({
+          icon: 'success',
+          title: res.data.message,
+          confirmButtonText: 'OK'
+        }).then(()=>{
+          history.push(`/datasets/${res.data.datasetId}`); 
+        })
+    } else{
+        switch(res.status){
+            case 404:
+            case 401:
+                MySwal.fire({
+                    icon: 'error',
+                    title: `${res.data.message}`,
+                }).then(()=>{
+                    history.goBack()
+                })
+                break
+            case 403:
+                MySwal.fire({
+                    icon: 'error',
+                    title: `${res.data.message}`,
+                }).then(()=>{
+                    history.push('/users/sign_in')
+                })
+                break
+            case 500:
+                MySwal.fire({
+                    icon: 'error',
+                    title: `${res.data.message}`,
+                    text: `Please retry after a while. (${res.data.message})`,
+                  }).then(()=>{
+                    history.goBack()
+                })
+                break
+        }
+    }
+    } catch (error) {
+      
+    }
+    
 
   }
 
@@ -51,12 +144,21 @@ const Datasets = (prop)=>{
               <thead>
                 <tr>
                   <th>Dataset name / Dataset info</th>
-                  <th>MSI data Information</th>
+                  {/*<th>MSI data Information</th>*/}
                   <th>Operations</th>
                 </tr>
               </thead>
               <tbody>
-                {}
+                {datasets.length>0? (
+                  datasets.map((dataset)=>{return <DatasetItem data={dataset}/>})
+                ):(
+                  <tr>
+                    <td>
+                      <p>No Dataset</p>
+                      <a href={'/datasets/new'}><button className='btn btn-primary'>Create a new Dataset</button></a>
+                    </td>
+                  </tr>
+                    )}
               </tbody>
               </table></div></div></div></section>
               </>

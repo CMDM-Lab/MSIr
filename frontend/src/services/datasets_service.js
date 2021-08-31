@@ -37,11 +37,10 @@ const example = async (payload) => {
     
 }
 
-const all = async (payload) => {
+const all = async () => {
     try {
         const res = await instance.get('/datasets/all', {
             headers: authHeader(),
-            params: payload
         })
         return res
     } catch (error) {

@@ -17,8 +17,8 @@ const DatasetEdit = () => {
     const getData = async()=>{
         const res = await datasetService.show({datasetId})
         if (res.status >= 200 && res.status <300){
-            setName(res.data.data.name)
-            setDescription(res.data.data.description)
+            setName(res.data.dataset.name)
+            setDescription(res.data.dataset.description)
         } else{
             switch(res.status){
                 case 404:
@@ -82,7 +82,7 @@ const DatasetEdit = () => {
                     title: res.data.message,
                     confirmButtonText: 'OK'
                   }).then(()=>{
-                    history.push(`/datasets/${datasetId}`); 
+                    history.goBack(); 
                   })
             }else{
                 switch(res.status){
@@ -139,7 +139,7 @@ const DatasetEdit = () => {
                             <a href='/datasets'>Datasets</a>
                         </li>
                         <li className="breadcrumb-item">
-                            <a href={`/datasets/${datasetId}`}>{}Dataset Name</a>
+                            <a href={`/datasets/${datasetId}`}>{datasetId}</a>
                         </li>
                         <li className="breadcrumb-item active">
                             <a>Edit this dataset</a>

@@ -8,6 +8,8 @@ import registrationService from '../../services/registration_service'
 import extractionService from '../../services/extraction_service'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import path from 'path'
+
 
 const DatasetRender = (props) => {
     const MySwal = withReactContent(Swal)
@@ -22,8 +24,10 @@ const DatasetRender = (props) => {
 
     const getData = async()=>{
         const res_dataset = await datasetService.show({datasetId})
+        const {data} = res_dataset
         if (res_dataset.status >= 200 && res_dataset.status <300){
-            setDataset(res_dataset.data.data)
+            setDataset({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
+            console.log({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
         } else{
             switch(res_dataset.status){
                 case 404:
@@ -129,7 +133,7 @@ const DatasetRender = (props) => {
 
     return (
     <>
-    <Banner title={'Dataset Name'} />
+    <Banner title={dataset?`Dataset: ${dataset.name}`: 'Dataset'} />
     <section className="challange_area">
       <div className="container-fluid">
         <div className="row">
@@ -150,7 +154,7 @@ const DatasetRender = (props) => {
             <div className="col-lg-1 col-1" />
             <div className='col-lg-5 col-sm-12 dataset_info border-end'>
                 <h3>
-                    Dataset details
+                    Dataset details <span/>
                     <div className='btn-group'>
                         <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/edit`}>
                             Edit
@@ -158,27 +162,28 @@ const DatasetRender = (props) => {
                     </div>
                 </h3>
                 <ol>
-                    <li>Dataset Name:{dataset? dataset.name : null}</li>
-                    <li>Dataset Description:{dataset? dataset.description : null}</li>
+                    <li>Dataset Name: {dataset? dataset.name : null}</li>
+                    <li>Dataset Description: {dataset? dataset.description : null}</li>
                 </ol>
                 <h3>
-                    MSI data
+                    MSI data <span/>
                     <div className='btn-group'>
-                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href=''>
+                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/msi/new`}>
                             Edit
                         </a>
                     </div>
                 </h3>
                 <ol>
-                    <li>imzML:{}</li>
-                    <li>ibd:{}</li>
+                    <li>imzML:{dataset? dataset.msi? path.basename(dataset.msi.imzml_file):null:null}</li>
+                    <li>ibd:{dataset? dataset.msi? path.basename(dataset.msi.ibd_file):null:null}</li>
                 </ol>
                 <h3>
-                    Histological Image
+                    Histological Image <span/>
                     <div className='btn-group'>
-                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href=''>
+                        <button>Upload</button>
+                        {/*<a className='btn btn-secondary text-left' style={{'color':'white'}} href=''>
                             Edit
-                        </a>
+                        </a>*/}
                     </div>
                 </h3>
                 <img></img>
@@ -206,7 +211,13 @@ const DatasetRender = (props) => {
                         All Extractions
                     </a>
                 </div>
-                {extractions.length>0?(<div></div>):(<p>No Extraction Result</p>)}
+                {extractions.length>0?(
+                 extractions.map((extract,idx)=>{
+                    if (extract.status!=='finished'){
+                        return 
+                    }
+                 })
+                ):(<p>No Extraction</p>)}
             </div>
         </div>
       </div>

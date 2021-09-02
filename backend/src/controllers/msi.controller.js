@@ -1,38 +1,100 @@
-import { MSI } from "../db/db";
+import { Dataset, MSI } from "../db/db";
 import {uploadMSIMiddleware} from '../middleware'
 import path from 'path'
 import fs from 'fs'
-
-const DIR_MSI = process.env.DIR_MSI
+/*import dotenv from 'dotenv-defaults'
+dotenv.config()
+const DIR_MSI = process.env.DIR_MSI*/
 
 const newMSI = async (req, res) => {
-    const imzml_file = req.files.filter(file=> file.toLowerCase().endsWith('imzml'))
-    const ibd_file = req.files.filter(file=> file.toLowerCase().endsWith('ibd'))
-    const data = req.body
+
+    const dataset = await Dataset.findByPk(Number(req.query.datasetId))
+    if (req.userId !== dataset.userId){
+        return res.status(401).json({
+            message: "Unauthorized!"
+        });
+    }
 
     try{
-        if (req.files.length !== 2) {
-            return res.status(400).json({message:'You must upload 2 files (*.imzML and *.ibd) simultaneously.'});
-        }
-
         await uploadMSIMiddleware(req,res)
-        console.log(req.files);
-
-        const msiData = await MSI.create({
-            data_type:'imzML',
-            imzml_file:path.join(DIR_MSI,imzml_file),
-            ibd_file:path.join(DIR_MSI,ibd_file),
-            datasetId: data.datasetId,
-            userId: data.userId
-        });
-        res.status(201).json({
-            message: "Uploaded!",
-            msi: {
-                msiId: msiData.id,
-                imzml_file: msiData.imzml_file,
-                ibd_file: msiData.ibd_file,
+        let msi = await MSI.findOne({
+            where:{
+                datasetId: req.query.datasetId
             }
         })
+        if (msi){
+            if (req.file.path === msi.imzml_file){
+                return res.status(201).json({
+                            message: "ImzML file Uploaded!",
+                            msi: {
+                                msiId: msi.id,
+                                imzml_file: path.basename(msi.imzml_file),
+                            }
+                })
+            }
+            if (req.file.path === msi.ibd_file){
+                return res.status(201).json({
+                    message: "Ibd file Uploaded!",
+                    msi: {
+                        msiId: msi.id,
+                        ibd_file: path.basename(msi.ibd_file),
+                    }
+                })
+            }
+            if (req.file.path.toLowerCase().endsWith('imzml')){
+                if (msi.imzml_file!==''){
+                     fs.unlink(msi.imzml_file, function (err) {
+                        if (err) throw err;
+                        console.log('imzML file deleted!');
+                    });
+                }
+               
+                msi.imzml_file = req.file.path
+                await msi.save()
+                return res.status(201).json({
+                            message: "ImzML file Uploaded!",
+                            msi: {
+                                msiId: msi.id,
+                                imzml_file: path.basename(msi.imzml_file),
+                            }
+                        })
+            }
+            if (req.file.path.toLowerCase().endsWith('ibd')){
+                if (msi.ibd_file!==''){
+                    fs.unlink(msi.ibd_file, function (err) {
+                        if (err) throw err;
+                        console.log('ibd file deleted!');
+                    });
+                }
+                
+                msi.ibd_file = req.file.path
+                await msi.save()
+                return res.status(201).json({
+                            message: "Ibd file Uploaded!",
+                            msi: {
+                                msiId: msi.id,
+                                ibd_file: path.basename(msi.ibd_file),
+                            }
+                        })
+            }
+            
+        }else{
+            msi = await MSI.create({
+                data_type:'imzML',
+                imzml_file: req.file.path.toLowerCase().endsWith('imzml')? req.file.path : '',
+                ibd_file: req.file.path.toLowerCase().endsWith('ibd')? req.file.path : '',
+                datasetId: req.query.datasetId,
+                userId: req.userId
+            })
+            return res.status(201).json({
+                        message: "Uploaded!",
+                        msi: {
+                            msiId: msi.id,
+                            imzml_file: path.basename(msi.imzml_file),
+                            ibd_file: path.basename(msi.ibd_file),
+                        }
+                    })
+        }
 
     }
     catch(err){
@@ -44,7 +106,7 @@ const newMSI = async (req, res) => {
     }
 }
 
-const updateMSI = async (req, res) => {
+/*const updateMSI = async (req, res) => {
     const imzml_file = req.files.filter(file=> file.toLowerCase().endsWith('imzml'))
     const ibd_file = req.files.filter(file=> file.toLowerCase().endsWith('ibd'))
     const data = req.body
@@ -97,15 +159,17 @@ const updateMSI = async (req, res) => {
             });
     }
     
-}
+}*/
 
-const submitMSI = (req, res) => {
+const submitMSI = async (req, res) => {
 
     const data = req.body
 
     try {
 
-        const msiData = MSI.findByPk(data.msiId)
+        const msiData = await MSI.findByPk(data.msiId)
+        console.log(msiData)
+        console.log(req.userId)
         
         if (msiData.userId !== req.userId){
             return res.status(401).json({
@@ -125,4 +189,4 @@ const submitMSI = (req, res) => {
     
 }
 
-export default {newMSI, updateMSI, submitMSI}
+export default {newMSI, submitMSI}

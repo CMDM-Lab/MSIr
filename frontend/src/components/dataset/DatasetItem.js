@@ -13,12 +13,13 @@ const DatasetItem = ({data})=>{
         try {
             const res = await datasetService.remove({datasetId: data.id})
             if (res.status >= 200 && res.status <300){
-                MySwal.fire({
+                /*MySwal.fire({
                     icon: 'success',
                     title: `${res.data.message}`,
                 }).then(
-                    window.location.reload()
-                )
+                    history.go(0)
+                )*/
+                history.go(0)
             } else{
                 switch(res.status){
                     case 404:
@@ -67,10 +68,10 @@ const DatasetItem = ({data})=>{
     return (
         <>
             <tr>
-                <td style={{width: '60%'}}>
-                    <a href={`/datasets/${data.id}`}><h4>Name: {data.name}</h4></a>
-                    <p>Description: {data.description}</p>
-                    {/*<table className="table" style={{fontSize: '1em'}}>
+                <td style={{width: '20%'}}>
+                    <a href={`/datasets/${data.id}`}><h4>{data.name}</h4></a>
+                    {/*<p>Description: {data.description}</p>
+                    <table className="table" style={{fontSize: '1em'}}>
                         <tbody>
                             <tr>
                                 <td colSpan={3}>Pixel size</td>
@@ -84,6 +85,9 @@ const DatasetItem = ({data})=>{
                                 <td>{}</td>
                             </tr>
                         </tbody></table>*/}
+                </td>
+                <td style={{width:'40%'}}>
+                    <p>{data.description}</p> 
                 </td>
                 {/*<td className="dataset_info">
                     <table className="table" style={{fontSize: '1em'}}>

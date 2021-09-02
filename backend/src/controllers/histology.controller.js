@@ -1,34 +1,57 @@
-import { HistologyImage } from "../db/db";
+import { Dataset, HistologyImage } from "../db/db";
 import {uploadHistologyMiddleware} from '../middleware'
 import path from 'path'
 import fs from 'fs'
+/*import dotenv from 'dotenv-defaults'
 
-const DIR_HIST = process.env.DIR_HIST
+dotenv.config()
+
+const DIR_HIST = process.env.DIR_HIST*/
 
 const newHistologyImg = async (req, res) => {
     
-    const data = req.body
+    const {datasetId} = req.query
+    const dataset = await Dataset.findByPk(Number(datasetId))
+    if (req.userId !== dataset.userId){
+        return res.status(401).json({
+            message: "Unauthorized!"
+        });
+    }
     
     try {
-        
-        if (req.file == undefined) {
-            return res.status(400).json({ message: "Please upload a file!" });
-        }
         await uploadHistologyMiddleware(req,res)
-        console.log(req.files);
 
-        const histologyImage = await HistologyImage.create({
-            file: path.join(DIR_HIST,req.files[0]),
-            datasetId: data.datasetId,
-            userId: data.userId
-        })
-        res.status(201).json({
-            message: "Uploaded!",
-            histologyImage: {
-                histologyImageId: histologyImage.id,
-                file: histologyImage.file
+        let histologyImage = await HistologyImage.findOne({
+            where:{
+                datasetId: datasetId
             }
         })
+
+        if (histologyImage){
+            if (req.file.path !== histologyImage.file){
+                
+                fs.unlink(histologyImage.file, function (err) {
+                    if (err) throw err;
+                    console.log('histology image file deleted!');
+                });
+                histologyImage.file = req.file.path
+                histologyImage.save()
+            }
+        }else{
+            histologyImage = await HistologyImage.create({
+                file: req.file.path,
+                datasetId: datasetId,
+                userId: req.userId
+            })
+        }
+        
+        return res.status(201).json({
+                    message: "Uploaded!",
+                    histologyImage: {
+                        histologyImageId: histologyImage.id,
+                        file: histologyImage.file
+                    }
+                })
     }
     catch (err){
             console.log(err),
@@ -39,7 +62,7 @@ const newHistologyImg = async (req, res) => {
     }
 }
 
-const update = async (req, res) => {
+/*const update = async (req, res) => {
 
     const data = req.body
     
@@ -64,7 +87,7 @@ const update = async (req, res) => {
         await uploadHistologyMiddleware(req,res)
         console.log(req.files);
 
-        histologyImage.file = path.join(DIR_HIST,req.files[0])
+        histologyImage.file = req.file.path
         await histologyImage.save()
 
         res.status(201).json({
@@ -83,10 +106,10 @@ const update = async (req, res) => {
             });
     }
     
-}
+}*/
 
 const show = (req, res) => {
     
 }
 
-export default {newHistologyImg, update, show}
+export default {newHistologyImg, show}

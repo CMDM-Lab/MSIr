@@ -6,7 +6,7 @@ let router = express.Router();
 
 router.post('/new', authJwt.verifyToken ,controller.newHistologyImg)
 
-router.post('/update',authJwt.verifyToken, controller.update)
+//router.post('/update',authJwt.verifyToken, controller.update)
 
 router.get('/show', authJwt.verifyToken, controller.show)
 

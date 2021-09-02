@@ -103,7 +103,12 @@ const Datasets = (prop)=>{
         }
     }
     } catch (error) {
-      
+      console.log(error)
+      MySwal.fire({
+        icon: 'error',
+        title: `Error`,
+        text: `Please retry after a while.`,
+      })
     }
     
 
@@ -143,7 +148,8 @@ const Datasets = (prop)=>{
             <table className="table object_list">
               <thead>
                 <tr>
-                  <th>Dataset name / Dataset info</th>
+                  <th>Dataset Name</th>
+                  <th>Dataset Description</th>
                   {/*<th>MSI data Information</th>*/}
                   <th>Operations</th>
                 </tr>

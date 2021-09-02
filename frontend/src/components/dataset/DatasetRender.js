@@ -8,25 +8,65 @@ import registrationService from '../../services/registration_service'
 import extractionService from '../../services/extraction_service'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import path from 'path'
 
+import {Circle} from "rc-progress"
+import Uploady, { useItemProgressListener, useItemFinishListener} from "@rpldy/uploady";
+import UploadButton from "@rpldy/upload-button";
+import url from '../../config/url'
+import authHeader from '../../services/auth-header'
 
-const DatasetRender = (props) => {
+const UploadProgress = ({setState}) => {
+    const [progress, setProgess] = useState(0);
+    const history = useHistory()
+  
+    const progressData = useItemProgressListener();
+    useItemFinishListener((item)=>{
+        console.log(item)
+        setState({res:item.uploadResponse, status: item.uploadStatus})
+        history.go(0)
+    })
+  
+    if (progressData && progressData.completed > progress) {
+      setProgess(() => progressData.completed);
+    }
+
+    if (progressData &&progress==100){
+        return <></>
+    }
+
+    return (
+        progressData && (
+          <Circle
+            style={{ height: "50px", marginLeft: "20px" }}
+            strokeWidth={2}
+            strokeColor={progress === 100 ? "#00a626" : "#2db7f5"}
+            percent={progress}
+          />
+        )
+      );
+};
+
+const DatasetRender = () => {
     const MySwal = withReactContent(Swal)
 
     const {datasetId} = useParams()
-    const {user} = useAuthState()
+    //const {user} = useAuthState()
     const history = useHistory()
     
     const [dataset, setDataset] = useState() 
     const [registrations,setRegistrations] = useState([])
     const [extractions,setExtractions] = useState([])
+    const [hist, setHist] = useState()
+    const [msi, setMsi] = useState()
 
     const getData = async()=>{
         const res_dataset = await datasetService.show({datasetId})
         const {data} = res_dataset
         if (res_dataset.status >= 200 && res_dataset.status <300){
-            setDataset({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
+            //setDataset({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
+            setDataset(data.dataset)
+            setHist(data.histologyImage)
+            setMsi(data.msi)
             console.log({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
         } else{
             switch(res_dataset.status){
@@ -130,7 +170,6 @@ const DatasetRender = (props) => {
     useEffect(()=>{
         getData()
     },[])
-
     return (
     <>
     <Banner title={dataset?`Dataset: ${dataset.name}`: 'Dataset'} />
@@ -147,7 +186,7 @@ const DatasetRender = (props) => {
                 <a href='/datasets'>Datasets</a>
               </li>
               <li className="breadcrumb-item">
-                <a>{dataset? dataset.name : null}</a>
+                <a>{dataset? `ID: ${dataset.id}` : null}</a>
               </li>
               </ol></div></div>
         <div className="row">
@@ -168,25 +207,33 @@ const DatasetRender = (props) => {
                 <h3>
                     MSI data <span/>
                     <div className='btn-group'>
-                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/msi/new`}>
-                            Edit
+                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href={msi?`/datasets/${datasetId}/msi/edit`:`/datasets/${datasetId}/msi/new`}>
+                            {msi?'Edit':'Upload'}
                         </a>
                     </div>
                 </h3>
                 <ol>
-                    <li>imzML:{dataset? dataset.msi? path.basename(dataset.msi.imzml_file):null:null}</li>
-                    <li>ibd:{dataset? dataset.msi? path.basename(dataset.msi.ibd_file):null:null}</li>
+                    <li>imzML: {msi? msi.imzml_file:null}</li>
+                    <li>ibd: {msi? msi.ibd_file:null}</li>
                 </ol>
                 <h3>
                     Histological Image <span/>
                     <div className='btn-group'>
-                        <button>Upload</button>
-                        {/*<a className='btn btn-secondary text-left' style={{'color':'white'}} href=''>
-                            Edit
-                        </a>*/}
+                        <Uploady
+                        multiple = {false}
+                        destination={{ url: url.API_URL+`/histology/new?datasetId=${datasetId}` , headers:authHeader()}}
+                        accept=".png,.tif,.jpg,.jpeg"
+                        fileFilter={(file)=>{return file.size < 1e+7}}
+                        sendWithFormData = {true}
+                        >
+                            <UploadButton className='btn btn-outline-secondary  col-lg-3 col-3'>{hist?'Remove & Re-upload':'Select File & Upload'}</UploadButton> 
+                            <UploadProgress setState={setHist} />
+                        </Uploady>
+                        <span/>
+                        {hist? <button onClick={()=>{history.push(`/datasets/${datasetId}/image/roi`)}} className='btn btn-outline-primary  col-lg-3 col-3'>Create ROI</button>:null}
                     </div>
                 </h3>
-                <img></img>
+                {hist?<><img/><p>{hist.file}</p></>:null}
             </div>
             <div className='col-lg-3 col-sm-12 border-end'>
                 <h3>Registrations</h3>

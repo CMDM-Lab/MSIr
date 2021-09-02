@@ -38,6 +38,10 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });
 
+app.use((error, req, res, next) => {
+  console.log('This is the rejected field ->', error.field);
+});
+
 db.sync()
 
 const server = app.listen(process.env.PORT || 8080, function () {

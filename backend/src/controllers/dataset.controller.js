@@ -54,14 +54,19 @@ const show = async (req, res) => {
             where:{
                 datasetId:data.datasetId
             },
+            attributes:['datasetId', 'ibd_file', 'imzml_file', 'id']
         })
         const hist = await HistologyImage.findOne({
             where:{
                 datasetId:data.datasetId
             },
+            attributes:['datasetId', 'file', 'id']
         })
 
-        res.json({dataset:dataset, msi:msi, histologyImage:hist})
+        //res.json({dataset:dataset, msi:msi, histologyImage:hist})
+        res.json({dataset:dataset, 
+            msi:msi?{datasetId: msi.datasetId, msiId: msi.id, ibd_file:path.basename(msi.ibd_file),imzml_file:path.basename(msi.imzml_file)}:null, 
+            histologyImage:hist?{datasetId:hist.datasetId, histologyImageId: hist.id, file: path.basename(hist.file)}:null})
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: error.message }); 
@@ -137,9 +142,10 @@ const newDataset = async (req, res) => {
 }
 
 const deleteDataset = async (req, res) => {
-    const data = req.body
+    const {datasetId} = req.body
+    console.log(req.body)
     try {
-        const dataset = await Dataset.findByPk(data.datasetId)
+        const dataset = await Dataset.findByPk(datasetId)
         if (!dataset){
             return res.status(404).json({message:'Dataset not found'})
         }
@@ -149,8 +155,24 @@ const deleteDataset = async (req, res) => {
             });
         }
         /* Need to remove relation record from db */
-
-        dataset.destroy()
+        const msi = await MSI.findOne({where:{datasetId:datasetId}})
+        const hist = await HistologyImage.findOne({where:{datasetId:datasetId}})
+        if (msi){
+            await msi.destroy()
+        }
+        if (hist){
+            await hist.destroy()
+        }
+        
+        fs.rmdir(path.join(histDir,dataset.id.toString()), { recursive: true }, (err) => {
+            if (err) {throw err;}
+            console.log(`${path.join(histDir,dataset.id.toString())} is deleted!`);
+        });
+        fs.rmdir(path.join(msiDir,dataset.id.toString()), { recursive: true }, (err) => {
+            if (err) {throw err;}
+            console.log(`${path.join(msiDir,dataset.id.toString())} is deleted!`);
+        });
+        await dataset.destroy()
 
         return res.json({message:"Delete dataset successfully!"})
 

@@ -6,8 +6,8 @@ let router = express.Router();
 
 router.post('/new', authJwt.verifyToken, controller.newMSI)
 
-router.post('/update', authJwt.verifyToken, controller.updateMSI)
+//router.post('/update', authJwt.verifyToken, controller.updateMSI)
 
-router.post('/sumbit', authJwt.verifyToken, controller.submitMSI)
+router.post('/submit', authJwt.verifyToken, controller.submitMSI)
 
 export default router

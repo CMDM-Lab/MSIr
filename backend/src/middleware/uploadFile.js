@@ -1,6 +1,9 @@
 import multer from 'multer'
 import util from 'util'
 import path from 'path'
+import dotenv from 'dotenv-defaults'
+
+dotenv.config()
 
 const DIR = process.env.ROOT_STORAGE
 const DIR_HIST = process.env.DIR_HIST
@@ -8,7 +11,7 @@ const DIR_MSI = process.env.DIR_MSI
 
 const storage_msi = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, DIR_MSI);
+        cb(null, path.join(DIR_MSI,req.query.datasetId));
     },
     filename: (req, file, cb) => {
         const fileName = file.originalname.toLowerCase().split(' ').join('-');
@@ -18,7 +21,7 @@ const storage_msi = multer.diskStorage({
 
 const storage_hist = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, DIR_HIST);
+        cb(null, path.join(DIR_HIST,req.query.datasetId));
     },
     filename: (req, file, cb) => {
         const fileName = file.originalname.toLowerCase().split(' ').join('-');
@@ -52,7 +55,7 @@ var upload_Histology = multer({
     }
 });
 
-export var uploadMSIMiddleware = util.promisify(upload_MSI.array('MSIDataArray', 2))
+export var uploadMSIMiddleware = util.promisify(upload_MSI.single('file'))
 export var uploadHistologyMiddleware = util.promisify(upload_Histology.single('file'))
 
 export default {uploadMSIMiddleware,uploadHistologyMiddleware}

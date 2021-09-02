@@ -2,7 +2,7 @@ import React from "react";
 
 const footerCustom = ()=>{
     return (
-        <footer className="footr_area p_50">
+        <footer className="footr_area p_t_100">
             <div className="footer_widget_area">
                 <div className="container">
                     <h5>MSI Registrar 2 is developed by CMDM Lab at National Taiwan University.</h5>

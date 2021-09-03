@@ -5,6 +5,7 @@ import Banner from "../public/Banner"
 import datasetService from "../../services/datasets_service"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { handleResponse } from "../../utils/handleResponse"
 
 const DatasetEdit = () => {
     const MySwal = withReactContent(Swal)
@@ -20,34 +21,7 @@ const DatasetEdit = () => {
             setName(res.data.dataset.name)
             setDescription(res.data.dataset.description)
         } else{
-            switch(res.status){
-                case 404:
-                case 401:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res.data.message}`,
-                    }).then(()=>{
-                        history.goBack()
-                    })
-                    break
-                case 403:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res.data.message}`,
-                    }).then(()=>{
-                        history.push('/users/sign_in')
-                    })
-                    break
-                case 500:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res.data.message}`,
-                        text: `Please retry after a while. (${res.data.message})`,
-                      }).then(()=>{
-                        history.goBack()
-                    })
-                    break
-            }
+            handleResponse(res,MySwal,history)
         }
     }
 
@@ -85,34 +59,7 @@ const DatasetEdit = () => {
                     history.goBack(); 
                   })
             }else{
-                switch(res.status){
-                    case 404:
-                    case 401:
-                        MySwal.fire({
-                            icon: 'error',
-                            title: `${res.data.message}`,
-                        }).then(()=>{
-                            history.goBack()
-                        })
-                        break
-                    case 403:
-                        MySwal.fire({
-                            icon: 'error',
-                            title: `${res.data.message}`,
-                        }).then(()=>{
-                            history.push('/users/sign_in')
-                        })
-                        break
-                    case 500:
-                        MySwal.fire({
-                            icon: 'error',
-                            title: `${res.data.message}`,
-                            text: `Please retry after a while. (${res.data.message})`,
-                          }).then(()=>{
-                            history.goBack()
-                        })
-                        break
-                }
+                handleResponse(res, MySwal, history)
             }
         } catch (error) {
             MySwal.fire({

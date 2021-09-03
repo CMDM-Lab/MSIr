@@ -254,6 +254,7 @@ HistologyImage.hasMany(Registration)
 MSI.hasMany(Registration)
 MSI.hasMany(Extraction)
 HistologyROI.hasMany(Extraction)
+Registration.hasMany(Extraction)
 
 
 export {User, Dataset, Registration, Extraction, HistologyImage, HistologyROI, MSI}

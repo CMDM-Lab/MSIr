@@ -10,6 +10,7 @@ import authHeader from "../../services/auth-header";
 import url from '../../config/url'
 import path from "path";
 import msi_service from "../../services/msi_service";
+import { handleResponse } from "../../utils/handleResponse";
 
 const UploadProgress = ({setState}) => {
     const [progress, setProgess] = useState(0);
@@ -17,7 +18,7 @@ const UploadProgress = ({setState}) => {
     const progressData = useItemProgressListener();
     useItemFinishListener((item)=>{
         console.log(item)
-        setState({res:item.uploadResponse, status: item.uploadStatus})
+        setState({data:item.uploadResponse.data, status: item.uploadStatus})
     })
   
     if (progressData && progressData.completed > progress) {
@@ -71,7 +72,7 @@ const UploadMSI = (props) => {
             }
             /*axios post接後端回傳response*/
             const res = await msi_service.submit({
-                msiId: imzmlRes.res.data.msi.msiId,
+                msiId: imzmlRes.data.msi.msiId,
                 bin_size: binSize,
                 pixel_size: axisSize,
                 datasetId: datasetId
@@ -80,30 +81,7 @@ const UploadMSI = (props) => {
             if (res.status >= 200 && res.status <300){
                 MySwal.fire('Success',data.message,'success').then(()=>history.goBack())
             }else{
-                switch(res.status){
-                    case 404:
-                    case 401:
-                        MySwal.fire({
-                            icon: 'error',
-                            title: `${data.message}`,
-                        })
-                        break
-                    case 403:
-                        MySwal.fire({
-                            icon: 'error',
-                            title: `${data.message}`,
-                        }).then(()=>{
-                            history.push('/users/sign_in')
-                        })
-                        break
-                    case 500:
-                        MySwal.fire({
-                            icon: 'error',
-                            title: `${data.message}`,
-                            text: `Please retry after a while. (${data.message})`,
-                          })
-                        break
-                }
+                handleResponse(res, MySwal, history)
             }
         } catch (error) {
             console.log(error)
@@ -131,7 +109,7 @@ const UploadMSI = (props) => {
                             <a href='/datasets'>Datasets</a>
                         </li>
                         <li className="breadcrumb-item">
-                            <a href='/datasets'>Dataset name{}</a>
+                            <a href={`/datasets/${datasetId}`}>ID: {datasetId}</a>
                         </li>
                         <li className="breadcrumb-item active">
                             <p>Upload MSI data</p>
@@ -152,8 +130,8 @@ const UploadMSI = (props) => {
                         fileFilter={(file)=>{return file.size < 1e+7}}
                         maxGroupSize = {1}
                     >
-                        <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>Select Files & Upload </UploadButton> 
-                        {imzmlRes? <p>{imzmlRes.res.data.msi.imzml_file} Upload Finish</p>:null}
+                        <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>{imzmlRes?'Remove & Re-upload':'Select Files & Upload' }</UploadButton> 
+                        {imzmlRes? <p>{imzmlRes.data.msi.imzml_file} Upload Finish</p>:null}
                         <UploadProgress setState={setImzmlRes}/>
                     </Uploady>
 
@@ -179,8 +157,8 @@ const UploadMSI = (props) => {
                         fileFilter={(file)=>{return file.size < 1e+7}}
                         maxGroupSize = {1}
                     >
-                        <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>Select Files & Upload </UploadButton>
-                        {ibdRes? <p>{ibdRes.res.data.msi.ibd_file} Upload Finish</p>:null} 
+                        <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>{ibdRes?'Remove & Re-upload':'Select Files & Upload' }</UploadButton>
+                        {ibdRes? <p>{ibdRes.data.msi.ibd_file} Upload Finish</p>:null} 
                         <UploadProgress setState={setIbdRes}/>
                     </Uploady>
 

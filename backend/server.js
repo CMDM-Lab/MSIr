@@ -22,10 +22,10 @@ var corsOptions = {
   };
   
 app.use(cors(corsOptions));
-/*
+
 //set static path 
-app.use('',express.static(__dirname + ''))
-*/
+app.use('/api/upload',express.static(process.env.DIR_HIST))
+
 app.use('/api/auth', auth)
 app.use('/api/datasets', dataset)
 app.use('/api/msi', msi)

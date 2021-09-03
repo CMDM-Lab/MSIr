@@ -5,6 +5,7 @@ import Banner from "../public/Banner";
 import { useAuthState } from "../../services/auth_service";
 import datasetService from "../../services/datasets_service";
 import { useHistory } from "react-router-dom";
+import { handleResponse } from "../../utils/handleResponse";
 
 const CreateDataset = (props) => {
 
@@ -51,13 +52,7 @@ const CreateDataset = (props) => {
                     history.push(`/datasets/${res.data.datasetId}`); 
                   })
             }else{
-                if (res.status >= 400){
-                    MySwal.fire({
-                      icon: 'error',
-                      title: 'Oops... Something went wrong!',
-                      text: `Please retry after a while. (${res.data.message})`,
-                    })
-                }
+                handleResponse(res, MySwal, history)
             }
         } catch (error) {
             MySwal.fire({

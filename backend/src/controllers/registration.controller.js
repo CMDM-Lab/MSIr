@@ -27,6 +27,9 @@ const deleteRegistration = async (req, res) => {
     const data = req.body
     try {
         const registration = await Registration.findByPk(data.registrationId)
+        if (!registration){
+            return res.status(404).json({message:'This registration is not found.'})
+        }
         if (registration.userId !== req.userId){
             return res.status(401).json({message: "Unauthorized!"})
         }

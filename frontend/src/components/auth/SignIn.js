@@ -1,5 +1,5 @@
 import '../../stylesheet/signin.css'
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
@@ -7,7 +7,7 @@ import { required, validEmail, validpassword } from '../../utils/validation'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
-import {useAuthDispatch, useAuthState, loginUser} from "../../services/auth_service";
+import {useAuthDispatch, useAuthState, loginUser, logout} from "../../services/auth_service";
 import Banner from '../public/Banner';
 import { useHistory } from 'react-router-dom';
 
@@ -56,7 +56,7 @@ const SignIn = (props) => {
           text: 'Signed in successfully.',
           confirmButtonText: 'OK'
         }).then(()=>{
-          history.push("/home"); 
+          history.goBack(); 
         })
       } catch (error) {
           MySwal.fire({
@@ -67,6 +67,10 @@ const SignIn = (props) => {
         }
     }
   };
+
+  useEffect(()=>{
+    logout(dispatch)
+  },[])
 
   return (
     <>

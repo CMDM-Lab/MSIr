@@ -119,6 +119,14 @@ body, p, h1, h2, h3, h4, h5, h6 {
   padding: 100px 0px 0px 0px;
 }
 
+.p_b_50 {
+  padding: 0px 0px 50px 0px;
+}
+
+.p_b_100 {
+  padding: 0px 0px 100px 0px;
+}
+
 iframe {
   border: none;
 }

@@ -1,10 +1,39 @@
-import React from "react"
-import { useParams } from "react-router"
+import React, { useEffect, useState } from "react"
+import { useParams, useHistory } from "react-router"
+import registrationService from "../../services/registration_service"
 import Banner from "../public/Banner"
+import RegistrationItem from "./RegistrationItem"
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import {handleResponse} from "../../utils/handleResponse"
 
 const Registrations = () => {
 
+    const MySwal = withReactContent(Swal)
+
     const {datasetId} = useParams()
+    const history = useHistory()
+    const [registrations, setRegistrations] = useState([{id:1,perform_type:'intensity',roi:{blend_img_file:'jpg'},result_file:'png',transform_matrix_file:'as',status:'finish'}])
+
+    const getData = async ()=>{
+      try {
+        const res = await registrationService.all({datasetId})
+        const {data} = res.data
+        console.log(data)
+        if (res.status >= 200 && res.status <300){
+          //setRegistrations(data)
+        } else{
+          handleResponse(res,MySwal,history)
+        }
+      } catch (error) {
+        console.log(error) 
+      }  
+    }
+
+    useEffect(()=>{
+      getData()
+    },[])
+
 
     return (
       <>
@@ -17,7 +46,7 @@ const Registrations = () => {
               <ol className="breadcrumb">
                 <li className="breadcrumb-item"><a href="/">Home</a></li>
                 <li className="breadcrumb-item"><a href="/datasets">Datasets</a></li>
-                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>{''}Dataset Name</a></li>
+                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>ID: {datasetId}</a></li>
                 <li className="breadcrumb-item active"><a>Registrations</a></li>
               </ol>
             </div>
@@ -44,33 +73,21 @@ const Registrations = () => {
                     <th >Status</th>
                     <th width="25%">Operation</th>
                   </tr></thead>
-                <tbody><tr>
-                    <td>
-                      <a className="btn btn-success" href={`/datasets/${datasetId}/registrations/`}>
-                        ID: {}
-                      </a><br />
-                      <br />
-                      <li>Registration type: {}</li>
-                      <br />
-                    </td>
-                    <td>
-                        <img alt={''} className="img-fluid img-thumbnail" src={''} />
-                    </td>
-                    <td>
-                      <img alt={''} className="img-fluid img-thumbnail viewer" src={''} />
-                    </td>
-                    <td>{}</td>
-                    <td>
-                      <div className="btn-group">
-                        <a href={''}><button className="btn btn-outline-primary">
-                          <i className="fad fa-cloud-download" />
-                            Download Transform Matrix 
-                          </button></a>
-                        <a className="delete-object btn btn-outline-danger" data-tippy-content="<i class='fad fa-file-minus fa-2x msi-icon'></i> Delete this image" data-id={1} data-object="registration" title="Delete this registration" href="/delete_registration"><svg className="svg-inline--fa fa-trash-alt fa-w-14 fa-2x" data-fa-transform="shrink-5" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="trash-alt" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg style={{transformOrigin: '0.4375em 0.5em'}}><g transform="translate(224 256)"><g transform="translate(0, 0)  scale(0.6875, 0.6875)  rotate(0 0 0)"><path fill="currentColor" d="M296 432h16a8 8 0 0 0 8-8V152a8 8 0 0 0-8-8h-16a8 8 0 0 0-8 8v272a8 8 0 0 0 8 8zm-160 0h16a8 8 0 0 0 8-8V152a8 8 0 0 0-8-8h-16a8 8 0 0 0-8 8v272a8 8 0 0 0 8 8zM440 64H336l-33.6-44.8A48 48 0 0 0 264 0h-80a48 48 0 0 0-38.4 19.2L112 64H8a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h24v368a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V96h24a8 8 0 0 0 8-8V72a8 8 0 0 0-8-8zM171.2 38.4A16.1 16.1 0 0 1 184 32h80a16.1 16.1 0 0 1 12.8 6.4L296 64H152zM384 464a16 16 0 0 1-16 16H80a16 16 0 0 1-16-16V96h320zm-168-32h16a8 8 0 0 0 8-8V152a8 8 0 0 0-8-8h-16a8 8 0 0 0-8 8v272a8 8 0 0 0 8 8z" transform="translate(-224 -256)" /></g></g></svg>{/* <i class="fal fa-trash-alt fa-2x" data-fa-transform="shrink-5"></i> Font Awesome fontawesome.com */}
-                        </a></div>
-                    </td>
-                  </tr>
-                </tbody></table>
+                <tbody>
+                  {registrations.length>0?registrations.map((registration)=>{
+                    return <RegistrationItem registration={registration} datasetId={datasetId} />
+                  }):<tr>
+                      <td>
+                        <p>No Registration</p>
+                        <a href={`/datasets/${datasetId}/registrations/new`}></a>
+                      </td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

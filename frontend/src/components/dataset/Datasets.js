@@ -5,8 +5,8 @@ import Banner from '../public/Banner'
 import datasetService from '../../services/datasets_service'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import path from 'path'
 import { useHistory } from 'react-router-dom'
+import { handleResponse } from '../../utils/handleResponse'
 
 const Datasets = (prop)=>{
   
@@ -17,43 +17,20 @@ const Datasets = (prop)=>{
   const [datasets, setDatasets] = useState([])
 
   const getData = async()=>{
-    const res_dataset = await datasetService.all()
-    const {data} = res_dataset.data
-    console.log(data)
-    if (res_dataset.status >= 200 && res_dataset.status <300){
+    try {
+      const res_dataset = await datasetService.all()
+      const {data} = res_dataset.data
+      console.log(data)
+      if (res_dataset.status >= 200 && res_dataset.status <300){
         setDatasets(data)
-        //console.log({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
-    } else{
-        switch(res_dataset.status){
-            case 404:
-            case 401:
-                MySwal.fire({
-                    icon: 'error',
-                    title: `${res_dataset.data.message}`,
-                }).then(()=>{
-                    history.goBack()
-                })
-                break
-            case 403:
-                MySwal.fire({
-                    icon: 'error',
-                    title: `${res_dataset.data.message}`,
-                }).then(()=>{
-                    history.push('/users/sign_in')
-                })
-                break
-            case 500:
-                MySwal.fire({
-                    icon: 'error',
-                    title: `${res_dataset.data.message}`,
-                    text: `Please retry after a while. (${res_dataset.data.message})`,
-                  }).then(()=>{
-                    history.goBack()
-                })
-                break
-        }
+      } else{
+        handleResponse(res_dataset, MySwal, history)
     }
-    }
+    } catch (error) {
+      console.log(error) 
+    }  
+  }
+
 
   useEffect(()=>{
     getData()
@@ -73,34 +50,7 @@ const Datasets = (prop)=>{
           history.push(`/datasets/${res.data.datasetId}`); 
         })
     } else{
-        switch(res.status){
-            case 404:
-            case 401:
-                MySwal.fire({
-                    icon: 'error',
-                    title: `${res.data.message}`,
-                }).then(()=>{
-                    history.goBack()
-                })
-                break
-            case 403:
-                MySwal.fire({
-                    icon: 'error',
-                    title: `${res.data.message}`,
-                }).then(()=>{
-                    history.push('/users/sign_in')
-                })
-                break
-            case 500:
-                MySwal.fire({
-                    icon: 'error',
-                    title: `${res.data.message}`,
-                    text: `Please retry after a while. (${res.data.message})`,
-                  }).then(()=>{
-                    history.goBack()
-                })
-                break
-        }
+        handleResponse(res, MySwal, history)
     }
     } catch (error) {
       console.log(error)
@@ -134,10 +84,6 @@ const Datasets = (prop)=>{
           <div className="col-lg-2">
             <div className="challange_text_inner">
               <div className="l_title">
-                {/*<span className="fa-stack fa-2x">
-                                    <i className="fad fa-square fa-stack-2x" data-fa-transform="rotate-60" style={{-faPrimaryColor: '#A268C6', -faSecondaryColor: '#A268C6'}} />
-                                    <i className="fad fa-square fa-stack-2x fa-inverse" data-fa-transform="rotate-30 shrink-1 left-1" style={{-faPrimaryColor: '#72BBDE', -faSecondaryColor: '#72BBDE'}} />
-                </span>*/}
                 <h6>Quick menu</h6>
                 <div className="btn-group-vertical">
                   <a className='btn btn-warning' onClick={onClickExample}>Import an example</a>
@@ -161,13 +107,18 @@ const Datasets = (prop)=>{
                   <tr>
                     <td>
                       <p>No Dataset</p>
-                      <a href={'/datasets/new'}><button className='btn btn-primary'>Create a new Dataset</button></a>
                     </td>
+                    <td></td>
+                    <td></td>
                   </tr>
                     )}
               </tbody>
-              </table></div></div></div></section>
-              </>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+    </>
 
     )
 }

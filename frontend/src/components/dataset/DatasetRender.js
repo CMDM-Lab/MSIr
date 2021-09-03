@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { useHistory } from 'react-router-dom'
-import { useAuthState } from '../../services/auth_service'
 import Banner from '../public/Banner'
 import datasetService from '../../services/datasets_service'
 import registrationService from '../../services/registration_service'
@@ -14,6 +13,10 @@ import Uploady, { useItemProgressListener, useItemFinishListener} from "@rpldy/u
 import UploadButton from "@rpldy/upload-button";
 import url from '../../config/url'
 import authHeader from '../../services/auth-header'
+import RegisterCard from './RegisterCard'
+import running from '../../stylesheet/running.png';
+import ExtractCard from './ExtractCard'
+import { handleResponse } from '../../utils/handleResponse'
 
 const UploadProgress = ({setState}) => {
     const [progress, setProgess] = useState(0);
@@ -60,116 +63,40 @@ const DatasetRender = () => {
     const [msi, setMsi] = useState()
 
     const getData = async()=>{
-        const res_dataset = await datasetService.show({datasetId})
-        const {data} = res_dataset
-        if (res_dataset.status >= 200 && res_dataset.status <300){
-            //setDataset({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
-            setDataset(data.dataset)
-            setHist(data.histologyImage)
-            setMsi(data.msi)
-            console.log({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
-        } else{
-            switch(res_dataset.status){
-                case 404:
-                case 401:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res_dataset.data.message}`,
-                    }).then(()=>{
-                        history.goBack()
-                    })
-                    break
-                case 403:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res_dataset.data.message}`,
-                    }).then(()=>{
-                        history.push('/users/sign_in')
-                    })
-                    break
-                case 500:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res_dataset.data.message}`,
-                        text: `Please retry after a while. (${res_dataset.data.message})`,
-                      }).then(()=>{
-                        history.goBack()
-                    })
-                    break
+        try {
+            const res_dataset = await datasetService.show({datasetId})
+            const {data} = res_dataset
+            if (res_dataset.status >= 200 && res_dataset.status <300){
+                setDataset(data.dataset)
+                setHist(data.histologyImage)
+                setMsi(data.msi)
+                console.log({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
+            } else{
+                handleResponse(res_dataset, MySwal, history)
             }
-        }
-        const res_regist = await registrationService.all({datasetId})
-        if (res_regist.status >= 200 && res_regist.status <300){
-            setRegistrations([...res_regist.data.data])
-        } else{
-            switch(res_regist.status){
-                case 404:
-                case 401:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res_regist.data.message}`,
-                    }).then(()=>{
-                        history.goBack()
-                    })
-                    break
-                case 403:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res_regist.data.message}`,
-                    }).then(()=>{
-                        history.push('/users/sign_in')
-                    })
-                    break
-                case 500:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res_regist.data.message}`,
-                        text: `Please retry after a while. (${res_regist.data.message})`,
-                      }).then(()=>{
-                        history.goBack()
-                    })
-                    break
+            const res_regist = await registrationService.all({datasetId})
+            if (res_regist.status >= 200 && res_regist.status <300){
+                console.log(res_regist.data.data)
+                setRegistrations([...res_regist.data.data])
+            } else{
+                handleResponse(res_regist, MySwal, history)
             }
-        }
-        const res_extract = await extractionService.all({datasetId})
-        if (res_extract.status >= 200 && res_extract.status <300){
-            setExtractions([...res_extract.data.data])
-        } else{
-            switch(res_extract.status){
-                case 404:
-                case 401:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res_extract.data.message}`,
-                    }).then(()=>{
-                        history.goBack()
-                    })
-                    break
-                case 403:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res_extract.data.message}`,
-                    }).then(()=>{
-                        history.push('/users/sign_in')
-                    })
-                    break
-                case 500:
-                    MySwal.fire({
-                        icon: 'error',
-                        title: `${res_extract.data.message}`,
-                        text: `Please retry after a while. (${res_extract.data.message})`,
-                      }).then(()=>{
-                        history.goBack()
-                    })
-                    break
+            const res_extract = await extractionService.all({datasetId})
+            if (res_extract.status >= 200 && res_extract.status <300){
+                console.log(res_extract.data.data)
+                setExtractions([...res_extract.data.data])
+            } else{
+                handleResponse(res_extract, MySwal, history)
             }
+            } catch (error) {
+            console.log(error)
         }
-
     }
 
     useEffect(()=>{
         getData()
     },[])
+
     return (
     <>
     <Banner title={dataset?`Dataset: ${dataset.name}`: 'Dataset'} />
@@ -189,33 +116,33 @@ const DatasetRender = () => {
                 <a>{dataset? `ID: ${dataset.id}` : null}</a>
               </li>
               </ol></div></div>
-        <div className="row">
+        <div className="row p_b_100">
             <div className="col-lg-1 col-1" />
             <div className='col-lg-5 col-sm-12 dataset_info border-end'>
                 <h3>
                     Dataset details <span/>
-                    <div className='btn-group'>
+                    <div className='btn-group col-lg-2 col-2'>
                         <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/edit`}>
                             Edit
                         </a>
                     </div>
                 </h3>
-                <ol>
-                    <li>Dataset Name: {dataset? dataset.name : null}</li>
-                    <li>Dataset Description: {dataset? dataset.description : null}</li>
-                </ol>
+                <ul>
+                    <li>Name: {dataset? dataset.name : null}</li>
+                    <li>Description: {dataset? dataset.description : null}</li>
+                </ul>
                 <h3>
                     MSI data <span/>
-                    <div className='btn-group'>
+                    <div className='btn-group col-lg-2 col-2'>
                         <a className='btn btn-secondary text-left' style={{'color':'white'}} href={msi?`/datasets/${datasetId}/msi/edit`:`/datasets/${datasetId}/msi/new`}>
-                            {msi?'Edit':'Upload'}
+                            {msi?'Edit':'Select File & Upload'}
                         </a>
                     </div>
                 </h3>
-                <ol>
+                <ul>
                     <li>imzML: {msi? msi.imzml_file:null}</li>
                     <li>ibd: {msi? msi.ibd_file:null}</li>
-                </ol>
+                </ul>
                 <h3>
                     Histological Image <span/>
                     <div className='btn-group'>
@@ -226,14 +153,21 @@ const DatasetRender = () => {
                         fileFilter={(file)=>{return file.size < 1e+7}}
                         sendWithFormData = {true}
                         >
-                            <UploadButton className='btn btn-outline-secondary  col-lg-3 col-3'>{hist?'Remove & Re-upload':'Select File & Upload'}</UploadButton> 
+                            <UploadButton className='btn btn-outline-secondary col-lg-2 col-2'>{hist?'Remove & Re-upload':'Select File & Upload'}</UploadButton> 
                             <UploadProgress setState={setHist} />
                         </Uploady>
                         <span/>
-                        {hist? <button onClick={()=>{history.push(`/datasets/${datasetId}/image/roi`)}} className='btn btn-outline-primary  col-lg-3 col-3'>Create ROI</button>:null}
+                        {hist? <button onClick={()=>{history.push(`/datasets/${datasetId}/image/roi`)}} className='btn btn-outline-primary  col-lg-2 col-2'>Create ROI</button>:null}
                     </div>
                 </h3>
-                {hist?<><img/><p>{hist.file}</p></>:null}
+                {hist?
+                <div className='images card-columns'>
+                    <div className='card'>
+                        <img src={url.API_URL+`/upload/${datasetId}/${hist.file}`} className='card-img-top viewer'/>
+                        <div className='card-body'><h5 className='card-title'>{hist.file}</h5></div>
+                    </div>
+                </div>
+                :null}
             </div>
             <div className='col-lg-3 col-sm-12 border-end'>
                 <h3>Registrations</h3>
@@ -245,7 +179,11 @@ const DatasetRender = () => {
                         All Registrations
                     </a>
                 </div>
-                {registrations.length>0?(<div></div>):(<p>No Registration Result</p>)}
+                {registrations.length>0?(
+                    registrations.map((registration)=>{
+                        return <RegisterCard registerData={registration} />
+                    })
+                ):(<p>No Registration Result</p>)}
             </div>
             <div className='col-lg-3 col-sm-12'>
                 <h3>Data Extractions</h3>
@@ -260,10 +198,9 @@ const DatasetRender = () => {
                 </div>
                 {extractions.length>0?(
                  extractions.map((extract,idx)=>{
-                    if (extract.status!=='finished'){
-                        return 
+                    return<ExtractCard extractData={extract}/>
                     }
-                 })
+                 )
                 ):(<p>No Extraction</p>)}
             </div>
         </div>

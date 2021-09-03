@@ -189,4 +189,40 @@ const submitMSI = async (req, res) => {
     
 }
 
-export default {newMSI, submitMSI}
+const getMSI = async (req, res) => {
+
+    const {datasetId} = req.query
+
+    try {
+
+        const msiData = await MSI.findOne({
+            where:{
+                datasetId: datasetId
+            }
+        })
+        
+        if (msiData){
+            if (msiData.userId !== req.userId){
+                return res.status(401).json({
+                    message: "Unauthorized!"
+                });
+            }
+
+            res.json({msi:
+                {msiId:msiData.id,
+                datasetId: msiData.datasetId, 
+                ibd_file:path.basename(msiData.ibd_file),
+                imzml_file:path.basename(msiData.imzml_file),
+                bin_size: msiData.bin_size,
+                pixel_size: msiData.pixel_size
+            }})
+        }else{
+            res.json({msi:{}})
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message }); 
+    }
+    
+}
+
+export default {newMSI, submitMSI, getMSI}

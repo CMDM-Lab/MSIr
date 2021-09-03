@@ -10,4 +10,6 @@ router.post('/new', authJwt.verifyToken, controller.newMSI)
 
 router.post('/submit', authJwt.verifyToken, controller.submitMSI)
 
+router.get('/get', authJwt.verifyToken, controller.getMSI)
+
 export default router

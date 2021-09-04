@@ -13,7 +13,7 @@ const Registrations = () => {
 
     const {datasetId} = useParams()
     const history = useHistory()
-    const [registrations, setRegistrations] = useState([{id:1,perform_type:'intensity',roi:{blend_img_file:'jpg'},result_file:'png',transform_matrix_file:'as',status:'finish'}])
+    const [registrations, setRegistrations] = useState([{id:1,perform_type:'intensity',roi:{blend_img_file:'test_slide[2709].jpg'},result_file:'test_slide[2709].jpg',transform_matrix_file:'as',status:'finish'}])
 
     const getData = async ()=>{
       try {
@@ -41,12 +41,12 @@ const Registrations = () => {
         <section className="challange_area">
         <div className="container-fluid">
           <div className="row">
-            <div className="col-lg-2 col-3 ms-3" />
+            <div className="col-lg-1 col-1 ms-3" />
             <div className="col-lg-6 col-6" style={{paddingLeft: 0}}>
               <ol className="breadcrumb">
                 <li className="breadcrumb-item"><a href="/">Home</a></li>
                 <li className="breadcrumb-item"><a href="/datasets">Datasets</a></li>
-                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>ID: {datasetId}</a></li>
+                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</a></li>
                 <li className="breadcrumb-item active"><a>Registrations</a></li>
               </ol>
             </div>

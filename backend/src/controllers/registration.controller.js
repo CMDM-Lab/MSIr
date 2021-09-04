@@ -79,14 +79,13 @@ const all = async (req, res) => {
 }
 
 const show = async (req, res) => {
-    const data = req.body
+    const data = req.query
     try {
-        const registration = await Registration.findOne({
-            where: {
-                id: data.registrationId,
-            },
+        const registration = await Registration.findByPk(data.registrationId)
             //attributes: { exclude: ['userId',]}
-        })
+        if (!registration){
+            return res.status(404).json({message: "Not Found"})
+        }
         if (registration.userId !== req.userId){
             return res.status(401).json({
                 message: "Unauthorized!"

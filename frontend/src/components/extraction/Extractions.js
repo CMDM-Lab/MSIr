@@ -1,11 +1,38 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { useParams, useHistory } from "react-router"
 import Banner from "../public/Banner"
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import {handleResponse} from "../../utils/handleResponse"
+import extractionService from "../../services/extraction_service"
 
 const Extractions = () => {
 
+  const MySwal = withReactContent(Swal)
+
   const {datasetId} = useParams()
   const history = useHistory()
+  const [extractions, setExtractions] = useState([])
+  
+  const getData = async ()=>{
+    try {
+      const res = await extractionService.all({datasetId})
+      const {data} = res.data
+      console.log(data)
+      if (res.status >= 200 && res.status <300){
+        setExtractions(data)
+      } else{
+        handleResponse(res,MySwal,history)
+      }
+    } catch (error) {
+      console.log(error) 
+    }  
+  }
+
+  useEffect(()=>{
+    getData()
+  },[])
+  
 
     return (
       <>
@@ -18,7 +45,7 @@ const Extractions = () => {
               <ol className="breadcrumb">
                 <li className="breadcrumb-item"><a href="/">Home</a></li>
                 <li className="breadcrumb-item"><a href="/datasets">Datasets</a></li>
-                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>{''}Dataset Name</a></li>
+                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</a></li>
                 <li className="breadcrumb-item active"><a>Extractions</a></li>
               </ol>
             </div>

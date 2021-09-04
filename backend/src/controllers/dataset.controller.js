@@ -33,12 +33,7 @@ const all = async (req, res) => {
 const show = async (req, res) => {
     const data = req.query
     try {
-        const dataset = await Dataset.findOne({
-            where:{
-                id:data.datasetId
-            },
-            //attributes: ['id', 'name','description',]
-        })
+        const dataset = await Dataset.findByPk(data.datasetId)
         if (!dataset){
             return res.status(404).json({
                 message: "Not Found"

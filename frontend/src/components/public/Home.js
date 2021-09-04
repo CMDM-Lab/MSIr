@@ -13,7 +13,7 @@ const Home = (prop) =>{
                 <span class="fa-stack fa-2x">
                 </span>
                 <h6>Discover the features</h6>
-                <h2>What is MSI Registrar?</h2>
+                <h2>What is MSI Registrar II?</h2>
               </div>
               <p>MSI Registrar is a web service for automatic image registration between MSI images and H&E images. We deployed a generic contour-based approach to perform co-registration in a few seconds for various kinds of MSI techniques.</p>
             </div>

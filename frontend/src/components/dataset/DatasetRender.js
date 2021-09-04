@@ -113,7 +113,7 @@ const DatasetRender = () => {
                 <a href='/datasets'>Datasets</a>
               </li>
               <li className="breadcrumb-item">
-                <a>{dataset? `ID: ${dataset.id}` : null}</a>
+                <a>{dataset? `Dataset ID: ${dataset.id}` : null}</a>
               </li>
               </ol></div></div>
         <div className="row p_b_100">
@@ -121,7 +121,7 @@ const DatasetRender = () => {
             <div className='col-lg-5 col-sm-12 dataset_info border-end'>
                 <h3>
                     Dataset details <span/>
-                    <div className='btn-group col-lg-2 col-2'>
+                    <div className='btn-group col-lg-3 col-3'>
                         <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/edit`}>
                             Edit
                         </a>
@@ -133,7 +133,7 @@ const DatasetRender = () => {
                 </ul>
                 <h3>
                     MSI data <span/>
-                    <div className='btn-group col-lg-2 col-2'>
+                    <div className='btn-group col-lg-3 col-3'>
                         <a className='btn btn-secondary text-left' style={{'color':'white'}} href={msi?`/datasets/${datasetId}/msi/edit`:`/datasets/${datasetId}/msi/new`}>
                             {msi?'Edit':'Select File & Upload'}
                         </a>

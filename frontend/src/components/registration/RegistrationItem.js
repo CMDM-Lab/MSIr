@@ -45,13 +45,13 @@ const RegistrationItem = ({datasetId, registration})=>{
     }
 
     return (
-        <tr>
+        <tr key={registration.id}>
             <td>
                 <a className="btn btn-success" href={`/datasets/${datasetId}/registrations/${registration.id}`}>
                     ID: {registration.id}
                 </a><br />
                 <br />
-                <li>Registration type: {registration.perform_type}</li>
+                <p>Registration type: {registration.perform_type}</p>
                 <br />
             </td>
             <td>
@@ -69,7 +69,7 @@ const RegistrationItem = ({datasetId, registration})=>{
                         registration.status === 'finish'?(
                             <a className='col-lg-6 col-6' href={url.API_URL+`/upload/${datasetId}/${registration.transform_matrix_file}`}>
                                 <button className="btn btn-outline-primary">
-                                    Download Transform Matrix 
+                                    Transform Matrix 
                                 </button>
                             </a>
                         ):null

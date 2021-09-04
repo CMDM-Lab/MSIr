@@ -86,7 +86,7 @@ const DatasetEdit = () => {
                             <a href='/datasets'>Datasets</a>
                         </li>
                         <li className="breadcrumb-item">
-                            <a href={`/datasets/${datasetId}`}>{datasetId}</a>
+                            <a href={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</a>
                         </li>
                         <li className="breadcrumb-item active">
                             <a>Edit this dataset</a>

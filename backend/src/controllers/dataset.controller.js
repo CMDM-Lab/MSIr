@@ -18,8 +18,8 @@ const all = async (req, res) => {
         })
         if (datasets.length>0){
             if (datasets[0].userId !== req.userId){
-                return res.status(401).json({
-                    message: "Unauthorized!"
+                return res.status(403).json({
+                    message: "Access is denied!"
                 });
             }
         }
@@ -41,8 +41,8 @@ const show = async (req, res) => {
         }
 
         if (dataset.userId !== req.userId){
-            return res.status(401).json({
-                message: "Unauthorized!"
+            return res.status(403).json({
+                message: "Access is denied!"
             });
         }
         const msi = await MSI.findOne({
@@ -98,8 +98,8 @@ const edit = async (req, res) => {
             return res.status(404).json({message:'Dataset not found'})
         }
         if (dataset.userId !== req.userId){
-            return res.status(401).json({
-                message: "Unauthorized!"
+            return res.status(403).json({
+                message: "Access is denied!"
             });
         }
         dataset.name = data.name
@@ -145,8 +145,8 @@ const deleteDataset = async (req, res) => {
             return res.status(404).json({message:'Dataset not found'})
         }
         if (dataset.userId !== req.userId){
-            return res.status(401).json({
-                message: "Unauthorized!"
+            return res.status(403).json({
+                message: "Access is denied!"
             });
         }
         /* Need to remove relation record from db */

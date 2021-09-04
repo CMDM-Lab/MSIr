@@ -31,7 +31,7 @@ const deleteRegistration = async (req, res) => {
             return res.status(404).json({message:'This registration is not found.'})
         }
         if (registration.userId !== req.userId){
-            return res.status(401).json({message: "Unauthorized!"})
+            return res.status(403).json({message: "Access is denied!"})
         }
         if (registration.status==='running'){
             return res.status(404).json({message:'This registration is being implement, please retry after a while.'})
@@ -65,8 +65,8 @@ const all = async (req, res) => {
             return res.json({data:[]})
         }else{
             if (registrations[0].userId !== req.userId){
-                return res.status(401).json({
-                    message: "Unauthorized!"
+                return res.status(403).json({
+                    message: "Access is denied!"
                 })
             }
         }
@@ -87,8 +87,8 @@ const show = async (req, res) => {
             return res.status(404).json({message: "Not Found"})
         }
         if (registration.userId !== req.userId){
-            return res.status(401).json({
-                message: "Unauthorized!"
+            return res.status(403).json({
+                message: "Access is denied!"
             });
         }
         res.json({data:registration})

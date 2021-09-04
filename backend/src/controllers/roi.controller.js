@@ -34,8 +34,8 @@ const all = (req, res) => {
         })
         if (rois){
             if (rois[0].userId !== req.userId){
-                return res.status(401).json({
-                    message: "Unauthorized!"
+                return res.status(403).json({
+                    message: "Access is denied!"
                 });
             }
         }
@@ -58,8 +58,8 @@ const allmask = (req, res) => {
         })
         if (masks){
             if (masks[0].userId !== req.userId){
-                return res.status(401).json({
-                    message: "Unauthorized!"
+                return res.status(403).json({
+                    message: "Access is denied!"
                 });
             }
         }

@@ -13,8 +13,8 @@ const newHistologyImg = async (req, res) => {
     const {datasetId} = req.query
     const dataset = await Dataset.findByPk(Number(datasetId))
     if (req.userId !== dataset.userId){
-        return res.status(401).json({
-            message: "Unauthorized!"
+        return res.status(403).json({
+            message: "Access is denied!"
         });
     }
     

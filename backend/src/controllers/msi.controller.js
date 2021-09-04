@@ -10,8 +10,8 @@ const newMSI = async (req, res) => {
 
     const dataset = await Dataset.findByPk(Number(req.query.datasetId))
     if (req.userId !== dataset.userId){
-        return res.status(401).json({
-            message: "Unauthorized!"
+        return res.status(403).json({
+            message: "Access is denied!"
         });
     }
 
@@ -172,8 +172,8 @@ const submitMSI = async (req, res) => {
         console.log(req.userId)
         
         if (msiData.userId !== req.userId){
-            return res.status(401).json({
-                message: "Unauthorized!"
+            return res.status(403).json({
+                message: "Access is denied!"
             });
         }
 
@@ -203,8 +203,8 @@ const getMSI = async (req, res) => {
         
         if (msiData){
             if (msiData.userId !== req.userId){
-                return res.status(401).json({
-                    message: "Unauthorized!"
+                return res.status(403).json({
+                    message: "Access is denied!"
                 });
             }
 

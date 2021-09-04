@@ -5,6 +5,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import {handleResponse} from "../../utils/handleResponse"
 import extractionService from "../../services/extraction_service"
+import ExtractionItem from "./ExtractionItem"
 
 const Extractions = () => {
 
@@ -12,7 +13,7 @@ const Extractions = () => {
 
   const {datasetId} = useParams()
   const history = useHistory()
-  const [extractions, setExtractions] = useState([])
+  const [extractions, setExtractions] = useState([{id:1, normaliztion:'none',registrationId:3,registration:{result_file:'123'},roi:{blend_img_file:'123'},status:'finish',extract_file:'111'}])
   
   const getData = async ()=>{
     try {
@@ -20,7 +21,7 @@ const Extractions = () => {
       const {data} = res.data
       console.log(data)
       if (res.status >= 200 && res.status <300){
-        setExtractions(data)
+        //setExtractions(data)
       } else{
         handleResponse(res,MySwal,history)
       }
@@ -67,33 +68,24 @@ const Extractions = () => {
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Extraction ID</th>
-                    <th width="20%">ROI Image</th>
-                    <th>Status</th>
+                    <th width="20%">Extraction ID</th>
+                    <th width="25%">Registration</th>
+                    <th width="25%">ROI Image</th>
+                    <th width="10%">Status</th>
                     <th width="20%">Operation</th>
                   </tr></thead>
                 <tbody>
-                  {/* for loop to show */}
-                  <tr>
-                    <td>
-                      <div className="btn btn-success">ID: {}</div><br /><br />
-                      <li>Registration Id: {}</li>
-                      <li>Data Normalization Type: {}</li>
-                    </td>
-                    <td>
-                        <img alt={''} className="img-fluid img-thumbnail" src={''} />
-                    </td>
-                    <td>{}</td>
-                    <td>
-                      <div className="btn-group">
-                        <a href={''} className='col-lg-6 col-6'><button className="btn btn-outline-primary">
-                            Download Result Data 
-                          </button></a>
-                        <button className="delete-object btn btn-outline-danger col-lg-6 col-6">Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                  {/* for loop to show end*/}
+                  {
+                    extractions.length>0?(extractions.map((extraction)=>{
+                      return <ExtractionItem extraction={extraction} datasetId={datasetId} />
+                    })
+                    ):(
+                      <tr>
+                        <td><p>No Extraction</p></td>
+                        <td></td><td></td><td></td>
+                      </tr>
+                    )
+                  }
                 </tbody></table>
             </div>
           </div>

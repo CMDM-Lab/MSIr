@@ -27,8 +27,8 @@ const deleteExtraction = async (req, res) => {
             return res.status(404).json({message:'Extraction not found'})
         }
         if (extract.userId !== req.userId){
-            return res.status(401).json({
-                message: "Unauthorized!"
+            return res.status(403).json({
+                message: "Access is denied!"
             });
         }
         fs.unlink(extract.extract_file, function (err) {
@@ -56,12 +56,11 @@ const all = async (req, res) => {
             //attributes: { exclude: ['userId',]}
         })
         if (extracts.length===0){
-            console.log('1')
             return res.json({data:[]})
         }else{
             if (extracts[0].userId !== req.userId){
-                return res.status(401).json({
-                    message: "Unauthorized!"
+                return res.status(403).json({
+                    message: "Access is denied!"
                 });
             }
         }
@@ -80,8 +79,8 @@ const show = async (req, res) => {
             //attributes: { exclude: ['userId',]}
         })
         if (extract.userId !== req.userId){
-            return res.status(401).json({
-                message: "Unauthorized!"
+            return res.status(403).json({
+                message: "Access is denied!"
             });
         }
         res.json({data:extract})

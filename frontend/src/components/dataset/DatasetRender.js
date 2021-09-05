@@ -72,7 +72,17 @@ const DatasetRender = () => {
                 setMsi(data.msi)
                 console.log({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
             } else{
-                handleResponse(res_dataset, MySwal, history)
+                if (res_dataset.status===404){
+                    MySwal.fire({
+                        icon: 'error',
+                        title: `${res_dataset.data.message}`,
+                    }).then(()=>{
+                        history.goBack()
+                    })
+                }else{
+                    handleResponse(res_dataset, MySwal, history)
+                }
+                
             }
             const res_regist = await registrationService.all({datasetId})
             if (res_regist.status >= 200 && res_regist.status <300){

@@ -8,8 +8,12 @@ const newExtraction = async (req, res) => {
         const extract = await Extraction.create({
             normalization: data.normalization,
             datasetId: data.datasetId,
-            msiId: dataset.msiId
+            msiId: dataset.msiId,
+            histologyroiId: data.histologyroiId,
+            registrationId: data.registrationId
         })
+
+        res.json({message: "Extraction was created successfully!"})
         //run extraction script
 
     } catch (error) {

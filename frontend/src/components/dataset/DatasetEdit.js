@@ -21,7 +21,16 @@ const DatasetEdit = () => {
             setName(res.data.dataset.name)
             setDescription(res.data.dataset.description)
         } else{
-            handleResponse(res,MySwal,history)
+            if (res.status===404){
+                MySwal.fire({
+                    icon: 'error',
+                    title: `${res.data.message}`,
+                }).then(()=>{
+                    history.goBack()
+                })
+            }else{
+               handleResponse(res,MySwal,history) 
+            }
         }
     }
 

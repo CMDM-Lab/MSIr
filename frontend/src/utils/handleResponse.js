@@ -1,5 +1,6 @@
 const handleResponse = (res, MySwal, history)=>{
     switch(res.status){
+        case 400:
         case 404:
             MySwal.fire({
                 icon: 'error',
@@ -15,6 +16,7 @@ const handleResponse = (res, MySwal, history)=>{
             })
             break
         case 403:
+        
             MySwal.fire({
                 icon: 'error',
                 title: `${res.data.message}`,
@@ -30,6 +32,8 @@ const handleResponse = (res, MySwal, history)=>{
               }).then(()=>{
                 history.goBack()
             })
+            break
+        default:
             break
     }
 

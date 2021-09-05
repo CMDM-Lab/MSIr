@@ -9,6 +9,8 @@ import CreateDataset from '../components/dataset/CreateDataset'
 import DatasetEdit from '../components/dataset/DatasetEdit'
 import UploadMSI from '../components/msidata/UploadMSI'
 import EditMSI from '../components/msidata/EditMSI'
+import HistologyROI from '../components/roi/HistologyROI'
+
 
 const routes =[
   {
@@ -25,12 +27,12 @@ const routes =[
     path:'/datasets/:datasetId/image',
     component: ,
     isPrivate: true,
-  },
+  },*/
   {
     path:'/datasets/:datasetId/image/roi',
-    component: ,
+    component: HistologyROI,
     isPrivate: true,
-  },*/
+  },
   {
     path:'/datasets/:datasetId/extractions/new',
     component: CreateExtraction,
@@ -80,9 +82,7 @@ const routes =[
     path:'/datasets',
     component: Datasets,
     //isPrivate: true,
-  },
-  
-  /*
+  },/*
   {
     path:'/users/password/edit',
     component: EditUserPassword

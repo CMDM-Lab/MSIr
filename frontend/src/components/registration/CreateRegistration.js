@@ -1,30 +1,81 @@
-import React, { useState } from "react"
-import { useParams } from "react-router-dom"
+import React, { useEffect, useState } from "react"
+import { useParams, useHistory } from "react-router-dom"
 import Banner from "../public/Banner"
+import ImagePicker from 'react-image-picker'
+import 'react-image-picker/dist/index.css'
+import url from "../../config/url"
+import not_select from '../../stylesheet/not_select_mask.svg'
+import roi_service from "../../services/roi_service"
+import registrationService from "../../services/registration_service"
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import {handleResponse} from "../../utils/handleResponse"
 
 const CreateRegistration = () =>{
     
-    const [maskId, setMaskId] = useState()
-    const [regType, setRegType] = useState('intensity')
+    const MySwal = withReactContent(Swal)
 
     const {datasetId} = useParams()
+    const history = useHistory()
+
+    const [maskId, setMaskId] = useState()
+    const [regType, setRegType] = useState('intensity')
+    const [masks, setMasks] = useState([{id:null, blend_img_file:not_select}])
+
+    const getMask = async () =>{
+      try {
+        const res = await roi_service.allmask({datasetId})
+        const {data} = res.data
+        console.log(data)
+        if (res.status >= 200 && res.status <300){
+          const newMasks = masks
+          newMasks.concat(data)
+          setMasks(newMasks)
+        } else{
+          handleResponse(res,MySwal,history)
+        }
+      } catch (error) {
+        console.log(error) 
+      }  
+    }
+    
+    useEffect(()=>{
+      getMask()
+    },[])
 
     const onChangeRegType = (e) => {
         setRegType(e.target.value)
     }
 
-    const onChangeMaskId = (e) => {
-        setMaskId(e.target.value)
+    const onPick = (img) => {
+        setMaskId(img.value)
     }
 
-    const handleSubmit = (e) => {
-
+    const handleSubmit = async (e) => {
+      try {
+        const res = await registrationService.create({
+          perform_type: regType,
+          datasetId: datasetId,
+          histologyroiId: maskId
+        })
+        const {data} = res.data
+        if (res.status >= 200 && res.status <300){
+          MySwal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: data.message
+          }).then(()=>{
+            history.push(`/datasets/${datasetId}/registrations`)
+          })
+        } else{
+          handleResponse(res,MySwal,history)
+        }
+      } catch (error) {
+        console.log(error) 
+      }
     }
 
-    const handleReset = (e) => {
-        setMaskId()
-        setRegType('intensity')
-    }
+    
 
     return (
     <>
@@ -42,7 +93,7 @@ const CreateRegistration = () =>{
                     <a href='/datasets'>Datasets</a>
                 </li>
                 <li className="breadcrumb-item">
-                    <a href={`/datasets/${datasetId}`}>Dataset Name</a>
+                    <a href={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</a>
                 </li>
                 <li className="breadcrumb-item active">
                     <a>Create a Registration</a>
@@ -70,15 +121,17 @@ const CreateRegistration = () =>{
                             If there is not any mask to select, mask would be generated automatically.
                             If there are not satisfying mask, you can manually draw.
                     </small><br />
-                    <select value={maskId} onChange={onChangeMaskId}>    
-                        {}
-                    </select>
+                    <ImagePicker 
+                      images={masks.map((mask) => (mask.id===null?{src: mask.blend_img_file, value: mask.id}
+                        :{src: url.API_URL+`/upload/${datasetId}/${mask.blend_img_file}`, value: mask.id}))}
+                      onPick={onPick}
+                    />
                 </div>
               </div>
               <div className="form-group row py-2">
                 <div className="col-lg-3 col-3" />
                 <button onClick={handleSubmit} className='btn btn-primary col-lg-2 col-1'>Submit</button>
-                <button onClick={handleReset} className='btn btn-secondary col-lg-2 col-1'>Reset</button>
+                {/*<button onClick={handleReset} className='btn btn-secondary col-lg-2 col-1'>Reset</button>*/}
               </div>
             </div>
           </div>

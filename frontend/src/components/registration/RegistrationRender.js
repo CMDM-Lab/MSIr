@@ -23,7 +23,17 @@ const RegistrationRender = () => {
         if (res.status >= 200 && res.status <300){
           setRegistration(data)
         } else{
-          handleResponse(res,MySwal,history)
+          if (res.status===404){
+            MySwal.fire({
+              icon: 'error',
+              title: `${res.data.message}`,
+            }).then(()=>{
+              history.goBack()
+          })
+          }else{
+            handleResponse(res,MySwal,history)
+          }
+          
         }
     }catch(error){
       console.log(error) 

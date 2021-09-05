@@ -15,6 +15,8 @@ import Doc from './components/public/Doc';
 import Contact from './components/public/Contact';
 import SignIn from './components/auth/SignIn';
 import Signup from './components/auth/SignUp'
+import EditUserPassword from './components/auth/EditUserPassword';
+import ResetRequire from './components/auth/ResetRequire';
 
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
           <Route path='/contact' component={Contact} />
           <Route path='/users/sign_in' component={SignIn} />
           <Route path='/users/sign_up' component={Signup} />
+          <Route path='/users/password/edit' component={EditUserPassword} />
+          <Route path='/users/password/reset_require' component={ResetRequire} />
           {/*<Route exact path='/datasets' component={Datasets} />
           <Route exact path='/datasets/new' component={CreateDataset} />
           <Route exact path='/datasets/:datasetId' component={DatasetRender} />

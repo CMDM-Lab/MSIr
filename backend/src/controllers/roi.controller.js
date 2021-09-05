@@ -29,7 +29,7 @@ const all = (req, res) => {
     try {
         const rois = HistologyROI.findAll({
             where:{
-                histologyImageId: data.histologyImageId
+                datasetId: data.datasetId
             }
         })
         if (rois){
@@ -48,13 +48,14 @@ const all = (req, res) => {
 }
 
 const allmask = (req, res) => {
-    const data = req.body
+    const data = req.query
     try {
         const masks = HistologyROI.findAll({
             where:{
                 roi_type: 'mask',
-                histologyImageId: data.histologyImageId
-            }
+                datasetId: data.datasetId
+            },
+            attributes:['id','blend_img_file','histologyImageId']
         })
         if (masks){
             if (masks[0].userId !== req.userId){
@@ -78,7 +79,7 @@ const allROI = (req, res) => {
         const rois = HistologyROI.findAll({
             where:{
                 roi_type: 'ROI',
-                histologyImageId: data.histologyImageId
+                datasetId: data.datasetId
             }
         })
         if (rois){

@@ -4,14 +4,16 @@ import fs from 'fs'
 const newRegistration = async (req, res) => {
     const data = req.body
     try {
-        const dataset = await Dataset.findByPk(data.datasetId)
+        //const dataset = await Dataset.findByPk(data.datasetId)
+        const msi = await MSI.findOne({where:{datasetId:datasetId}})
+        const hist = await HistologyImage.findOne({where:{datasetId:datasetId}})
         const registration = await Registration.create({
             perform_type: data.perform_type,
             transform_type: data.transform_type,
             datasetId: data.datasetId,
-            msiId: dataset.msiId,
-            histologyImageId: dataset.histologyImageId,
-            histologyroiId: dataset.histologyroiId
+            msiId: msi.id,
+            histologyImageId: hist.id,
+            histologyroiId: data.histologyroiId
         })
         res.json({message: "Registration was created successfully!"})
 
@@ -159,16 +161,4 @@ const setParameter = async (req, res) => {
     }
 }
 
-const resultImg = (req, res) => {
-    
-}
-
-const matrixFile = (req, res) => {
-    
-}
-
-const idxFile = (req, res) => {
-    
-}
-
-export default {newRegistration, deleteRegistration, all, show, getParameter, setParameter, resultImg, matrixFile, idxFile}
+export default {newRegistration, deleteRegistration, all, show, getParameter, setParameter}

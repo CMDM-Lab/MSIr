@@ -11,7 +11,7 @@ import withReactContent from 'sweetalert2-react-content'
 import {Circle} from "rc-progress"
 import Uploady, { useItemProgressListener, useItemFinishListener} from "@rpldy/uploady";
 import UploadButton from "@rpldy/upload-button";
-import url from '../../config/url'
+import configData from '../../config.json'
 import authHeader from '../../services/auth-header'
 import RegisterCard from './RegisterCard'
 import running from '../../stylesheet/running.png';
@@ -158,7 +158,7 @@ const DatasetRender = () => {
                     <div className='btn-group'>
                         <Uploady
                         multiple = {false}
-                        destination={{ url: url.API_URL+`/histology/new?datasetId=${datasetId}` , headers:authHeader()}}
+                        destination={{ url: configData.API_URL+`/histology/new?datasetId=${datasetId}` , headers:authHeader()}}
                         accept=".png,.tif,.jpg,.jpeg"
                         fileFilter={(file)=>{return file.size < 1e+7}}
                         sendWithFormData = {true}
@@ -173,7 +173,7 @@ const DatasetRender = () => {
                 {hist?
                 <div className='images card-columns'>
                     <div className='card'>
-                        <img src={url.API_URL+`/upload/${datasetId}/${hist.file}`} className='card-img-top viewer'/>
+                        <img src={configData.API_URL+`/upload/${datasetId}/${hist.file}`} className='card-img-top viewer'/>
                         <div className='card-body'><h5 className='card-title'>{hist.file}</h5></div>
                     </div>
                 </div>

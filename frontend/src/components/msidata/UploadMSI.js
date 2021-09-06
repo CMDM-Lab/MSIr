@@ -7,7 +7,7 @@ import UploadButton from "@rpldy/upload-button";
 import Banner from "../public/Banner";
 import { useHistory, useParams } from "react-router-dom";
 import authHeader from "../../services/auth-header";
-import url from '../../config/url'
+import configData from '../../config.json'
 import path from "path";
 import msi_service from "../../services/msi_service";
 import { handleResponse } from "../../utils/handleResponse";
@@ -125,7 +125,7 @@ const UploadMSI = (props) => {
                     </div>*/}
                     <Uploady
                         multiple = {false}
-                        destination={{ url: url.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
+                        destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
                         accept=".imzML"
                         fileFilter={(file)=>{return file.size < 1e+7}}
                         maxGroupSize = {1}
@@ -152,7 +152,7 @@ const UploadMSI = (props) => {
                     </div>*/}
                     <Uploady
                         multiple = {false}
-                        destination={{ url: url.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
+                        destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
                         accept=".ibd"
                         fileFilter={(file)=>{return file.size < 1e+7}}
                         maxGroupSize = {1}

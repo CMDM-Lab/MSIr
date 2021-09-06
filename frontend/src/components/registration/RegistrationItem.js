@@ -1,5 +1,5 @@
 import React from "react";
-import url from '../../config/url'
+import configData from '../../config.json'
 import registrationService from "../../services/registration_service";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -55,10 +55,10 @@ const RegistrationItem = ({datasetId, registration})=>{
                 <br />
             </td>
             <td>
-                <img className="img-fluid img-thumbnail" src={url.API_URL+`/upload/${datasetId}/${registration.roi.blend_img_file}`} />
+                <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${registration.roi.blend_img_file}`} />
             </td>
             <td>
-                <img className="img-fluid img-thumbnail viewer" src={url.API_URL+`/upload/${datasetId}/${registration.result_file}`} />
+                <img className="img-fluid img-thumbnail viewer" src={configData.API_URL+`/upload/${datasetId}/${registration.result_file}`} />
             </td>
             <td>
                 <p>{registration.status}</p>
@@ -67,7 +67,7 @@ const RegistrationItem = ({datasetId, registration})=>{
                 <div className="btn-group">
                     {
                         registration.status === 'finish'?(
-                            <a className='col-lg-6 col-6' href={url.API_URL+`/upload/${datasetId}/${registration.transform_matrix_file}`}>
+                            <a className='col-lg-6 col-6' href={configData.API_URL+`/upload/${datasetId}/${registration.transform_matrix_file}`}>
                                 <button className="btn btn-outline-primary">
                                     Transform Matrix 
                                 </button>

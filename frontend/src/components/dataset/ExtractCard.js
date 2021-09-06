@@ -1,5 +1,5 @@
 import React from "react";
-import url from '../../config/url'
+import configData from '../../config.json'
 import running from '../../stylesheet/running.png';
 
 const ExtractCard = ({extractData}) =>{
@@ -9,7 +9,7 @@ const ExtractCard = ({extractData}) =>{
                     <div className='row no-gutters'>
                         <div className='col-6'>
                             {extractData.roi.blend_img_file?(
-                                <img className='card-img-top' src={url.API_URL+`/upload/${extractData.datasetId}/${extractData.roi.blend_img_file}`}/>
+                                <img className='card-img-top' src={configData.API_URL+`/upload/${extractData.datasetId}/${extractData.roi.blend_img_file}`}/>
                             ):(
                                 <img className='card-img-top' src={running}/>
                             )}
@@ -28,7 +28,7 @@ const ExtractCard = ({extractData}) =>{
                                 <p>Status: {extractData.status}</p>
                                 {
                                     extractData.extract_file? 
-                                    <a href={url.API_URL+`/upload/${extractData.datasetId}/${extractData.extract_file}`}>
+                                    <a href={configData.API_URL+`/upload/${extractData.datasetId}/${extractData.extract_file}`}>
                                         <button className='btn btn-outline-primary'>Download</button>
                                     </a>
                                     :null

@@ -5,7 +5,7 @@ import ImagePicker from 'react-image-picker'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import {handleResponse} from "../../utils/handleResponse"
-import url from "../../config/url"
+import configData from "../../config.json"
 import registrationService from "../../services/registration_service"
 import roi_service from "../../services/roi_service"
 import extractionService from "../../services/extraction_service"
@@ -121,7 +121,7 @@ const CreateExtraction = () =>{
                 <label className="col-3 col-form-label">Select Registration Result</label>
                 <div className="col-9">
                     <ImagePicker 
-                      images={regs.map((reg) => ({src: url.API_URL+`/upload/${datasetId}/${reg.result_file}`, value: reg.id}))}
+                      images={regs.map((reg) => ({src: configData.API_URL+`/upload/${datasetId}/${reg.result_file}`, value: reg.id}))}
                       onPick={onPickReg}
                     />
                 </div>
@@ -133,7 +133,7 @@ const CreateExtraction = () =>{
                             If there are not satisfying ROI, you can manually draw.
                     </small><br />
                     <ImagePicker 
-                      images={rois.map((roi) => ({src: url.API_URL+`/upload/${datasetId}/${roi.blend_img_file}`, value: roi.id}))}
+                      images={rois.map((roi) => ({src: configData.API_URL+`/upload/${datasetId}/${roi.blend_img_file}`, value: roi.id}))}
                       onPick={onPickROI}
                     />
                 </div>

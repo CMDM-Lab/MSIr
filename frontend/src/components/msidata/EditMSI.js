@@ -7,7 +7,7 @@ import Uploady, { useItemFinishListener, useItemProgressListener } from "@rpldy/
 import UploadButton from "@rpldy/upload-button";
 import { useHistory, useParams } from "react-router-dom";
 import authHeader from "../../services/auth-header";
-import url from '../../config/url'
+import configData from '../../config.json'
 import path from "path";
 import msi_service from "../../services/msi_service";
 import { handleResponse } from "../../utils/handleResponse";
@@ -136,7 +136,7 @@ const EditMSI = (props) => {
                 <div className="col-6">
                     <Uploady
                         multiple = {false}
-                        destination={{ url: url.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
+                        destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
                         accept=".imzML"
                         fileFilter={(file)=>{return file.size < 1e+7}}
                         maxGroupSize = {1}
@@ -163,7 +163,7 @@ const EditMSI = (props) => {
                     </div>*/}
                     <Uploady
                         multiple = {false}
-                        destination={{ url: url.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
+                        destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
                         accept=".ibd"
                         fileFilter={(file)=>{return file.size < 1e+7}}
                         maxGroupSize = {1}

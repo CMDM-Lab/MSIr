@@ -1,5 +1,5 @@
 import React from "react";
-import url from '../../config/url'
+import configData from '../../config.json'
 import running from '../../stylesheet/running.png';
 
 const RegisterCard = ({registerData}) =>{
@@ -10,7 +10,7 @@ const RegisterCard = ({registerData}) =>{
                 registerData.result_file?(
                     <div className='row no-gutters'>
                         <div className='col-6'>
-                            <img className='card-img-top' src={url.API_URL+`/upload/${registerData.datasetId}/${registerData.result_file}`}/>
+                            <img className='card-img-top' src={configData.API_URL+`/upload/${registerData.datasetId}/${registerData.result_file}`}/>
                         </div>
                         <div className='col-6'>
                             <div className='card-body'>

@@ -1,9 +1,9 @@
 import { HistologyImage, HistologyROI } from "../db/db";
 
-const newROI = (req, res) => {
+const newROI = async (req, res) => {
     const data = req.body
     try {
-        const roi = HistologyROI.create({
+        const roi = await HistologyROI.create({
             userId: req.userId,
             roi_type: data.roi_type,
             points: data.points,
@@ -20,14 +20,46 @@ const newROI = (req, res) => {
 
 }
 
+const newROIs = async (req,res)=>{
+    const data = req.body
+    try {
+        data.rois.forEach(async(roi)=>{
+            const roi_tmp = await HistologyROI.create({
+                userId: req.userId,
+                roi_type: roi.roi_type,
+                points: roi.points,
+                histologyImageId: data.histology.id,
+                datasetId: data.datasetId
+            }) 
+        })
+        
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ message: error.message });  
+    }
+}
+
+const deletROIs = async (req, res) => {
+    const data = req.body
+    try {
+        data.roiIds.forEach(async(idx)=>{
+            const roi_tmp = await HistologyROI.findByPk(idx)
+            roi_tmp.destroy()
+        })
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ message: error.message });
+    }
+}
+
 const show = (req, res) => {
     
 }
 
-const all = (req, res) => {
+const all = async (req, res) => {
     const data = req.body
     try {
-        const rois = HistologyROI.findAll({
+        const rois = await HistologyROI.findAll({
             where:{
                 datasetId: data.datasetId
             }
@@ -39,7 +71,12 @@ const all = (req, res) => {
                 });
             }
         }
-        return res.json({data:rois})
+        const histology = await HistologyImage.findOne({
+            where:{
+                datasetId: data.datasetId
+            }
+        })
+        return res.json({rois,histology})
         
     } catch (error) {
         console.log(error.message)
@@ -47,10 +84,10 @@ const all = (req, res) => {
     }
 }
 
-const allmask = (req, res) => {
+const allmask = async (req, res) => {
     const data = req.query
     try {
-        const masks = HistologyROI.findAll({
+        const masks = await HistologyROI.findAll({
             where:{
                 roi_type: 'mask',
                 datasetId: data.datasetId
@@ -73,10 +110,10 @@ const allmask = (req, res) => {
 
 }
 
-const allROI = (req, res) => {
+const allROI = async (req, res) => {
     const data = req.body
     try {
-        const rois = HistologyROI.findAll({
+        const rois = await HistologyROI.findAll({
             where:{
                 roi_type: 'ROI',
                 datasetId: data.datasetId
@@ -131,4 +168,4 @@ const setParameter = async (req, res) => {
     
 }
 
-export default  {newROI, show, all, allmask, allROI, getParameter, setParameter}
+export default  {newROI, show, all, allmask, allROI, getParameter, setParameter, newROIs, deletROIs}

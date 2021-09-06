@@ -140,9 +140,9 @@ const HistologyROI = sequelize.define('histologyroi',{
     roi_type: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 'mask',
+        defaultValue: 'Mask',
         validate: {
-            isIn: [['mask', 'ROI']]
+            isIn: [['Mask', 'ROI']]
         }
     },
     points: {

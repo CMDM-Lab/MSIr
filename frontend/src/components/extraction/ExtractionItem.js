@@ -1,5 +1,5 @@
 import React from "react";
-import url from '../../config/url'
+import configData from '../../config.json'
 import running from '../../stylesheet/running.png'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -54,10 +54,10 @@ const ExtractionItem = ({datasetId,extraction}) =>{
             </td>
             <td>
                 <a href={`/datasets/${datasetId}/registrations/${extraction.registrationId}`}><p>Registration ID: {extraction.registrationId}</p></a>
-                <img className="img-fluid img-thumbnail" src={url.API_URL+`/upload/${datasetId}/${extraction.registration.result_file}`}/>
+                <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${extraction.registration.result_file}`}/>
             </td>
             <td>
-                <img className="img-fluid img-thumbnail" src={url.API_URL+`/upload/${datasetId}/${extraction.roi.blend_img_file}`}  />
+                <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${extraction.roi.blend_img_file}`}  />
             </td>
             <td>{extraction.status}</td>
             <td>
@@ -65,7 +65,7 @@ const ExtractionItem = ({datasetId,extraction}) =>{
                     {
                         extraction.status === 'finish'?
                             (<>
-                                <a href={url.API_URL+`/upload/${datasetId}/${extraction.extract_file}`} className='col-lg-6 col-6'>
+                                <a href={configData.API_URL+`/upload/${datasetId}/${extraction.extract_file}`} className='col-lg-6 col-6'>
                                     <button className="btn btn-outline-primary">
                                         Download Result 
                                     </button>

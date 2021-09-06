@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import {handleResponse} from "../../utils/handleResponse"
 import registrationService from '../../services/registration_service'
-import url from '../../config/url'
+import configData from '../../config.json'
 import running from '../../stylesheet/running.png'
 
 const RegistrationRender = () => {
@@ -110,7 +110,7 @@ const RegistrationRender = () => {
             <div className="col-lg-3 col-md-9">
               {
                 registration? registration.status==='finish'?
-                <img className="img-fluid img-thumbnail" src={url.API_URL+`/upload/${datasetId}/${registration.result_file}`} />:
+                <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${registration.result_file}`} />:
                 <img className="img-fluid img-thumbnail" src={running} />:null
               }
               
@@ -133,7 +133,7 @@ const RegistrationRender = () => {
                     <td>{registration.perform_type}</td>
                   </tr><tr>
                     <td>Mask image:</td>
-                    <td><a href={url.API_URL+`/upload/${datasetId}/${registration.roi.blend_img_file}`}><button className="btn btn-outline-primary">View</button></a></td>
+                    <td><a href={configData.API_URL+`/upload/${datasetId}/${registration.roi.blend_img_file}`}><button className="btn btn-outline-primary">View</button></a></td>
                   </tr>
                   
                   </tbody></table>
@@ -143,7 +143,7 @@ const RegistrationRender = () => {
                   <tr>
                     <td width='40%'>Transform Matrix:</td>
                     <td width='60%'>
-                      <a className='col-lg-6 col-6' href={url.API_URL+`/upload/${datasetId}/${registration.transform_matrix_file}`}>
+                      <a className='col-lg-6 col-6' href={configData.API_URL+`/upload/${datasetId}/${registration.transform_matrix_file}`}>
                         <button className="btn btn-outline-primary">
                           Download
                         </button>

@@ -3,7 +3,7 @@ import { useParams, useHistory } from "react-router-dom"
 import Banner from "../public/Banner"
 import ImagePicker from 'react-image-picker'
 import 'react-image-picker/dist/index.css'
-import url from "../../config/url"
+import configData from "../../config.json"
 import not_select from '../../stylesheet/not_select_mask.svg'
 import roi_service from "../../services/roi_service"
 import registrationService from "../../services/registration_service"
@@ -123,7 +123,7 @@ const CreateRegistration = () =>{
                     </small><br />
                     <ImagePicker 
                       images={masks.map((mask) => (mask.id===null?{src: mask.blend_img_file, value: mask.id}
-                        :{src: url.API_URL+`/upload/${datasetId}/${mask.blend_img_file}`, value: mask.id}))}
+                        :{src: configData.API_URL+`/upload/${datasetId}/${mask.blend_img_file}`, value: mask.id}))}
                       onPick={onPick}
                     />
                 </div>

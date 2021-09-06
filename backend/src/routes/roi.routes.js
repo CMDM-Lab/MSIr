@@ -14,6 +14,10 @@ router.get('/allmask', authJwt.verifyToken, controller.allmask)
 
 router.get('/allroi', authJwt.verifyToken, controller.allROI)
 
+router.delete('/delete',authJwt.verifyToken, controller.deletROIs)
+
+router.post('/new_batch', authJwt.verifyToken, controller.newROIs)
+
 router.post('/get_parameter', controller.getParameter)
 
 router.post('/set_parameter', controller.setParameter)

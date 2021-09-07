@@ -105,23 +105,31 @@ const getParameter = async (req, res) => {
     const data = req.body
     try {
         const registration = await Registration.findByPk(data.id)
-        const image = await HistologyImage.findByPk(registration.histologyImageId)
-        const msi = await MSI.findByPk(registration.msiId)
+        const image = await HistologyImage.findOne({
+            where:{id:registration.histologyImageId},
+            attributes:['id', 'file']
+        })
+        const msi = await MSI.findOne({
+            where:{id:registration.msiId},
+            attributes:['id', 'imzml_file']
+        })
         if (registration.histologyroiId){
             const roi = await HistologyROI.findByPk(registration.histologyroiId)
             res.json({
+                datasetId: msi.datasetId,
+                image: image,
+                msi: msi,
                 perform_type: registration.perform_type,
                 transform_type: registration.transform_type,
-                image_file: image.file,
-                msi_file: msi.imzml_file,
                 roi: roi.points
             })
         }else{
             res.json({
+                datasetId: msi.datasetId,
+                image: image,
+                msi: msi,
                 perform_type: registration.perform_type,
                 transform_type: registration.transform_type,
-                image_file: image.file,
-                msi_file: msi.imzml_file,
                 roi: undefined
             })
         }

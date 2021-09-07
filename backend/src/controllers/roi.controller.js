@@ -89,7 +89,7 @@ const allmask = async (req, res) => {
     try {
         const masks = await HistologyROI.findAll({
             where:{
-                roi_type: 'mask',
+                roi_type: 'Mask',
                 datasetId: data.datasetId
             },
             attributes:['id','blend_img_file','histologyImageId']
@@ -144,6 +144,7 @@ const getParameter = async (req, res) => {
             image_id:image.id,
             image_file: image.file,
             points: roi.points,
+            roi_type: roi.roi_type
         })
 
     } catch (error) {

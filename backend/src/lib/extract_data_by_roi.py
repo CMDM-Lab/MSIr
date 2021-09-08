@@ -1,3 +1,4 @@
+from operator import index
 from Reg_functions import ImzmlFileReader
 import numpy as np
 from scipy.sparse import csc_matrix,csr_matrix,vstack
@@ -28,26 +29,19 @@ if __name__ == '__main__':
         res = res.json()
 
         # set parameter
-        image_id =  res['data']['image_id']
-        image_file = res['data']['image_file']
-        points= res['data']['points']
-        roi_type= res['data']['roi_type']
+        normalization =  res['data']['normalization']
+        imzml_file = res['data']['msi']['imzml']
+        points = res['data']['roi']['points']
+        bin_size = res['data']['msi']['bin_size']
 
         #set output file name
-        output_file = os.path.join(dir_hist,f'{roi_type}_{roi_id}.png')
+        output_file = os.path.join(dir_hist,f'extraction_{extract_id}.csv')
 
-        hist_ori = cv2.imread(image_file)
-        points = np.round(np.array(points)*[hist_ori.shape[1],hist_ori.shape[0]]).astype(int)
-        mask = np.zeros(hist_ori.shape,np.uint8)
-        cv2.drawContours(mask,[points],0,(255,255,255),-1)
-        blend_img = cv2.addWeighted(hist_ori,0.65,mask,0.35,0)
-        if roi_type == 'ROI':
-            thickness = int(max([np.round(np.log10(hist_ori.shape[0]*hist_ori[1])-2),1]))
-            cv2.drawContours(blend_img,[points],0,(0,255,0),thickness)
-        cv2.imwrite(output_file, blend_img)
+        
+        pd.DataFrame.sparse.from_spmatrix(data='', index=[], columns=[])
 
         return_data = {
-            "id":roi_id,
+            "id":extract_id,
             "key":secret_key,
             "status":"SUCCESS",
             "result_file": output_file

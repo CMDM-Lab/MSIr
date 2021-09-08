@@ -21,33 +21,49 @@ const HistologyROI = () =>{
         const res = await roi_service.all({datasetId})
         const data = res.data
         if (res.status >= 200 && res.status <300){
-            setRois(data.rois)
-            setHistology(data.histology)
+            const processRois = data.rois.map((roi)=>{
+                return {
+                    type: 'polygon',
+                    locked: true,
+                    cls: roi.roi_type,
+                    color: roi.roi_type==='Mask'?'#f00':'#0f0',
+                    id: roi.id,
+                    points: roi.points,
+                    visible: roi.roi_type==='Mask'?false:true,
+                    editingLabels: false,
+                }
+            })
+            setRois(processRois)
+            const processHist = {id:data.histology.id, file:configData.API_URL+`/upload/${datasetId}/${data.histology.file}`}
+            setHistology(processHist)
           } else{
             handleResponse(res,MySwal,history)
           }
     }
 
     useEffect(()=>{
-        //getData()
+        getData()
     },[])
 
     const handleSave = async (output)=>{
         try {
-            console.log(output.images[0].regions)
             const outputRois = output.images[0].regions
-            const newRois = outputRois.filter(roi=>typeof(roi.id)==='string')
+            console.log(outputRois)
+            const newRois = outputRois.filter(roi=>typeof roi.id ==='string')
             const outputRoisId = outputRois.map((roi)=>{
                 return roi.id
             })
             const oriRoisId = rois.map((roi)=>{
                 return roi.id
             })
-            const deleteRoisId = outputRoisId.filter((idx)=>oriRoisId.includes(idx))
-            const res_new = await roi_service.newRois({datasetId,rois:newRois, histology:histology})
-            const res_delete = await roi_service.remove({roiIds: deleteRoisId})
-
-            history.push(`/datasets/${datasetId}`)
+            const deleteRoisId = oriRoisId.filter((idx)=>!outputRoisId.includes(idx))
+            if (newRois.length>0){
+                roi_service.newRois({datasetId,rois:newRois, histology:histology})
+            }
+            if (deleteRoisId.length>0){
+                roi_service.remove({roiIds: deleteRoisId})
+            }
+            history.goBack()
         } catch (error) {
             console.log(error)
         }
@@ -56,17 +72,24 @@ const HistologyROI = () =>{
 
     return (
         <>
-        <Banner subtitle = {"Draw mask of tissue region or region of interest (ROI)."} />
+        <Banner subtitle = {`Draw mask of tissue region or region of interest (ROI).`} />
         <section className="challange_area">
-            <ReactImageAnnotate
-                selectedImage={configData.API_URL+'/upload/4/test_slide[2709].jpg'}
-                taskDescription="# Draw mask of tissue region or region of interest (ROI)."
-                images={[{ src: configData.API_URL+'/upload/4/test_slide[2709].jpg', name: "Image 1", regions:rois }]}
-                showTags={false}
-                regionClsList={["Mask", "ROI"]}
-                enabledTools={["create-polygon", "select"]}
-                onExit = {handleSave}
-            />
+            {
+                histology?(
+                    <ReactImageAnnotate
+                        selectedImage={histology.file}
+                        taskDescription="# Draw mask of tissue region or region of interest (ROI)."
+                        images={[{ src: histology.file, name: "Histology Image", regions:rois }]}
+                        showTags={false}
+                        regionClsList={["Mask", "ROI"]}
+                        enabledTools={["create-polygon", "select"]}
+                        onExit = {handleSave}
+                    />
+                ):(
+                    <p>Page Loading</p>
+                )
+            }
+            
         </section>
         </>
     ) 

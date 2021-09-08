@@ -1,4 +1,5 @@
 import { HistologyImage, HistologyROI } from "../db/db";
+import path from 'path'
 
 const newROI = async (req, res) => {
     const data = req.body
@@ -12,7 +13,7 @@ const newROI = async (req, res) => {
         res.json({message:'ROI was created successfully!'})
         // run draw roi script
 
-        
+
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: error.message });
@@ -23,10 +24,11 @@ const newROI = async (req, res) => {
 const newROIs = async (req,res)=>{
     const data = req.body
     try {
+        console.log(data.rois)
         data.rois.forEach(async(roi)=>{
             const roi_tmp = await HistologyROI.create({
                 userId: req.userId,
-                roi_type: roi.roi_type,
+                roi_type: roi.cls?roi.cls:'ROI',
                 points: roi.points,
                 histologyImageId: data.histology.id,
                 datasetId: data.datasetId
@@ -44,7 +46,10 @@ const deletROIs = async (req, res) => {
     try {
         data.roiIds.forEach(async(idx)=>{
             const roi_tmp = await HistologyROI.findByPk(idx)
-            roi_tmp.destroy()
+            if (roi_tmp.roi_type!='Mask'){
+                roi_tmp.destroy()
+            }
+            
         })
     } catch (error) {
         console.log(error.message)
@@ -57,14 +62,14 @@ const show = (req, res) => {
 }
 
 const all = async (req, res) => {
-    const data = req.body
+    const data = req.query
     try {
         const rois = await HistologyROI.findAll({
             where:{
                 datasetId: data.datasetId
             }
         })
-        if (rois){
+        if (rois.length>0){
             if (rois[0].userId !== req.userId){
                 return res.status(403).json({
                     message: "Access is denied!"
@@ -76,7 +81,7 @@ const all = async (req, res) => {
                 datasetId: data.datasetId
             }
         })
-        return res.json({rois,histology})
+        return res.json({rois,histology:{id:histology.id, file:path.basename(histology.file)}})
         
     } catch (error) {
         console.log(error.message)

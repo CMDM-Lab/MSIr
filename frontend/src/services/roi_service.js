@@ -3,6 +3,17 @@ import authHeader from "./auth-header";
 
 const create = async (payload) => {
     try {
+        const res = await instance.post('/roi/new', payload, {
+            headers: authHeader()
+        })
+        return res
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const newRois = async (payload) => {
+    try {
         const res = await instance.post('/roi/new_batch', payload, {
             headers: authHeader()
         })
@@ -73,7 +84,7 @@ const  allroi = async (payload) => {
 }
 
 const roi_service = {
-    allroi, allmask, all, show, create, remove
+    allroi, allmask, all, show, create, remove, newRois
 }
 
 export default roi_service

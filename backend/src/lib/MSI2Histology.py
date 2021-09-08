@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import csc_matrix,csr_matrix,vstack
+from scipy.sparse import csc_matrix,csr_matrix,vstack, save_npz
 from scipy.sparse.linalg import norm
 import cv2,os,time, requests, argparse, json, sys, umap, itk
 from dotenv import load_dotenv
@@ -85,6 +85,7 @@ if __name__ == '__main__':
         secret_key=os.getenv("key")
         api_url=os.getenv('API_URL')
         dir_hist=os.getenv('DIR_HIST')
+        dir_msi = os.getenv('DIR_MSI')
 
         #Get registration parameters
         get_data={"id":RegID,"key":secret_key}
@@ -96,9 +97,11 @@ if __name__ == '__main__':
         transform_type =  res['data']['transform_type']
         histology_file = res['data']['image']['file']
         msi_file= res['data']['msi']['imzml_file']
+        bin_size = res['data']['msi']['bin_size']
         cnt_he = res['data']['roi']
 
         #set output file name
+        process_file = os.path.join(dir_msi,os.path.basename(msi_file)+'.npz')
         transform_matrix_file = os.path.join(dir_hist,f'transform_matrix_{RegID}.txt')
         result_file = os.path.join(dir_hist,f'result_img_{RegID}.png')
 
@@ -122,7 +125,9 @@ if __name__ == '__main__':
         hist_proc = cv2.cvtColor(hist_proc,cv2.COLOR_BGR2GRAY)
 
         # read msi data
-        msi_data,msi_size,_,mzs=ImzmlFileReader(msi_file)
+        msi_data,msi_size,_,mzs=ImzmlFileReader(msi_file,bin_size=bin_size)
+        # save MSI data in sparse matrix
+        save_npz(process_file,msi_data)
 
         # TIC normaliztion
         tic=np.array(msi_data.sum(axis=1))
@@ -237,7 +242,8 @@ if __name__ == '__main__':
             "min_mz":mzs[0],
             "max_mz":mzs[-1],
             "msi_h":msi_size[0],
-            "msi_w": msi_size[1]
+            "msi_w": msi_size[1],
+            "process_file": process_file
             }
         r_post = requests.post(api_url+"/registrations/set_parameter", json=return_data)
         

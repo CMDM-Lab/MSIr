@@ -12,16 +12,16 @@ if __name__ == '__main__':
     try:
         ##### parameter setting #####
         args = process_command()
-        roi_id=args.RoiID
+        RoiID=args.RoiID
 
         #get secrete key
         load_dotenv(dotenv_path=".env")
-        secret_key=os.getenv("key")
+        api_key=os.getenv("API_KEY")
         api_url=os.getenv('API_URL')
         dir_hist=os.getenv('DIR_HIST')
 
         #Get registration parameters
-        get_data={"id":roi_id,"key":secret_key}
+        get_data={"id":RoiID,"key":api_key}
         res = requests.post(api_url+"/roi/get_parameter", json=get_data)
         res = res.json()
 
@@ -32,7 +32,7 @@ if __name__ == '__main__':
         roi_type= res['data']['roi_type']
 
         #set output file name
-        output_file = os.path.join(dir_hist,f'{roi_type}_{roi_id}.png')
+        output_file = os.path.join(dir_hist,f'{roi_type}_{RoiID}.png')
 
         hist_ori = cv2.imread(image_file)
         points = np.round(np.array(points)*[hist_ori.shape[1],hist_ori.shape[0]]).astype(int)
@@ -45,12 +45,26 @@ if __name__ == '__main__':
         cv2.imwrite(output_file, blend_img)
 
         return_data = {
-            "id":roi_id,
-            "key":secret_key,
+            "id":RoiID,
+            "key":api_key,
             "status":"SUCCESS",
             "result_file": output_file
             }
         r_post = requests.post(api_url+"/roi/set_parameter", json=return_data)
             
-    except:
+    except Exception as e:
+        import traceback
+        error_class = e.__class__.__name__
+        detail = e.args[0]
+        cl, exc, tb = sys.exc_info()
+        lastCallStack = traceback.extract_tb(tb)[-1]
+        fileName, lineNum, funcName = lastCallStack[:3]
+        errMsg = "File \"{}\", line {}, in {}: [{}] {}".format(fileName, lineNum, funcName, error_class, detail)
+        return_data = {
+            "id":RoiID,
+            "key":api_key,
+            "status":"ERROR",
+            "message":errMsg,
+            }
+        r_post = requests.post(api_url+"/roi/set_parameter", json=return_data)
         pass

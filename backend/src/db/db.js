@@ -123,7 +123,8 @@ const MSI = sequelize.define('msi',{
     pixel_size: DataTypes.INTEGER,
     processed_data_file: {
         type: DataTypes.STRING,
-    }
+    },
+    processed_file: DataTypes.STRING
 }, {
     freezeTableName: true
   })
@@ -237,6 +238,41 @@ const Extraction = sequelize.define('extraction',{
     freezeTableName: true
   })
 
+const Job = sequelize.define('job',{
+    task: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'registration',
+        validate: {
+            isIn: [['registration', 'extraction']]
+        }
+    },
+    taskId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'WAITING',
+        validate: {
+            isIn: [['WAITING', 'RUNNING', 'ERROR', 'FINISH']]
+        }
+    },
+    message: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: '',
+    },
+    attempts: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+    } 
+},{
+    freezeTableName: true
+  })
+
 Dataset.belongsTo(User)
 HistologyImage.belongsTo(User)
 MSI.belongsTo(User)
@@ -258,5 +294,5 @@ Registration.hasMany(Extraction)
 Dataset.hasMany(HistologyROI)
 
 
-export {User, Dataset, Registration, Extraction, HistologyImage, HistologyROI, MSI}
+export {User, Dataset, Registration, Extraction, HistologyImage, HistologyROI, MSI, Job}
 export default sequelize

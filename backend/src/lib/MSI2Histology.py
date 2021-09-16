@@ -1,73 +1,12 @@
+from ast import Str
 import numpy as np
 from scipy.sparse import csc_matrix,csr_matrix,vstack, save_npz
 from scipy.sparse.linalg import norm
 import cv2,os,time, requests, argparse, json, sys, umap, itk
 from dotenv import load_dotenv
-from Reg_functions import *
+from Reg_functions import ImzmlFileReader, data2bgr, sort_cnt_by_area, \
+    binning, generate_msi_mask, tic_normalization, getorient, he_preprocessing, get_elastix_transform_matrix, get_inital_transform_matrix
 from ms_peak_picker import pick_peaks
-
-def get_elastix_transform_matrix (transform_parameters):
-    '''
-    Convert elastix transform parameter to transform matrix
-
-    transform_parameter : elastixParameterObject
-    '''
-    T_final = np.array([[1,0,0],[0,1,0],[0,0,1]]).astype(np.float32)
-
-    for idx in range(transform_parameters.GetNumberOfParameterMaps()):
-        parameter_map = transform_parameters.GetParameterMap(idx)
-        center = np.asarray(parameter_map['CenterOfRotationPoint']).astype(np.float32)
-        T = np.asarray(parameter_map['TransformParameters']).astype(np.float32)
-        center = np.asarray([[1,0,center[0]], [0,1,center[1]],[0,0,1]]).astype(np.float32)
-        center_inv = np.linalg.inv(center)
-        if parameter_map['Transform'][0] == "AffineTransform":
-            M = np.array([[T[0],T[1],T[4]],[T[2],T[3],T[5]],[0,0,1]],dtype=np.float32)
-
-        elif parameter_map['Transform'][0] == "SimilarityTransform":
-            M = np.array(
-                [
-                    [T[0]*np.cos(T[1],dtype=np.float32),-np.sin(T[1],dtype=np.float32)*T[0],T[2]], 
-                    [T[0]*np.sin(T[1],dtype=np.float32),T[0]*np.cos(T[1],dtype=np.float32),T[3]],
-                    [0,0,1]
-                ]
-                ,dtype=np.float32)
-
-        elif parameter_map['Transform'][0] == "TranslationTransform":
-            M = np.array([[1.0,0,T[0]], [0,1.0,T[1]],[0,0,1]],dtype=np.float32)
-
-        elif parameter_map['Transform'][0] == "EulerTransform":
-            M = np.array(
-                [
-                    [np.cos(T[0],dtype=np.float32),-np.sin(T[0],dtype=np.float32),T[1]], 
-                    [np.sin(T[0],dtype=np.float32),np.cos(T[0],dtype=np.float32),T[2]],
-                    [0,0,1]
-                ]
-                ,dtype=np.float32)
-
-        else:
-            continue
-
-        T_final = T_final @ center @ M @ center_inv
-    
-    T_final_inv = np.linalg.inv(T_final)
-
-    return T_final_inv
-
-def get_inital_transform_matrix (state, img_size):
-    M_init=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]],dtype=np.float32)
-    if state//2==1:
-        M_init[:2] = cv2.getRotationMatrix2D((0,0),90,1)
-        M_init = M_init + np.array([[0,0,img_size[0]],[0,0,0],[0,0,0]])
-    elif state//2==2:
-        M_init[:2] = cv2.getRotationMatrix2D((0,0),180,1)
-        M_init = M_init + np.array([[0,0,img_size[1]],[0,0,img_size[0]],[0,0,0]])    
-    elif state//2==3:
-        M_init[:2] = cv2.getRotationMatrix2D((0,0),-90,1)
-        M_init = M_init + np.array([[0,0,0],[0,0,img_size[1]],[0,0,0]])
-    if state%2==1:
-        M_init = np.array([[-1,0,0],[0,1,0],[img_size[1],0,1]],dtype=np.float64) @ M_init
-
-    return M_init
 
 def process_command():
     parser = argparse.ArgumentParser()
@@ -80,15 +19,15 @@ if __name__ == '__main__':
         args = process_command()
         RegID=args.RegistrationID
 
-        #get secrete key
+        #load env file
         load_dotenv(dotenv_path=".env")
-        secret_key=os.getenv("key")
+        api_key=os.getenv("API_KEY")
         api_url=os.getenv('API_URL')
         dir_hist=os.getenv('DIR_HIST')
         dir_msi = os.getenv('DIR_MSI')
 
         #Get registration parameters
-        get_data={"id":RegID,"key":secret_key}
+        get_data={"id":RegID,"key":api_key}
         res = requests.post(api_url+"/registrations/get_parameter", json=get_data)
         res = res.json()
 
@@ -98,29 +37,30 @@ if __name__ == '__main__':
         histology_file = res['data']['image']['file']
         msi_file= res['data']['msi']['imzml_file']
         bin_size = res['data']['msi']['bin_size']
-        cnt_he = res['data']['roi']
+        cnt_hist = res['data']['roi']
+        userId = res['data']['userId']
 
         #set output file name
-        process_file = os.path.join(dir_msi,os.path.basename(msi_file)+'.npz')
+        process_file = os.path.join(dir_msi,os.path.basename(msi_file).split('.')[0]+'.npz')
         transform_matrix_file = os.path.join(dir_hist,f'transform_matrix_{RegID}.txt')
         result_file = os.path.join(dir_hist,f'result_img_{RegID}.png')
 
         # read histology image and mask
-        hist_ori = cv2.imread(histology_file)
-        if not cnt_he:
-            cnt_he = np.round(np.array(cnt_he)*[hist_ori.shape[1],hist_ori.shape[0]]).astype(int)
+        hist_ori = cv2.imread(os.path.join(dir_hist, str(RegID), histology_file))
+        if cnt_hist:
+            cnt_hist = np.round(np.array(cnt_hist)*[hist_ori.shape[1],hist_ori.shape[0]]).astype(int)
             hist_mask = np.zeros(hist_ori.shape[:2],np.uint8)
-            hist_mask = cv2.drawContours(hist_mask,[cnt_he],0,1,-1)
+            hist_mask = cv2.drawContours(hist_mask,[cnt_hist],0,1,-1)
             hist_proc = hist_ori*hist_mask
         else:
             hist_proc, hist_mask = he_preprocessing(hist_ori)
-            cnt_he,_=cv2.findContours(hist_mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-            cnt_he = sort_cnt_by_area(cnt_he)[0]
+            cnt_hist, _ = cv2.findContours(hist_mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+            cnt_hist = sort_cnt_by_area(cnt_hist)[0]
             # send new roi
             requests.post(api_url+"/roi/new", json={
                 "roi_type":"Mask", 
-                "points":cnt_he.astype(np.float32)/np.array([hist_ori.shape[1],hist_ori.shape[0]]), 
-                "userId":''})
+                "points":cnt_hist.astype(np.float32)/np.array([hist_ori.shape[1],hist_ori.shape[0]]), 
+                "userId":userId})
         #generate histology represent image
         hist_proc = cv2.cvtColor(hist_proc,cv2.COLOR_BGR2GRAY)
 
@@ -130,14 +70,12 @@ if __name__ == '__main__':
         save_npz(process_file,msi_data)
 
         # TIC normaliztion
-        tic=np.array(msi_data.sum(axis=1))
-        tic=np.nan_to_num(np.mean(tic)/tic,posinf=0)
-        msi_data=msi_data.multiply(tic.reshape((-1,1))).tocsc()
+        msi_data= tic_normalization(msi_data)
 
         #MSI list include msi_mask、msi_dr、msi_repr
         msi_list = []
         #Generate MSI mask
-        msi_mask = 
+        msi_mask = generate_msi_mask(msi_data,cnt_hist,msi_size)
         msi_list.append(msi_mask)
         cnt_msi,_ = cv2.findContours(msi_mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
         cnt_msi = sort_cnt_by_area(cnt_msi)[0]
@@ -152,14 +90,19 @@ if __name__ == '__main__':
 
             #Peak picking based on based on the tissue region signal
             intensity_mzs=np.array(data_proc[:-1].mean(axis=0))[0]
-            peak_idx=pick_peaks(mzs, intensity_mzs, fit_type="quadratic",signal_to_noise_threshold=3) #"quadratic", "gaussian", "lorentzian", or "apex"
+            peak_idx=pick_peaks(mzs, intensity_mzs, fit_type="quadratic",signal_to_noise_threshold=5) #"quadratic", "gaussian", "lorentzian", or "apex"
+            bin_tol = np.median([peak_idx[i].full_width_at_half_max for i in range(len(peak_idx))])*2
             peak_idx=np.array([peak_idx[i].index for i in range(len(peak_idx))])
 
             #Data binning based on peak picking result
-            data_proc=binning(data_proc,mzs,peak_idx,0.02)
+            if bin_size == 0.01:
+                data_proc=binning(data_proc,mzs,peak_idx,bin_tol)
 
             #UMAP 
-            DR_result=umap.UMAP(n_components=3,min_dist=0.001,metric='cosine',random_state=128,verbose=0).fit_transform(data_proc)
+            try:
+                DR_result=umap.UMAP(n_components=3,min_dist=0.001,metric='cosine',random_state=128,verbose=0).fit_transform(data_proc)
+            except:
+                DR_result=umap.UMAP(n_components=3,min_dist=0.001,metric='cosine',random_state=11,verbose=0).fit_transform(data_proc)
 
             #DR result into rgb image
             DR_result=data2bgr(DR_result)
@@ -173,7 +116,7 @@ if __name__ == '__main__':
             msi_list.append(cv2.cvtColor(msi_dr,cv2.COLOR_BGR2GRAY)*msi_mask)
         
         #detect the relation between MSI and H&E to solve the big angle rotation(90,180,270) and the flip situation
-        scale_ratio=round(cv2.minEnclosingCircle(cnt_he)[-1]/cv2.minEnclosingCircle(cnt_he)[-1])
+        scale_ratio=round(cv2.minEnclosingCircle(cnt_hist)[-1]/cv2.minEnclosingCircle(cnt_hist)[-1])
         rotate_stat=getorient(hist_proc,msi_list[0],scale_ratio)
         #simple registration (scale, big angle rotation, and flip)
         #rotation
@@ -199,8 +142,11 @@ if __name__ == '__main__':
         parameter_map_affine = parameter_object.GetDefaultParameterMap('affine')
         parameter_map_affine['MaximumNumberOfIterations']=['500']
         parameter_map_affine['Transform']=['SimilarityTransform']
+        parameter_map_affine['FinalBSplineInterpolationOrder']=['0']
         parameter_map_affine['AutomaticTransformInitialization']=['true']
         parameter_map_affine['AutomaticTransformInitializationMethod']=['CenterOfGravity']
+        parameter_map_affine['MaximumStepLength'] = ['50','10','1']
+        #parameter_map_affine['RequiredRatioOfValidSamples'] =['0.15']
         parameter_object.AddParameterMap(parameter_map_affine)
         if perform_type == 'contour':
             _, result_transform_parameters = itk.elastix_registration_method(
@@ -217,10 +163,10 @@ if __name__ == '__main__':
         #Calculate initial registration matrix
         M_scale = np.array([[scale_ratio,0,0],[0,scale_ratio,0],[0,0,1.0]],dtype=np.float32)
         M_init = get_inital_transform_matrix(rotate_stat,msi_size)
-        M_init = M_scale @ M_init
+        #M_init = M_scale @ M_init
 
         #save transform matrix parameter
-        np.savetxt(transform_matrix_file,np.vstack([M_init,M_elastix]))
+        np.savetxt(transform_matrix_file,np.vstack([M_init, M_scale, M_elastix]))
 
         #transform MSI_list and generate result image
         if perform_type != 'contour':
@@ -228,6 +174,7 @@ if __name__ == '__main__':
         else:
             msi_transform = msi_list[0]
         msi_transform = cv2.warpAffine(msi_transform,M=M_init[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
+        msi_transform = cv2.warpAffine(msi_transform,M=M_scale[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
         msi_transform = cv2.warpAffine(msi_transform,M=M_elastix[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST,borderMode=cv2.BORDER_REPLICATE)
         img_result = cv2.addWeighted(hist_ori,0.65,msi_transform,0.35,0)
         cv2.imwrite(result_file,img_result)
@@ -235,7 +182,7 @@ if __name__ == '__main__':
         # send result back to DB and server
         return_data = {
             "id":RegID,
-            "key":secret_key,
+            "key":api_key,
             "status":"SUCCESS",
             "transform_matrix_file":transform_matrix_file,
             "result_file":result_file,
@@ -247,5 +194,20 @@ if __name__ == '__main__':
             }
         r_post = requests.post(api_url+"/registrations/set_parameter", json=return_data)
         
-    except:
+    except Exception as e:
+        import traceback
+        error_class = e.__class__.__name__
+        detail = e.args[0]
+        cl, exc, tb = sys.exc_info()
+        lastCallStack = traceback.extract_tb(tb)[-1]
+        fileName, lineNum, funcName = lastCallStack[:3]
+        errMsg = "File \"{}\", line {}, in {}: [{}] {}".format(fileName, lineNum, funcName, error_class, detail)
+        return_data = {
+            "taskId":RegID,
+            "key":api_key,
+            "task": 'registration',
+            "status":"ERROR",
+            "message":errMsg
+            }
+        r_post = requests.post(api_url+"/jobs/error", json=return_data)
         pass

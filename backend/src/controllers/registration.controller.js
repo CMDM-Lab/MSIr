@@ -116,6 +116,7 @@ const getParameter = async (req, res) => {
         if (registration.histologyroiId){
             const roi = await HistologyROI.findByPk(registration.histologyroiId)
             res.json({
+                userId: registration.userId,
                 datasetId: msi.datasetId,
                 image: image,
                 msi: msi,

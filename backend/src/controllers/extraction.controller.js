@@ -1,4 +1,4 @@
-import { Extraction, HistologyROI, MSI, Dataset } from "../db/db";
+import { Extraction, HistologyROI, MSI, Dataset, Registration } from "../db/db";
 import fs from 'fs'
 
 const newExtraction = async (req, res) => {
@@ -102,11 +102,13 @@ const getParameter = async (req, res) => {
         const extract = await Extraction.findByPk(data.extractionId)
         const msi = await MSI.findByPk(extract.msiId)
         const roi = await HistologyROI.findByPk(extract.histologyroiId)
+        const registration = await Registration.findByPk(extract.registrationId)
         res.json({
             id: extract.id,
             normalization: extract.normalization,
             msi: msi,
-            roi: roi
+            roi: roi,
+            registration:registration
         })   
         extract.status = 'running'
         extract.save()

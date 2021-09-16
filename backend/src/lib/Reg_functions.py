@@ -1,7 +1,11 @@
 from pyimzml.ImzMLParser import ImzMLParser
 import numpy as np
 from scipy.sparse import csc_matrix
+#from scipy.sparse.linalg import norm
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import normalize
 import cv2
+from itertools import product
 
 def ImzmlFileReader(file_path,bin_size=0.01,mz_max=None,mz_min=None): #20210802
     precision=int(np.round(-np.log10(bin_size)))
@@ -73,41 +77,58 @@ def binning(data,mzs,target_peak_idx,bin_size=0.02):
         out_data.append(np.array(tmp).reshape(len(tmp)))
     return np.array(out_data).T
 
-'''Need rewrite'''
-def img_kmeans_segmentation(img_kmean): #Segmentation the reult of Kmeans with cosine distance 
-    label_rm=[]
-    label_keep=[]
-    label_unknown=[]
-    n_cluster=len(np.unique(img_kmean))
-    n_r,n_c=img_kmean.shape[:2]
-    img_kmean[np.where(img_kmean==0)]=n_cluster
-    sample_border=np.unique([*img_kmean[0,:],*img_kmean[:,-1],*img_kmean[-1,:],*img_kmean[:,1],*img_kmean[1,:],*img_kmean[:,-2],*img_kmean[-2,:],*img_kmean[:,1]],return_counts=True)
-    img_kmean[np.where(img_kmean==sample_border[0][np.argmax(sample_border[1])])]=0
-    n_border=np.sum(sample_border[1])
-    for i in range(len(sample_border[0])):
-        if sample_border[1][i]/n_border < 0.1:
-            label_keep.append(sample_border[0][i])
-        else:
-            label_rm.append(sample_border[0][i])
-    n_sample=int(round(n_r*n_c/4*0.2))
-    sample_center=np.random.choice(img_kmean[int(n_r/4):int(n_r/4*3),int(n_c/4):int(n_c/4*3)].flatten(),n_sample,replace=False)
-    sample_center=np.unique(sample_center,return_counts=True)
-       
-    for i in range(len(sample_center[0])):
-        if sample_center[1][i]>n_sample/len(sample_center[0]):
-            label_keep.append(sample_center[0][i])
-        else:
-            label_unknown.append(sample_center[0][i])
-    for i in range(len(label_rm)):
-        if label_rm[i] not in label_keep:
-            img_kmean[np.where(img_kmean==label_rm[i])]=0
-    _,img_kmean=cv2.threshold(np.uint8(img_kmean),0,255,cv2.THRESH_BINARY)
-    contours, _ = cv2.findContours(np.uint8(img_kmean),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-    img_kmean=np.zeros((n_r,n_c),np.uint8)
-    for i in range(len(contours)):
-        if cv2.contourArea(contours[i])>=n_r*n_c*0.05:
-            cv2.drawContours(img_kmean,contours,i,255,-1)
-    return img_kmean
+def get_combinations_list(k):
+    def ppowerset(iterable):
+        for sl in product(*[[[], [i]] for i in iterable]):
+            yield tuple(j for i in sl for j in i)
+
+    result =[]
+    for j in ppowerset(range(1,k+1)):
+        result.append(j)
+    result = sorted(result,key=lambda x:len(x))
+    return result[1:-1]
+
+def generate_msi_mask(msi_data, hist_cnt, shape):
+    '''
+    msi_data: csr sparse matrix
+    hist_cnt: 2d array
+
+    Through kmeans clustring with cosine distance (from k=2 to k=5), try to generate msi data mask of tissue region and use the similarity with hist_cnt as evaluation
+    '''
+    #unit norm
+    data_norm=normalize(msi_data)
+    #k-means clustering (k=2~5) stop when detected contour is similar with hist_cnt
+    min_diff = 100
+    better_mask = None
+    for k in range(2,6):
+        #kmeans result
+        label = KMeans(n_clusters=k, random_state=112,verbose=0).fit_predict(data_norm).reshape(shape)+1
+        #generate powerset of all value in label (exclude the all removed or all saved)
+        comb_list = get_combinations_list(k)
+        for subset in comb_list:
+            label_tmp = label.copy()
+            label_tmp[np.logical_or.reduce([label_tmp==i for i in subset])]=0
+            label_tmp[label_tmp!=0]=1
+            cnts, _ = cv2.findContours(np.uint8(label_tmp),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+            cnts = sort_cnt_by_area(cnts)
+            cnts_diff = cv2.matchShapes(hist_cnt,cnts,3, 0.0)
+            if cnts_diff <= 0.16:    
+                return label_tmp
+            else:
+                if min_diff > cnts_diff:
+                    better_mask = label_tmp
+                    min_diff = cnts_diff
+    return better_mask
+
+def tic_normalization (data):
+    '''
+    data: csc sparse matrix
+    '''
+    tic=np.array(data.sum(axis=1))
+    tic=np.nan_to_num(np.mean(tic)/tic,posinf=0)
+    data_proc=data.multiply(tic.reshape((-1,1))).tocsr()
+
+    return data_proc
 
 def getorient(he_img,msi_img,size_scale,cost_function='MI'):#get the orient between MSI and Histology image to solve the big-angle and flip situation
     #cost_function = 'SSD' or 'MI'
@@ -252,3 +273,71 @@ def he_preprocessing(img): #Histology image preprocessing to segmentation of bac
         cv2.drawContours(mask,contours,0,255,-1)
         img_cp[np.where(mask==0)]=0
     return img_cp,mask
+
+def get_elastix_transform_matrix (transform_parameters):
+    '''
+    Convert elastix transform parameter to transform matrix
+
+    transform_parameter : elastixParameterObject
+    '''
+    T_final = np.array([[1,0,0],[0,1,0],[0,0,1]]).astype(np.float32)
+
+    for idx in range(transform_parameters.GetNumberOfParameterMaps()):
+        parameter_map = transform_parameters.GetParameterMap(idx)
+        center = np.asarray(parameter_map['CenterOfRotationPoint']).astype(np.float32)
+        T = np.asarray(parameter_map['TransformParameters']).astype(np.float32)
+        center = np.asarray([[1,0,center[0]], [0,1,center[1]],[0,0,1]]).astype(np.float32)
+        center_inv = np.linalg.inv(center)
+        if parameter_map['Transform'][0] == "AffineTransform":
+            M = np.array([[T[0],T[1],T[4]],[T[2],T[3],T[5]],[0,0,1]],dtype=np.float32)
+
+        elif parameter_map['Transform'][0] == "SimilarityTransform":
+            M = np.array(
+                [
+                    [T[0]*np.cos(T[1],dtype=np.float32),-np.sin(T[1],dtype=np.float32)*T[0],T[2]], 
+                    [T[0]*np.sin(T[1],dtype=np.float32),T[0]*np.cos(T[1],dtype=np.float32),T[3]],
+                    [0,0,1]
+                ]
+                ,dtype=np.float32)
+
+        elif parameter_map['Transform'][0] == "TranslationTransform":
+            M = np.array([[1.0,0,T[0]], [0,1.0,T[1]],[0,0,1]],dtype=np.float32)
+
+        elif parameter_map['Transform'][0] == "EulerTransform":
+            M = np.array(
+                [
+                    [np.cos(T[0],dtype=np.float32),-np.sin(T[0],dtype=np.float32),T[1]], 
+                    [np.sin(T[0],dtype=np.float32),np.cos(T[0],dtype=np.float32),T[2]],
+                    [0,0,1]
+                ]
+                ,dtype=np.float32)
+
+        else:
+            continue
+
+        T_final = T_final @ center @ M @ center_inv
+    
+    T_final_inv = np.linalg.inv(T_final)
+
+    return T_final_inv
+
+def get_inital_transform_matrix (state, img_size):
+    """
+    status: the result of getorient
+    img_size: MSI data (n_rows, n_columns)
+    """
+    M_init=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]],dtype=np.float32)
+    if state//2==1:
+        M_init[:2] = cv2.getRotationMatrix2D((0,0),90,1)
+        M_init = M_init + np.array([[0,0,img_size[0]],[0,0,0],[0,0,0]])
+    elif state//2==2:
+        M_init[:2] = cv2.getRotationMatrix2D((0,0),180,1)
+        M_init = M_init + np.array([[0,0,img_size[1]],[0,0,img_size[0]],[0,0,0]])    
+    elif state//2==3:
+        M_init[:2] = cv2.getRotationMatrix2D((0,0),-90,1)
+        M_init = M_init + np.array([[0,0,0],[0,0,img_size[1]],[0,0,0]])
+    if state%2==1:
+        M_init = np.array([[-1,0,0],[0,1,0],[img_size[1],0,1]],dtype=np.float64) @ M_init
+
+    return M_init
+

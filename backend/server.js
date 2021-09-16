@@ -1,11 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import auth from './src/routes/auth.routes'
-import histology from './src/routes/histology.routes'
-import dataset from './src/routes/datasets.routes'
-import msi from './src/routes/msi.routes'
-import extract from './src/routes/extractions.routes'
-import registration from './src/routes/registrations.routes'
+import {auth, histology, dataset, msi, extract, registration, job} from './src/routes'
 import roi from './src/routes/roi.routes'
 import db from './src/db/db'
 import dotenv from 'dotenv-defaults'
@@ -33,6 +28,7 @@ app.use('/api/histology', histology)
 app.use('/api/roi', roi)
 app.use('/api/registrations', registration)
 app.use('/api/extractions', extract)
+app.use('/api/job', job)
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });

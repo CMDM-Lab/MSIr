@@ -1,9 +1,12 @@
 import pkg from 'sequelize'
 const { Sequelize, DataTypes } = pkg;
+import dotenv from 'dotenv-defaults'
+
+dotenv.config()
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: './msiregistrar2_db.sqlite',
+    storage: process.env.DB_PATH,
     define: {
         freezeTableName: true
       }
@@ -124,7 +127,6 @@ const MSI = sequelize.define('msi',{
     processed_data_file: {
         type: DataTypes.STRING,
     },
-    processed_file: DataTypes.STRING
 }, {
     freezeTableName: true
   })
@@ -242,9 +244,9 @@ const Job = sequelize.define('job',{
     task: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 'registration',
+        defaultValue: 'R',
         validate: {
-            isIn: [['registration', 'extraction']]
+            isIn: [['R', 'E']]
         }
     },
     taskId: {

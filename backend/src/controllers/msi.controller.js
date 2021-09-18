@@ -23,25 +23,25 @@ const newMSI = async (req, res) => {
             }
         })
         if (msi){
-            if (req.file.path === msi.imzml_file){
+            if (req.file.filename === msi.imzml_file){
                 return res.status(201).json({
                             message: "ImzML file Uploaded!",
                             msi: {
                                 msiId: msi.id,
-                                imzml_file: path.basename(msi.imzml_file),
+                                imzml_file: msi.imzml_file,
                             }
                 })
             }
-            if (req.file.path === msi.ibd_file){
+            if (req.file.filename === msi.ibd_file){
                 return res.status(201).json({
                     message: "Ibd file Uploaded!",
                     msi: {
                         msiId: msi.id,
-                        ibd_file: path.basename(msi.ibd_file),
+                        ibd_file: msi.ibd_file,
                     }
                 })
             }
-            if (req.file.path.toLowerCase().endsWith('imzml')){
+            if (req.file.filename.toLowerCase().endsWith('imzml')){
                 if (msi.imzml_file!==''){
                      fs.unlink(msi.imzml_file, function (err) {
                         if (err) throw err;
@@ -49,17 +49,17 @@ const newMSI = async (req, res) => {
                     });
                 }
                
-                msi.imzml_file = req.file.path
+                msi.imzml_file = req.file.filename
                 await msi.save()
                 return res.status(201).json({
                             message: "ImzML file Uploaded!",
                             msi: {
                                 msiId: msi.id,
-                                imzml_file: path.basename(msi.imzml_file),
+                                imzml_file: msi.imzml_file,
                             }
                         })
             }
-            if (req.file.path.toLowerCase().endsWith('ibd')){
+            if (req.file.filename.toLowerCase().endsWith('ibd')){
                 if (msi.ibd_file!==''){
                     fs.unlink(msi.ibd_file, function (err) {
                         if (err) throw err;
@@ -67,22 +67,23 @@ const newMSI = async (req, res) => {
                     });
                 }
                 
-                msi.ibd_file = req.file.path
+                msi.ibd_file = req.file.filename
                 await msi.save()
                 return res.status(201).json({
                             message: "Ibd file Uploaded!",
                             msi: {
                                 msiId: msi.id,
-                                ibd_file: path.basename(msi.ibd_file),
+                                ibd_file: msi.ibd_file,
                             }
                         })
             }
             
         }else{
+            console.log(req.file)
             msi = await MSI.create({
                 data_type:'imzML',
-                imzml_file: req.file.path.toLowerCase().endsWith('imzml')? req.file.path : '',
-                ibd_file: req.file.path.toLowerCase().endsWith('ibd')? req.file.path : '',
+                imzml_file: req.file.filename.toLowerCase().endsWith('imzml')? req.file.filename : '',
+                ibd_file: req.file.filename.toLowerCase().endsWith('ibd')? req.file.filename : '',
                 datasetId: req.query.datasetId,
                 userId: req.userId
             })
@@ -90,8 +91,8 @@ const newMSI = async (req, res) => {
                         message: "Uploaded!",
                         msi: {
                             msiId: msi.id,
-                            imzml_file: path.basename(msi.imzml_file),
-                            ibd_file: path.basename(msi.ibd_file),
+                            imzml_file: msi.imzml_file,
+                            ibd_file: msi.ibd_file,
                         }
                     })
         }
@@ -156,8 +157,8 @@ const getMSI = async (req, res) => {
             res.json({msi:
                 {msiId:msiData.id,
                 datasetId: msiData.datasetId, 
-                ibd_file:path.basename(msiData.ibd_file),
-                imzml_file:path.basename(msiData.imzml_file),
+                ibd_file:msiData.ibd_file,
+                imzml_file:msiData.imzml_file,
                 bin_size: msiData.bin_size,
                 pixel_size: msiData.pixel_size
             }})

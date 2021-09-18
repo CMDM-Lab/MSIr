@@ -15,12 +15,12 @@ const errorHandler = async (req, res) => {
             job.save()
         }
         switch (data.task){
-            case 'registration':
+            case 'R':
                 const registration = await Registration.findByPk(data.taskId)
                 registration.status = 'error'
                 registration.save()
                 break
-            case 'extraction':
+            case 'E':
                 const extraction = await Extraction.findByPk(data.taskId)
                 extraction.status = 'error'
                 extraction.save()

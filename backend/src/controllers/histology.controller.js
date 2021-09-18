@@ -28,18 +28,18 @@ const newHistologyImg = async (req, res) => {
         })
 
         if (histologyImage){
-            if (req.file.path !== histologyImage.file){
+            if (req.file.filename !== histologyImage.file){
                 
                 fs.unlink(histologyImage.file, function (err) {
                     if (err) throw err;
                     console.log('histology image file deleted!');
                 });
-                histologyImage.file = req.file.path
+                histologyImage.file = req.file.filename
                 histologyImage.save()
             }
         }else{
             histologyImage = await HistologyImage.create({
-                file: req.file.path,
+                file: req.file.filename,
                 datasetId: datasetId,
                 userId: req.userId
             })

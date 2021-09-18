@@ -5,6 +5,9 @@ export const runRegistrationScript = (id) => {
     python.stdout.on('data', function (data) {
         console.log(data.toString())
     });
+    python.stderr.on('data', function (data) {
+        console.log(data.toString())
+    });
     //python.on('close', (code) => {
     //    console.log(`child process close all stdio with code ${code}`);})
 }
@@ -14,6 +17,9 @@ export const runExtractionScript = (id) => {
     python.stdout.on('data', function (data) {
         console.log(data.toString())
     });
+    python.stderr.on('data', function (data) {
+        console.log(data.toString())
+    });
     //python.on('close', (code) => {
     //    console.log(`child process close all stdio with code ${code}`);})
 }
@@ -21,6 +27,9 @@ export const runExtractionScript = (id) => {
 export const runDrawROIScript = (id) => {
     const python = spawn('python', ['./src/lib/draw_mask_from_roi.py', '-ID', id]);
     python.stdout.on('data', function (data) {
+        console.log(data.toString())
+    });
+    python.stderr.on('data', function (data) {
         console.log(data.toString())
     });
     //python.on('close', (code) => {

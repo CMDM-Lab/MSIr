@@ -1,6 +1,7 @@
 import { User } from "../db/db";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt'
+import {sendPasswordChangeMail, sendResetMail} from '../utils/mail'
 
 //const Op = db.Sequelize.Op;
 
@@ -64,7 +65,7 @@ export const resetRequire = async (req, res) => {
             email: req.body.email
         }
     }).catch(err => {
-        res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message });
     });
     if (!user){
         return res.status(400).json({ message: "Invalid mail. Please sign up first." });
@@ -80,7 +81,8 @@ export const resetRequire = async (req, res) => {
     user.reset_password_sent_at = reset_password_sent_at
     user.save()
 
-    // send email with reset_password url with reset_password_token
+    //sendResetMail(user.email, reset_token)
+    return res.json({message: 'Password reset email has been sent!'})
 
 }
 
@@ -105,6 +107,8 @@ export const resetPassword = async (req, res) => {
     user.reset_password_token = null
     user.reset_password_sent_at = 0
     user.save()
+
+    //sendPasswordChangeMail(user.email)
 
     return res.json({message: "Password has been reset! Please use new password to sign in."})
 } 

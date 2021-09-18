@@ -1,5 +1,6 @@
-import { Extraction, HistologyROI, MSI, Dataset, Registration } from "../db/db";
+import { Extraction, HistologyROI, MSI, Dataset, Registration, Job } from "../db/db";
 import fs from 'fs'
+import { finishJob } from "../utils/util";
 
 const newExtraction = async (req, res) => {
     const data = req.body
@@ -15,6 +16,12 @@ const newExtraction = async (req, res) => {
 
         res.json({message: "Extraction was created successfully!"})
         //run extraction script
+        const job = await Job.create({
+            task:'E',
+            taskId: extract.id,
+            status:'WAITING'
+        })
+        runJobs()
 
     } catch (error) {
         console.log(error.message)
@@ -126,6 +133,7 @@ const setParameter = async (req, res) => {
             extract.extract_file = data.extract_file
             extract.status = 'finished'
             extract.save()
+            finishJob('E',extract.id)
         }else{
             //handle extract
             extract.status = 'error'
@@ -133,12 +141,9 @@ const setParameter = async (req, res) => {
         }
         
     } catch (error) {
-        
+        console.log(error.message)
+        res.status(500).json({ message: error.message }); 
     }
 }
 
-const resultFile = (req, res) => {
-    
-}
-
-export default {newExtraction, deleteExtraction, all, show, getParameter, setParameter, resultFile}
+export default {newExtraction, deleteExtraction, all, show, getParameter, setParameter}

@@ -1,5 +1,6 @@
-import { HistologyImage, HistologyROI, MSI, Registration } from "../db/db";
+import { HistologyImage, HistologyROI, Job, MSI, Registration } from "../db/db";
 import fs from 'fs'
+import { finishJob, runJobs } from "../utils/util";
 
 const newRegistration = async (req, res) => {
     const data = req.body
@@ -18,6 +19,12 @@ const newRegistration = async (req, res) => {
         res.json({message: "Registration was created successfully!"})
 
         // run script
+        const job = await Job.create({
+            task:'R',
+            taskId:registration.id,
+            status:'WAITING'
+        })
+        runJobs()
         
     } catch (error) {
         console.log(error.message)
@@ -159,11 +166,13 @@ const setParameter = async (req, res) => {
             msi.msi_w = data.msi_w
             msi.processed_data_file = data.processed_data_file
             msi.save()
+            await finishJob('R',registration.id)
         }else{
             //handle status ERROR
             registration.status = 'error'
+            registration.save()
         }
-        
+        runJobs()
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: error.message });

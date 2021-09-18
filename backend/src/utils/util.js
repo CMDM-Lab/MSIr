@@ -1,6 +1,7 @@
 import { Job } from "../db/db";
+import { runExtractionScript, runRegistrationScript } from "./runScript";
 
-export const runWaitingJob = async () => {
+const runWaitingJob = async () => {
     try {
         if (hasJobRunning){
             return true
@@ -12,16 +13,17 @@ export const runWaitingJob = async () => {
         })
         if (job){
             switch(job.task){
-                case 'registration':
-                    runRegistration(job.taskId)
+                case 'R':
+                    runRegistrationScript(job.taskId)
                     break
-                case 'extraction':
-                    runExtraction(job.taskId)
+                case 'E':
+                    runExtractionScript(job.taskId)
                     break
                 default:
                     break
             }
             job.status = 'RUNNING'
+            job.attempts =job.attempts+1
             await job.save()
             return true
         }
@@ -31,7 +33,7 @@ export const runWaitingJob = async () => {
     }
 }
 
-export const rerunErrorJob = () => {
+const rerunErrorJob = async () => {
     try {
         if (hasJobRunning){
             return true
@@ -42,19 +44,22 @@ export const rerunErrorJob = () => {
             }
         })
         if (job){
-            switch(job.task){
-                case 'registration':
-                    runRegistration(job.taskId)
+            if (job.attempts<3){
+                switch(job.task){
+                case 'R':
+                    runRegistrationScript(job.taskId)
                     break
-                case 'extraction':
-                    runExtraction(job.taskId)
+                case 'E':
+                    runExtractionScript(job.taskId)
                     break
                 default:
                     break
-            }
-            job.status = 'RUNNING'
-            await job.save()
-            return true
+                }
+                job.status = 'RUNNING'
+                job.attempts =job.attempts+1
+                await job.save()
+                return true
+            }   
         }
         return false
     } catch (error) {
@@ -96,10 +101,10 @@ const hasJobRunning = async () => {
     }
 }
 
-export const runRegistration = (id) => {
-
-}
-
-export const runExtraction = (id) => {
-
+export const runJobs = async () => {
+    var running = false
+    running = await runWaitingJob()
+    if (!running){
+        rerunErrorJob()
+    }
 }

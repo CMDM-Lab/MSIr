@@ -1,6 +1,7 @@
 from pyimzml.ImzMLParser import ImzMLParser
 import numpy as np
 from scipy.sparse import csc_matrix
+import scipy.ndimage as ndi
 #from scipy.sparse.linalg import norm
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import normalize
@@ -202,6 +203,7 @@ def getorient(he_img,msi_img,size_scale,cost_function='MI'):#get the orient betw
 def color_metric_edge_detection(img): #detect the edge from RGB image through color metric 
     '''
     Abasi, Saeedeh, Mohammad A. Tehran, and Mark D. Fairchild. "Colour metrics for image edge detection." Color Research & Application 45.4 (2020): 632-643.
+    The source code of skimage.feature.canny 
     '''
     def hyab(p):
         value=np.abs(p[:,:,0])+(np.power(p[:,:,1],2)+np.power(p[:,:,2],2))**0.5
@@ -217,6 +219,8 @@ def color_metric_edge_detection(img): #detect the edge from RGB image through co
     gx=hyab(e17)+2*hyab(e28)+hyab(e39)
     gy=hyab(e13)+2*hyab(e46)+hyab(e79)
     g=np.abs(gx)+np.abs(gy)
+
+
     return g
 
 '''need modify'''
@@ -341,3 +345,148 @@ def get_inital_transform_matrix (state, img_size):
 
     return M_init
 
+def color_metric_edge_detection(img, sigma=0.33): #detect the edge from RGB image through color metric 
+    '''
+    Abasi, Saeedeh, Mohammad A. Tehran, and Mark D. Fairchild. "Colour metrics for image edge detection." Color Research & Application 45.4 (2020): 632-643.
+    The source code of skimage.feature.canny 
+    '''
+    from skimage.filters import threshold_multiotsu
+    def hyab(p):
+        value=np.abs(p[:,:,0])+(np.power(p[:,:,1],2)+np.power(p[:,:,2],2))**0.5
+        return value
+
+    def get_eroded_mask(img):
+        eroded_mask = np.ones(img.shape, dtype=bool)
+        eroded_mask[:1, :] = 0
+        eroded_mask[-1:, :] = 0
+        eroded_mask[:, :1] = 0
+        eroded_mask[:, -1:] = 0
+        return eroded_mask
+    
+    def _set_local_maxima(magnitude, pts, w_num, w_denum, row_slices,col_slices, out):
+        """Get the magnitudes shifted left to make a matrix of the points to
+        the right of pts. Similarly, shift left and down to get the points
+        to the top right of pts.
+        """
+        r_0, r_1, r_2, r_3 = row_slices
+        c_0, c_1, c_2, c_3 = col_slices
+        c1 = magnitude[r_0, c_0][pts[r_1, c_1]]
+        c2 = magnitude[r_2, c_2][pts[r_3, c_3]]
+        m = magnitude[pts]
+        w = w_num[pts] / w_denum[pts]
+        c_plus = c2 * w + c1 * (1 - w) <= m
+        c1 = magnitude[r_1, c_1][pts[r_0, c_0]]
+        c2 = magnitude[r_3, c_3][pts[r_2, c_2]]
+        c_minus = c2 * w + c1 * (1 - w) <= m
+        out[pts] = c_plus & c_minus
+
+        return out
+
+    def _get_local_maxima(isobel, jsobel, magnitude, eroded_mask):
+        """Edge thinning by non-maximum suppression.
+        Finds the normal to the edge at each point, we can look at the signs of X and Y and the relative magnitude of X vs Y to sort the points into 4 categories: horizontal, vertical, diagonal and antidiagonal.
+        Look in the normal and reverse directions to see if the values in either of those directions are greater than the point in question.
+        Use interpolation (via _set_local_maxima) to get a mix of points instead of picking the one that's the closest to the normal.
+        """
+        abs_isobel = np.abs(isobel)
+        abs_jsobel = np.abs(jsobel)
+
+        eroded_mask = eroded_mask & (magnitude > 0)
+
+        # Normals' orientations
+        is_horizontal = eroded_mask & (abs_isobel >= abs_jsobel)
+        is_vertical = eroded_mask & (abs_isobel <= abs_jsobel)
+        is_up = (isobel >= 0)
+        is_down = (isobel <= 0)
+        is_right = (jsobel >= 0)
+        is_left = (jsobel <= 0)
+        #
+        # --------- Find local maxima --------------
+        #
+        # Assign each point to have a normal of 0-45 degrees, 45-90 degrees,
+        # 90-135 degrees and 135-180 degrees.
+        #
+        local_maxima = np.zeros(magnitude.shape, bool)
+        # ----- 0 to 45 degrees ------
+        # Mix diagonal and horizontal
+        pts_plus = is_up & is_right
+        pts_minus = is_down & is_left
+        pts = ((pts_plus | pts_minus) & is_horizontal)
+        # Get the magnitudes shifted left to make a matrix of the points to the right of pts. Similarly, shift left and down to get the points to the top right of pts.
+        local_maxima = _set_local_maxima(
+            magnitude, pts, abs_jsobel, abs_isobel,
+            [slice(1, None), slice(-1), slice(1, None), slice(-1)],
+            [slice(None), slice(None), slice(1, None), slice(-1)],
+            local_maxima)
+        # ----- 45 to 90 degrees ------
+        # Mix diagonal and vertical
+        #
+        pts = ((pts_plus | pts_minus) & is_vertical)
+        local_maxima = _set_local_maxima(
+            magnitude, pts, abs_isobel, abs_jsobel,
+            [slice(None), slice(None), slice(1, None), slice(-1)],
+            [slice(1, None), slice(-1), slice(1, None), slice(-1)],
+            local_maxima)
+        # ----- 90 to 135 degrees ------
+        # Mix anti-diagonal and vertical
+        #
+        pts_plus = is_down & is_right
+        pts_minus = is_up & is_left
+        pts = ((pts_plus | pts_minus) & is_vertical)
+        local_maxima = _set_local_maxima(
+            magnitude, pts, abs_isobel, abs_jsobel,
+            [slice(None), slice(None), slice(-1), slice(1, None)],
+            [slice(1, None), slice(-1), slice(1, None), slice(-1)],
+            local_maxima)
+        # ----- 135 to 180 degrees ------
+        # Mix anti-diagonal and anti-horizontal
+        #
+        pts = ((pts_plus | pts_minus) & is_horizontal)
+        local_maxima = _set_local_maxima(
+            magnitude, pts, abs_jsobel, abs_isobel,
+            [slice(-1), slice(1, None), slice(-1), slice(1, None)],
+            [slice(None), slice(None), slice(1, None), slice(-1)],
+            local_maxima)
+
+        return local_maxima
+
+    img_lab=cv2.cvtColor(img,cv2.COLOR_BGR2LAB)
+    e17=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[1,0,0],[0,0,0],[-1,0,0]]))
+    e28=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[0,1,0],[0,0,0],[0,-1,0]]))
+    e39=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[0,0,1],[0,0,0],[0,0,-1]]))
+    e13=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[1,0,-1],[0,0,0],[0,0,0]]))
+    e46=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[0,0,0],[1,0,-1],[0,0,0]]))
+    e79=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[0,0,0],[0,0,0],[1,0,-1]]))
+    gx=hyab(e17)+2*hyab(e28)+hyab(e39)
+    gy=hyab(e13)+2*hyab(e46)+hyab(e79)
+    g=np.abs(gx)+np.abs(gy)
+
+    v = np.median(g)
+    low_threshold  = int(max(0, (1.0 - sigma) * v))
+    high_threshold = int(min(255, (1.0 + sigma) * v))
+    '''
+    low_threshold, high_threshold = threshold_multiotsu(g)
+    '''
+
+    eroded_mask = get_eroded_mask(g)
+     # Non-maximum suppression
+    local_maxima = _get_local_maxima(gx, gy, g, eroded_mask)
+
+    # Double thresholding and edge traking
+    low_mask = local_maxima & (g >= low_threshold)
+
+    #
+    # Segment the low-mask, then only keep low-segments that have some high_mask component in them
+    #
+    strel = np.ones((3, 3), bool)
+    labels, count = ndi.label(low_mask, strel)
+    if count == 0:
+        return low_mask
+
+    high_mask = local_maxima & (g >= high_threshold)
+    nonzero_sums = np.unique(labels[high_mask])
+    good_label = np.zeros((count + 1,), bool)
+    good_label[nonzero_sums] = True
+    output_mask = good_label[labels]
+
+    return g

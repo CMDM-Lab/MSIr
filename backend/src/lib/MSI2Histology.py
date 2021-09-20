@@ -1,8 +1,7 @@
-from ast import Str
 import numpy as np
-from scipy.sparse import csc_matrix,csr_matrix,vstack, save_npz
-from scipy.sparse.linalg import norm
-import cv2,os,time, requests, argparse, json, sys, umap, itk
+from scipy.sparse import vstack, save_npz
+import cv2,os, requests, argparse, json, sys, umap 
+from itk import ParameterObject, elastix_registration_method
 from dotenv import load_dotenv
 from Reg_functions import ImzmlFileReader, data2bgr, sort_cnt_by_area, \
     binning, generate_msi_mask, tic_normalization, getorient, he_preprocessing, get_elastix_transform_matrix, get_inital_transform_matrix
@@ -75,10 +74,13 @@ if __name__ == '__main__':
         #MSI list include msi_mask、msi_dr、msi_repr
         msi_list = []
         #Generate MSI mask
-        msi_mask = generate_msi_mask(msi_data,cnt_hist,msi_size)
-        msi_list.append(msi_mask)
+        msi_mask = generate_msi_mask(msi_data,cnt_hist,msi_size).astype(np.uint8)
+        #clean border pixel
+        msi_mask[0,:]=0;msi_mask[-1,:]=0;msi_mask[:,0]=0;msi_mask[:,-1]=0
         cnt_msi,_ = cv2.findContours(msi_mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
         cnt_msi = sort_cnt_by_area(cnt_msi)[0]
+        cv2.drawContours(msi_mask,[cnt_msi],0,1,-1)
+        msi_list.append(msi_mask)
 
         #contour based data processing stop here
         if perform_type != 'contour':
@@ -138,7 +140,7 @@ if __name__ == '__main__':
             msi_list[i]=cv2.resize(msi_list[i],None, fx=scale_ratio, fy=scale_ratio,interpolation=cv2.INTER_NEAREST)
 
         #Automatic registration through intensity-based registration using Elastix
-        parameter_object = itk.ParameterObject.New()
+        parameter_object = ParameterObject.New()
         parameter_map_affine = parameter_object.GetDefaultParameterMap('affine')
         parameter_map_affine['MaximumNumberOfIterations']=['500']
         parameter_map_affine['Transform']=['SimilarityTransform']
@@ -146,14 +148,14 @@ if __name__ == '__main__':
         parameter_map_affine['AutomaticTransformInitialization']=['true']
         parameter_map_affine['AutomaticTransformInitializationMethod']=['CenterOfGravity']
         parameter_map_affine['MaximumStepLength'] = ['50','10','1']
-        #parameter_map_affine['RequiredRatioOfValidSamples'] =['0.15']
+        parameter_map_affine['RequiredRatioOfValidSamples'] =['0.15']
         parameter_object.AddParameterMap(parameter_map_affine)
         if perform_type == 'contour':
-            _, result_transform_parameters = itk.elastix_registration_method(
+            _, result_transform_parameters = elastix_registration_method(
                 hist_proc.astype(np.float32), msi_list[0].astype(np.float32),
                 parameter_object=parameter_object,number_of_threads=4,log_to_console=False)
         else:
-            _, result_transform_parameters = itk.elastix_registration_method(
+            _, result_transform_parameters = elastix_registration_method(
                 hist_proc.astype(np.float32), msi_list[2].astype(np.float32),
                 parameter_object=parameter_object,number_of_threads=4,log_to_console=False)
 
@@ -172,11 +174,12 @@ if __name__ == '__main__':
         if perform_type != 'contour':
             msi_transform = msi_list[1]
         else:
-            msi_transform = msi_list[0]
-        msi_transform = cv2.warpAffine(msi_transform,M=M_init[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
-        msi_transform = cv2.warpAffine(msi_transform,M=M_scale[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
-        msi_transform = cv2.warpAffine(msi_transform,M=M_elastix[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST,borderMode=cv2.BORDER_REPLICATE)
-        img_result = cv2.addWeighted(hist_ori,0.65,msi_transform,0.35,0)
+            msi_transform = msi_list[0]*255
+        #already perform reflection and big angle rotation in above 
+        #msi_transform = cv2.warpAffine(msi_transform,M=M_init[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
+        #msi_transform = cv2.warpAffine(msi_transform,M=M_scale[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
+        msi_transform = cv2.warpAffine(msi_transform,M=M_elastix[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
+        img_result = cv2.addWeighted(hist_ori,0.45,msi_transform,0.55,0)
         cv2.imwrite(result_file,img_result)
 
         # send result back to DB and server

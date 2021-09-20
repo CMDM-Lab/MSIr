@@ -2,7 +2,6 @@ from pyimzml.ImzMLParser import ImzMLParser
 import numpy as np
 from scipy.sparse import csc_matrix
 import scipy.ndimage as ndi
-#from scipy.sparse.linalg import norm
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import normalize
 import cv2
@@ -48,7 +47,7 @@ def data2bgr(data):#convert value to RBG(0~255)
     return out
 
 def sort_cnt_by_area(cnt): #sort contour by the area
-  cntsSorted = sorted(cnt, key=lambda x: cv2.contourArea(x))
+  cntsSorted = sorted(cnt, key=lambda x: cv2.contourArea(x),reverse=True)
   return cntsSorted
 
 def binning(data,mzs,target_peak_idx,bin_size=0.02):
@@ -105,19 +104,25 @@ def generate_msi_mask(msi_data, hist_cnt, shape):
     #k-means clustering (k=2~5) stop when detected contour is similar with hist_cnt
     min_diff = 100
     better_mask = None
-    for k in range(2,6):
+    #kernel_size = np.max([int(np.log10(msi_data.shape[0]))-1,3])
+    for k in range(2,5):
         #kmeans result
         label = KMeans(n_clusters=k, random_state=112,verbose=0).fit_predict(data_norm).reshape(shape)+1
         #generate powerset of all value in label (exclude the all removed or all saved)
         comb_list = get_combinations_list(k)
+        sample_border=np.unique([*label[0,:],*label[:,-1],*label[-1,:],*label[:,0]],return_counts=True)
+        label[label == sample_border[0][np.argmax(sample_border[1])]] = 0
         for subset in comb_list:
             label_tmp = label.copy()
             label_tmp[np.logical_or.reduce([label_tmp==i for i in subset])]=0
             label_tmp[label_tmp!=0]=1
+            #label_tmp = cv2.morphologyEx(np.uint8(label_tmp),cv2.MORPH_CLOSE,np.ones((kernel_size,kernel_size),np.uint8))
             cnts, _ = cv2.findContours(np.uint8(label_tmp),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
             cnts = sort_cnt_by_area(cnts)
-            cnts_diff = cv2.matchShapes(hist_cnt,cnts,3, 0.0)
-            if cnts_diff <= 0.16:    
+            if len(cnts)<1:
+                continue
+            cnts_diff = cv2.matchShapes(hist_cnt,cnts[0],3, 0.0)
+            if cnts_diff <= 0.15:      
                 return label_tmp
             else:
                 if min_diff > cnts_diff:
@@ -256,18 +261,20 @@ def get_inital_transform_matrix (state, img_size):
     status: the result of getorient
     img_size: MSI data (n_rows, n_columns)
     """
-    M_init=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]],dtype=np.float32)
+    M_init=np.array([[1.0,0,0],[0,1.0,0],[0,0,1]],dtype=np.float32)
     if state//2==1:
-        M_init[:2] = cv2.getRotationMatrix2D((0,0),90,1)
-        M_init = M_init + np.array([[0,0,img_size[0]],[0,0,0],[0,0,0]])
+        M_init[:2] = cv2.getRotationMatrix2D((0,0),-90,1)
+        M_init = M_init + np.array([[0,0,img_size[0]-1],[0,0,0],[0,0,0]])
+        img_size = (img_size[1],img_size[0])
     elif state//2==2:
         M_init[:2] = cv2.getRotationMatrix2D((0,0),180,1)
-        M_init = M_init + np.array([[0,0,img_size[1]],[0,0,img_size[0]],[0,0,0]])    
+        M_init = M_init + np.array([[0,0,img_size[1]-1],[0,0,img_size[0]-1],[0,0,0]])    
     elif state//2==3:
-        M_init[:2] = cv2.getRotationMatrix2D((0,0),-90,1)
-        M_init = M_init + np.array([[0,0,0],[0,0,img_size[1]],[0,0,0]])
+        M_init[:2] = cv2.getRotationMatrix2D((0,0),90,1)
+        M_init = M_init + np.array([[0,0,0],[0,0,img_size[1]-1],[0,0,0]])
+        img_size = (img_size[1],img_size[0])
     if state%2==1:
-        M_init = np.array([[-1,0,0],[0,1,0],[img_size[1],0,1]],dtype=np.float64) @ M_init
+        M_init = np.array([[1,0,0],[0,-1,img_size[0]-1],[0,0,1]],dtype=np.float32) @ M_init
 
     return M_init
 

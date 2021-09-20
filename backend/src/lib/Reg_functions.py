@@ -61,11 +61,15 @@ def binning(data,mzs,target_peak_idx,bin_size=0.02):
             nn_peak_idx_low=target_peak_idx[idx-1]+bin_idx  
         else:
             nn_peak_idx_low= target_peak_idx[0]-bin_idx
+            if nn_peak_idx_low < 0:
+                nn_peak_idx_low = 0
 
         if (idx+1)<len(target_peak_idx): # handle last idx
             nn_peak_idx_high=target_peak_idx[idx+1]-bin_idx  
         else: 
             nn_peak_idx_high=target_peak_idx[-1]+bin_idx
+            if nn_peak_idx_high > len(mzs):
+                nn_peak_idx_high = len(mzs)
 
         if bin_low>nn_peak_idx_low and bin_high<nn_peak_idx_high: #neighbor peak not overlap
             tmp=data[:,bin_low:bin_high+1].tocsr().sum(axis=1)
@@ -200,84 +204,6 @@ def getorient(he_img,msi_img,size_scale,cost_function='MI'):#get the orient betw
     status=np.argmin(status)
     return status
 
-def color_metric_edge_detection(img): #detect the edge from RGB image through color metric 
-    '''
-    Abasi, Saeedeh, Mohammad A. Tehran, and Mark D. Fairchild. "Colour metrics for image edge detection." Color Research & Application 45.4 (2020): 632-643.
-    The source code of skimage.feature.canny 
-    '''
-    def hyab(p):
-        value=np.abs(p[:,:,0])+(np.power(p[:,:,1],2)+np.power(p[:,:,2],2))**0.5
-        return value
-    
-    img_lab=cv2.cvtColor(img,cv2.COLOR_BGR2LAB)
-    e17=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[1,0,0],[0,0,0],[-1,0,0]]))
-    e28=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[0,1,0],[0,0,0],[0,-1,0]]))
-    e39=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[0,0,1],[0,0,0],[0,0,-1]]))
-    e13=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[1,0,-1],[0,0,0],[0,0,0]]))
-    e46=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[0,0,0],[1,0,-1],[0,0,0]]))
-    e79=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[0,0,0],[0,0,0],[1,0,-1]]))
-    gx=hyab(e17)+2*hyab(e28)+hyab(e39)
-    gy=hyab(e13)+2*hyab(e46)+hyab(e79)
-    g=np.abs(gx)+np.abs(gy)
-
-
-    return g
-
-'''need modify'''
-def he_preprocessing(img): #Histology image preprocessing to segmentation of background and tissue
-    img_cp=img.copy()
-    h,w=img_cp.shape[:2]
-    scale_size=max(round((h*w/300000)**0.5),1)
-    if scale_size>1:
-        #resize to smaller size
-        img_cp=cv2.GaussianBlur(img_cp,(3,3),0)
-        img_cp=cv2.resize(img_cp,None,fx=1/scale_size,fy=1/scale_size,interpolation=cv2.INTER_CUBIC)
-        #decolor to enhance 
-        _,img_cp=cv2.decolor(img_cp)
-        #colorful edge detection
-        img_edge=color_metric_edge_detection(img_cp)
-        #rerange to 0~255
-        v_max,v_min=np.max(img_edge),np.min(img_edge)
-        img_edge=np.uint8((img_edge-v_min)/(v_max-v_min)*255)
-        #mask initial 
-        mask=np.zeros(img_edge.shape[:2],np.uint8)
-        #binary colorful edge img and close hole 
-        _,img_edge= cv2.threshold(img_edge,(np.mean(img_edge)*0.8+np.median(img_edge)*1.2)//2,255,cv2.THRESH_BINARY)#+cv2.THRESH_OTSU)
-        #_,img_edge= cv2.threshold(img_edge,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-        img_edge=cv2.morphologyEx(img_edge,cv2.MORPH_CLOSE,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(15,15)),borderType=cv2.BORDER_REPLICATE)
-        #coontour detect in binary img
-        contours, _ = cv2.findContours(img_edge,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-        contours=sorted(contours,key=lambda x: cv2.contourArea(x),reverse=True)
-        #draw the largest contour 
-        cv2.drawContours(mask,contours,0,255,-1)
-        #draw other contour depend on area size 
-        for i in range(1,len(contours)):
-            if cv2.contourArea(contours[i])>0.15*img_edge.shape[0]*img_edge.shape[1] or cv2.contourArea(contours[i])>cv2.contourArea(contours[0])*0.5:
-                cv2.drawContours(mask,contours,i,255,-1)
-        #resize mask to original size 
-        mask=cv2.resize(mask,(img.shape[1],img.shape[0]),interpolation=cv2.INTER_NEAREST)
-        #remove the background region in original img 
-        img_cp=img.copy()
-        img_cp[np.where(mask==0)]=0
-    else:
-        mask=np.zeros(img.shape[:2],np.uint8)
-        img_cp = img_cp.reshape((-1, 3))
-        mask=mask.reshape((-1,1))
-        img_cp = np.float32(img_cp)
-        ret, label, center = cv2.kmeans(img_cp, 2, None, (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0), 10, cv2.KMEANS_RANDOM_CENTERS)
-        if abs(center[0][0]-center[0][1]) > abs(center[1][0]-center[1][1]):
-            mask[np.where(label == 0)[0]] = 255
-        else:
-            mask[np.where(label == 1)[0]] = 255
-        img_cp = np.uint8(img_cp).reshape((img.shape))
-        mask = mask.reshape((img.shape[:2]));mask=cv2.GaussianBlur(mask,(5,5),0)
-        contours, _ = cv2.findContours(mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-        mask=np.zeros(mask.shape,np.uint8)
-        contours=sort_cnt_by_area(contours)
-        cv2.drawContours(mask,contours,0,255,-1)
-        img_cp[np.where(mask==0)]=0
-    return img_cp,mask
-
 def get_elastix_transform_matrix (transform_parameters):
     '''
     Convert elastix transform parameter to transform matrix
@@ -345,12 +271,14 @@ def get_inital_transform_matrix (state, img_size):
 
     return M_init
 
-def color_metric_edge_detection(img, sigma=0.33): #detect the edge from RGB image through color metric 
+def color_metric_edge_detection(img, sigma=0.33): 
     '''
+    Complete version
     Abasi, Saeedeh, Mohammad A. Tehran, and Mark D. Fairchild. "Colour metrics for image edge detection." Color Research & Application 45.4 (2020): 632-643.
     The source code of skimage.feature.canny 
+    Detect the edge from RGB image through color metric, Non-maximum suppression, and Edge Tracking by Hysteresis
     '''
-    from skimage.filters import threshold_multiotsu
+
     def hyab(p):
         value=np.abs(p[:,:,0])+(np.power(p[:,:,1],2)+np.power(p[:,:,2],2))**0.5
         return value
@@ -451,6 +379,7 @@ def color_metric_edge_detection(img, sigma=0.33): #detect the edge from RGB imag
         return local_maxima
 
     img_lab=cv2.cvtColor(img,cv2.COLOR_BGR2LAB)
+    #color metric gradient magnitudes
     e17=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[1,0,0],[0,0,0],[-1,0,0]]))
     e28=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[0,1,0],[0,0,0],[0,-1,0]]))
     e39=cv2.filter2D(img_lab,cv2.CV_32F,np.array([[0,0,1],[0,0,0],[0,0,-1]]))
@@ -460,14 +389,16 @@ def color_metric_edge_detection(img, sigma=0.33): #detect the edge from RGB imag
     gx=hyab(e17)+2*hyab(e28)+hyab(e39)
     gy=hyab(e13)+2*hyab(e46)+hyab(e79)
     g=np.abs(gx)+np.abs(gy)
-
-    v = np.median(g)
+    
+    #automatic determine low and high threshold
+    #method 1
+    v = np.mean(g)
     low_threshold  = int(max(0, (1.0 - sigma) * v))
     high_threshold = int(min(255, (1.0 + sigma) * v))
-    '''
-    low_threshold, high_threshold = threshold_multiotsu(g)
-    '''
-
+    #method 2
+    '''from skimage.filters import threshold_multiotsu    
+    low_threshold, high_threshold = threshold_multiotsu(g)'''
+    
     eroded_mask = get_eroded_mask(g)
      # Non-maximum suppression
     local_maxima = _get_local_maxima(gx, gy, g, eroded_mask)
@@ -475,9 +406,7 @@ def color_metric_edge_detection(img, sigma=0.33): #detect the edge from RGB imag
     # Double thresholding and edge traking
     low_mask = local_maxima & (g >= low_threshold)
 
-    #
     # Segment the low-mask, then only keep low-segments that have some high_mask component in them
-    #
     strel = np.ones((3, 3), bool)
     labels, count = ndi.label(low_mask, strel)
     if count == 0:
@@ -489,4 +418,43 @@ def color_metric_edge_detection(img, sigma=0.33): #detect the edge from RGB imag
     good_label[nonzero_sums] = True
     output_mask = good_label[labels]
 
-    return g
+    return output_mask
+
+'''Work but need to improve and develope'''
+#Histology image preprocessing to segmentation of background and tissue through complete version color metric edge detection
+def he_preprocessing(img): 
+    img_cp=img.copy()
+    h,w=img_cp.shape[:2]
+    scale_size=max(round((h*w/300000)**0.5),1)
+    if scale_size>1:
+        #resize to smaller size
+        img_cp=cv2.resize(img_cp,None,fx=1/scale_size,fy=1/scale_size,interpolation=cv2.INTER_CUBIC)
+        
+    #decolor to enhance 
+    _,img_cp=cv2.decolor(img_cp)
+    #colorful edge detection
+    img_edge=color_metric_edge_detection(img_cp)
+    #mask initial 
+    mask=np.zeros(img_edge.shape[:2],np.uint8)
+    #close operation to remove small hole
+    img_edge=cv2.morphologyEx(np.uint8(img_edge),cv2.MORPH_CLOSE,
+        cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(15,15)),
+        borderType=cv2.BORDER_REPLICATE)
+        
+    #coontour detect in binary img
+    contours, _ = cv2.findContours(np.uint8(img_edge),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+    contours=sorted(contours,key=lambda x: cv2.contourArea(x),reverse=True)
+    #draw the largest contour 
+    cv2.drawContours(mask,contours,0,1,-1)
+    #draw other contour depend on area size 
+    for i in range(1,len(contours)):
+        if cv2.contourArea(contours[i])>0.15*img_edge.shape[0]*img_edge.shape[1] or cv2.contourArea(contours[i])>cv2.contourArea(contours[0])*0.5:
+            cv2.drawContours(mask,contours,i,1,-1)
+    if scale_size>1:
+        #resize mask to original size 
+        mask=cv2.resize(mask,(img.shape[1],img.shape[0]),interpolation=cv2.INTER_NEAREST)
+    #remove the background region in original img 
+    img_cp=img.copy()
+    img_cp= img_cp*mask.reshape((mask.shape[0],mask.shape[1],1))
+    
+    return img_cp,mask

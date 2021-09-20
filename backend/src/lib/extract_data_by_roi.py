@@ -1,6 +1,5 @@
 from Reg_functions import ImzmlFileReader
 import numpy as np
-#from scipy.sparse import csc_matrix,csr_matrix
 import pandas as pd
 from dotenv import load_dotenv
 import cv2, os, requests, argparse, json, sys

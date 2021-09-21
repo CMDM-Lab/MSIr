@@ -6,15 +6,16 @@ const newRegistration = async (req, res) => {
     const data = req.body
     try {
         //const dataset = await Dataset.findByPk(data.datasetId)
-        const msi = await MSI.findOne({where:{datasetId:datasetId}})
-        const hist = await HistologyImage.findOne({where:{datasetId:datasetId}})
+        const msi = await MSI.findOne({where:{datasetId:data.datasetId}})
+        const hist = await HistologyImage.findOne({where:{datasetId:data.datasetId}})
         const registration = await Registration.create({
             perform_type: data.perform_type,
             transform_type: data.transform_type,
             datasetId: data.datasetId,
             msiId: msi.id,
             histologyImageId: hist.id,
-            histologyroiId: data.histologyroiId
+            histologyroiId: data.histologyroiId,
+            userId: req.userId
         })
         res.json({message: "Registration was created successfully!"})
 
@@ -24,7 +25,9 @@ const newRegistration = async (req, res) => {
             taskId:registration.id,
             status:'WAITING'
         })
+        console.log('job save')
         runJobs()
+        console.log('job run')
         
     } catch (error) {
         console.log(error.message)
@@ -118,13 +121,13 @@ const getParameter = async (req, res) => {
         })
         const msi = await MSI.findOne({
             where:{id:registration.msiId},
-            attributes:['id', 'imzml_file']
+            attributes:['id', 'imzml_file', 'bin_size']
         })
         if (registration.histologyroiId){
             const roi = await HistologyROI.findByPk(registration.histologyroiId)
             res.json({
                 userId: registration.userId,
-                datasetId: msi.datasetId,
+                datasetId: registration.datasetId,
                 image: image,
                 msi: msi,
                 perform_type: registration.perform_type,
@@ -133,12 +136,13 @@ const getParameter = async (req, res) => {
             })
         }else{
             res.json({
-                datasetId: msi.datasetId,
+                userId: registration.userId,
+                datasetId: registration.datasetId,
                 image: image,
                 msi: msi,
                 perform_type: registration.perform_type,
                 transform_type: registration.transform_type,
-                roi: undefined
+                roi: null
             })
         }
         registration.status = 'running'
@@ -172,6 +176,7 @@ const setParameter = async (req, res) => {
             registration.status = 'error'
             registration.save()
         }
+        res.status(200).json({status:'SUCCESS'})
         runJobs()
     } catch (error) {
         console.log(error.message)

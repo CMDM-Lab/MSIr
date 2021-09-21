@@ -4,7 +4,7 @@ import {authJwt} from '../middleware'
 
 let router = express.Router();
 
-router.post('/new', authJwt.verifyToken, controller.newROI)
+router.post('/new', controller.newROI)
 
 router.get('/show', authJwt.verifyToken, controller.show)
 

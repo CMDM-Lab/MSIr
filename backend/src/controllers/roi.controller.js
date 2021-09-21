@@ -5,10 +5,11 @@ const newROI = async (req, res) => {
     const data = req.body
     try {
         const roi = await HistologyROI.create({
-            userId: req.userId,
+            userId: data.userId,
             roi_type: data.roi_type,
             points: data.points,
-            histologyImageId: data.histologyImageId 
+            histologyImageId: data.histologyImageId,
+            datasetId: data.datasetId
         })
         res.json({message:'ROI was created successfully!'})
         // run draw roi script
@@ -116,7 +117,7 @@ const allmask = async (req, res) => {
 }
 
 const allROI = async (req, res) => {
-    const data = req.body
+    const data = req.query
     try {
         const rois = await HistologyROI.findAll({
             where:{
@@ -124,7 +125,7 @@ const allROI = async (req, res) => {
                 datasetId: data.datasetId
             }
         })
-        if (rois){
+        if (rois.length>0){
             if (rois[0].userId !== req.userId){
                 return res.status(401).json({
                     message: "Unauthorized!"
@@ -149,7 +150,8 @@ const getParameter = async (req, res) => {
             image_id:image.id,
             image_file: image.file,
             points: roi.points,
-            roi_type: roi.roi_type
+            roi_type: roi.roi_type,
+            datasetId: roi.datasetId
         })
 
     } catch (error) {
@@ -167,6 +169,7 @@ const setParameter = async (req, res) => {
             roi.blend_img_file = data.result_file
             roi.save()
         }
+        res.status(200).json({status:'SUCCESS'})
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: error.message }); 

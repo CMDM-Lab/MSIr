@@ -10,7 +10,8 @@ const footerCustom = ()=>{
                         <div className="col-lg-6 col-sm-6">
                             <aside className="f_widget f_about_widget">
                                 <a href="https://www.cmdm.tw/">
-                                    <img height="150px" src="https://web.cmdm.tw/assets/images/cmdmlogo.png" />
+                                    {/*<img height="150px" src="https://web.cmdm.tw/assets/images/cmdmlogo.png" />*/}
+                                    CMDM LAB
                                 </a>
                             </aside>
                         </div>

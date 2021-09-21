@@ -55,10 +55,11 @@ const CreateRegistration = () =>{
       try {
         const res = await registrationService.create({
           perform_type: regType,
-          datasetId: datasetId,
+          datasetId: Number(datasetId),
           histologyroiId: maskId
         })
-        const {data} = res.data
+        console.log(res)
+        const data = res.data
         if (res.status >= 200 && res.status <300){
           MySwal.fire({
             icon: 'success',

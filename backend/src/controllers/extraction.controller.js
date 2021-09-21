@@ -1,15 +1,17 @@
 import { Extraction, HistologyROI, MSI, Dataset, Registration, Job } from "../db/db";
 import fs from 'fs'
-import { finishJob } from "../utils/util";
+import { finishJob, runJobs } from "../utils/util";
 
 const newExtraction = async (req, res) => {
     const data = req.body
     try {
         const dataset = await Dataset.findByPk(data.datasetId)
+        const msi = await MSI.findOne({where:{datasetId: dataset.id}})
         const extract = await Extraction.create({
+            userId: req.userId,
             normalization: data.normalization,
             datasetId: data.datasetId,
-            msiId: dataset.msiId,
+            msiId: msi.id,
             histologyroiId: data.histologyroiId,
             registrationId: data.registrationId
         })
@@ -106,7 +108,7 @@ const show = async (req, res) => {
 const getParameter = async (req, res) => {
     const data = req.body
     try {
-        const extract = await Extraction.findByPk(data.extractionId)
+        const extract = await Extraction.findByPk(data.id)
         const msi = await MSI.findByPk(extract.msiId)
         const roi = await HistologyROI.findByPk(extract.histologyroiId)
         const registration = await Registration.findByPk(extract.registrationId)
@@ -115,7 +117,7 @@ const getParameter = async (req, res) => {
             normalization: extract.normalization,
             msi: msi,
             roi: roi,
-            registration:registration
+            transform_matrix_file:registration.transform_matrix_file
         })   
         extract.status = 'running'
         extract.save()
@@ -128,7 +130,7 @@ const getParameter = async (req, res) => {
 const setParameter = async (req, res) => {
     const data = req.body
     try {
-        const extract = await Extraction.findByPk(data.extractionId)
+        const extract = await Extraction.findByPk(data.id)
         if (data.status == 'SUCCESS'){    
             extract.extract_file = data.extract_file
             extract.status = 'finished'
@@ -139,7 +141,8 @@ const setParameter = async (req, res) => {
             extract.status = 'error'
             extract.save()
         }
-        
+        res.status(200).json({status:'SUCCESS'})
+        runJobs()
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: error.message }); 

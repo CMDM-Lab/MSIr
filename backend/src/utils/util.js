@@ -103,7 +103,9 @@ const hasJobRunning = async () => {
 
 export const runJobs = async () => {
     var running = false
+    console.log(running)
     running = await runWaitingJob()
+    console.log(running)
     if (!running){
         rerunErrorJob()
     }

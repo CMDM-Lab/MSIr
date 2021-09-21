@@ -127,7 +127,7 @@ const UploadMSI = (props) => {
                         multiple = {false}
                         destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
                         accept=".imzML"
-                        fileFilter={(file)=>{return file.size < 1e+7}}
+                        fileFilter={(file)=>{return file.size < 1e+10}}
                         maxGroupSize = {1}
                     >
                         <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>{imzmlRes?'Remove & Re-upload':'Select Files & Upload' }</UploadButton> 
@@ -154,7 +154,7 @@ const UploadMSI = (props) => {
                         multiple = {false}
                         destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
                         accept=".ibd"
-                        fileFilter={(file)=>{return file.size < 1e+7}}
+                        fileFilter={(file)=>{return file.size < 1e+10}}
                         maxGroupSize = {1}
                     >
                         <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>{ibdRes?'Remove & Re-upload':'Select Files & Upload' }</UploadButton>

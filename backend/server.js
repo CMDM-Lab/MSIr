@@ -4,6 +4,7 @@ import {auth, histology, dataset, msi, extract, registration, job} from './src/r
 import roi from './src/routes/roi.routes'
 import db from './src/db/db'
 import dotenv from 'dotenv-defaults'
+import { activatePyvevn } from './src/utils/runScript';
 
 const app = express();
 
@@ -11,6 +12,9 @@ dotenv.config()
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+//activate python venv (has some problem need to solve)
+//activatePyvevn()
 
 var corsOptions = {
     origin: "http://localhost:3000"

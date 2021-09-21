@@ -116,6 +116,7 @@ const edit = async (req, res) => {
 
 const newDataset = async (req, res) => {
     const data = req.body
+    console.log(data)
     try {
         const dataset = await Dataset.create({
             name:data.name,

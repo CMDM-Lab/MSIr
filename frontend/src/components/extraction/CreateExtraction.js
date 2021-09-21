@@ -45,7 +45,7 @@ const CreateExtraction = () =>{
 
     useEffect(()=>{
       getData()
-    })
+    },[])
 
     const onPickROI = (img) => {
       setRoiId(img.value)
@@ -61,7 +61,7 @@ const CreateExtraction = () =>{
 
     const handleSubmit = async (e) => {
       try {
-        if (!regId || roiId){
+        if (!regId || !roiId){
           MySwal.fire({
             icon: 'error',
             title: 'Error',

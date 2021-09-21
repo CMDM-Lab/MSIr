@@ -19,7 +19,7 @@ if __name__ == '__main__':
         RegID=args.RegistrationID
 
         #load env file
-        load_dotenv(dotenv_path=".env")
+        load_dotenv(dotenv_path="./backend/.env")
         api_key=os.getenv("API_KEY")
         api_url=os.getenv('API_URL')
         dir_hist=os.getenv('DIR_HIST')
@@ -29,20 +29,22 @@ if __name__ == '__main__':
         get_data={"id":RegID,"key":api_key}
         res = requests.post(api_url+"/registrations/get_parameter", json=get_data)
         res = res.json()
-
         # set parameter
-        perform_type = res['data']['perform_type']
-        transform_type =  res['data']['transform_type']
-        histology_file = res['data']['image']['file']
-        msi_file= res['data']['msi']['imzml_file']
-        bin_size = res['data']['msi']['bin_size']
-        cnt_hist = res['data']['roi']
-        userId = res['data']['userId']
+        perform_type = res['perform_type']
+        transform_type =  res['transform_type']
+        histology_file = res['image']['file']
+        histology_id = res['image']['id']
+        msi_id = res['msi']['id']
+        msi_file= res['msi']['imzml_file']
+        bin_size = res['msi']['bin_size']
+        cnt_hist = res['roi']
+        userId = res['userId']
+        datasetId = res['datasetId']
 
         #set output file name
-        process_file = os.path.join(dir_msi,os.path.basename(msi_file).split('.')[0]+'.npz')
-        transform_matrix_file = os.path.join(dir_hist,f'transform_matrix_{RegID}.txt')
-        result_file = os.path.join(dir_hist,f'result_img_{RegID}.png')
+        process_file = os.path.join(dir_msi,str(RegID),os.path.basename(msi_file).split('.')[0]+'.npz')
+        transform_matrix_file = os.path.join(dir_hist,str(RegID),f'transform_matrix_{RegID}.txt')
+        result_file = os.path.join(dir_hist,str(RegID),f'result_img_{RegID}.png')
 
         # read histology image and mask
         hist_ori = cv2.imread(os.path.join(dir_hist, str(RegID), histology_file))
@@ -57,14 +59,16 @@ if __name__ == '__main__':
             cnt_hist = sort_cnt_by_area(cnt_hist)[0]
             # send new roi
             requests.post(api_url+"/roi/new", json={
+                "histologyImageId": histology_id,
                 "roi_type":"Mask", 
-                "points":cnt_hist.astype(np.float32)/np.array([hist_ori.shape[1],hist_ori.shape[0]]), 
-                "userId":userId})
+                "points":(cnt_hist.astype(np.float32)/np.array([hist_ori.shape[1],hist_ori.shape[0]])).tolist() , 
+                "userId":userId,
+                "datasetId":datasetId})
         #generate histology represent image
         hist_proc = cv2.cvtColor(hist_proc,cv2.COLOR_BGR2GRAY)
 
         # read msi data
-        msi_data,msi_size,_,mzs=ImzmlFileReader(msi_file,bin_size=bin_size)
+        msi_data,msi_size,_,mzs=ImzmlFileReader(os.path.join(dir_msi,str(RegID),msi_file),bin_size=bin_size)
         # save MSI data in sparse matrix
         save_npz(process_file,msi_data)
 
@@ -110,7 +114,7 @@ if __name__ == '__main__':
             DR_result=data2bgr(DR_result)
             msi_dr=np.full((msi_size[0]*msi_size[1],3),DR_result[-1])
             msi_dr[idx_tissue]=DR_result[:-1]
-            msi_dr=msi_dr.reshape((msi_size[0],msi_size[1],-1))
+            msi_dr=np.uint8(msi_dr.reshape((msi_size[0],msi_size[1],-1)))
             #add msi_dr to msi_list
             msi_list.append(msi_dr)
 
@@ -118,7 +122,7 @@ if __name__ == '__main__':
             msi_list.append(cv2.cvtColor(msi_dr,cv2.COLOR_BGR2GRAY)*msi_mask)
         
         #detect the relation between MSI and H&E to solve the big angle rotation(90,180,270) and the flip situation
-        scale_ratio=round(cv2.minEnclosingCircle(cnt_hist)[-1]/cv2.minEnclosingCircle(cnt_hist)[-1])
+        scale_ratio=round(cv2.minEnclosingCircle(cnt_hist)[-1]/cv2.minEnclosingCircle(cnt_msi)[-1])
         rotate_stat=getorient(hist_proc,msi_list[0],scale_ratio)
         #simple registration (scale, big angle rotation, and flip)
         #rotation
@@ -154,10 +158,12 @@ if __name__ == '__main__':
             _, result_transform_parameters = elastix_registration_method(
                 hist_proc.astype(np.float32), msi_list[0].astype(np.float32),
                 parameter_object=parameter_object,number_of_threads=4,log_to_console=False)
+                #log_to_file=True,log_file_name='log.txt',output_directory='.')
         else:
             _, result_transform_parameters = elastix_registration_method(
                 hist_proc.astype(np.float32), msi_list[2].astype(np.float32),
-                parameter_object=parameter_object,number_of_threads=4,log_to_console=False)
+                parameter_object=parameter_object,number_of_threads=4,log_to_console=False,)
+                #log_to_file=True,log_file_name='log.txt',output_directory='.')
 
         #Convert elastix transform parameter to transform matrix
         M_elastix = get_elastix_transform_matrix(result_transform_parameters)
@@ -187,15 +193,15 @@ if __name__ == '__main__':
             "id":RegID,
             "key":api_key,
             "status":"SUCCESS",
-            "transform_matrix_file":transform_matrix_file,
-            "result_file":result_file,
+            "transform_matrix_file":os.path.basename(transform_matrix_file),
+            "result_file":os.path.basename(result_file),
             "min_mz":mzs[0],
             "max_mz":mzs[-1],
             "msi_h":msi_size[0],
             "msi_w": msi_size[1],
-            "process_file": process_file
+            "processed_data_file": os.path.basename(process_file)
             }
-        r_post = requests.post(api_url+"/registrations/set_parameter", json=return_data)
+        requests.post(api_url+"/registrations/set_parameter", json=return_data)
         
     except Exception as e:
         import traceback
@@ -212,5 +218,5 @@ if __name__ == '__main__':
             "status":"ERROR",
             "message":errMsg
             }
-        r_post = requests.post(api_url+"/jobs/error", json=return_data)
+        requests.post(api_url+"/jobs/error", json=return_data)
         pass

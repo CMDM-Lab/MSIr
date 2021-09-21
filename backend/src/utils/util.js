@@ -3,7 +3,7 @@ import { runExtractionScript, runRegistrationScript } from "./runScript";
 
 const runWaitingJob = async () => {
     try {
-        if (hasJobRunning){
+        if (await hasJobRunning()){
             return true
         }
         const job = await Job.findOne({
@@ -12,6 +12,7 @@ const runWaitingJob = async () => {
             }
         })
         if (job){
+            console.log('sep job type')
             switch(job.task){
                 case 'R':
                     runRegistrationScript(job.taskId)
@@ -35,12 +36,12 @@ const runWaitingJob = async () => {
 
 const rerunErrorJob = async () => {
     try {
-        if (hasJobRunning){
+        if (await hasJobRunning()){
             return true
         }
         const job = await Job.findOne({
             where:{
-                status: ERROR
+                status: 'ERROR'
             }
         })
         if (job){

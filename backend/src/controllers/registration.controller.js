@@ -26,7 +26,7 @@ const newRegistration = async (req, res) => {
             status:'WAITING'
         })
         console.log('job save')
-        runJobs()
+        await runJobs()
         console.log('job run')
         
     } catch (error) {

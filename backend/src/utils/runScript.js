@@ -4,6 +4,7 @@ import dotenv from 'dotenv-defaults'
 dotenv.config()
 
 export const runRegistrationScript = (id) => {
+    console.log('run reg script')
     const python = spawn('python', ['./src/lib/MSI2Histology.py', '-ID', id]);
     python.stdout.on('data', function (data) {
         console.log(data.toString())
@@ -11,11 +12,12 @@ export const runRegistrationScript = (id) => {
     python.stderr.on('data', function (data) {
         console.log(data.toString())
     });
-    //python.on('close', (code) => {
-    //    console.log(`child process close all stdio with code ${code}`);})
+    python.on('close', (code) => {
+        console.log(`child process close all stdio with code ${code}`);})
 }
 
 export const runExtractionScript = (id) => {
+    console.log('run ext script')
     const python = spawn('python', ['./src/lib/extract_data_by_roi.py', '-ID', id]);
     python.stdout.on('data', function (data) {
         console.log(data.toString())
@@ -23,11 +25,12 @@ export const runExtractionScript = (id) => {
     python.stderr.on('data', function (data) {
         console.log(data.toString())
     });
-    //python.on('close', (code) => {
-    //    console.log(`child process close all stdio with code ${code}`);})
+    python.on('close', (code) => {
+        console.log(`child process close all stdio with code ${code}`);})
 }
 
 export const runDrawROIScript = (id) => {
+    console.log('run roi script')
     const python = spawn('python', ['./src/lib/draw_mask_from_roi.py', '-ID', id]);
     python.stdout.on('data', function (data) {
         console.log(data.toString())
@@ -35,8 +38,8 @@ export const runDrawROIScript = (id) => {
     python.stderr.on('data', function (data) {
         console.log(data.toString())
     });
-    //python.on('close', (code) => {
-    //    console.log(`child process close all stdio with code ${code}`);})
+    python.on('close', (code) => {
+        console.log(`child process close all stdio with code ${code}`);})
 }
 
 export const activatePyvevn = () => {

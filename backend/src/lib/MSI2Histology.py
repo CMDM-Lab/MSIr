@@ -13,7 +13,7 @@ def process_command():
     return parser.parse_args()
 
 if __name__ == '__main__':
-    try:
+    #try:
         ##### parameter setting #####
         args = process_command()
         RegID=args.RegistrationID
@@ -42,12 +42,12 @@ if __name__ == '__main__':
         datasetId = res['datasetId']
 
         #set output file name
-        process_file = os.path.join(dir_msi,str(RegID),os.path.basename(msi_file).split('.')[0]+'.npz')
-        transform_matrix_file = os.path.join(dir_hist,str(RegID),f'transform_matrix_{RegID}.txt')
-        result_file = os.path.join(dir_hist,str(RegID),f'result_img_{RegID}.png')
+        process_file = os.path.join(dir_msi,str(datasetId),os.path.basename(msi_file).split('.')[0]+'.npz')
+        transform_matrix_file = os.path.join(dir_hist,str(datasetId),f'transform_matrix_{RegID}.txt')
+        result_file = os.path.join(dir_hist,str(datasetId),f'result_img_{RegID}.png')
 
         # read histology image and mask
-        hist_ori = cv2.imread(os.path.join(dir_hist, str(RegID), histology_file))
+        hist_ori = cv2.imread(os.path.join(dir_hist, str(datasetId), histology_file))
         if cnt_hist:
             cnt_hist = np.round(np.array(cnt_hist)*[hist_ori.shape[1],hist_ori.shape[0]]).astype(int)
             hist_mask = np.zeros(hist_ori.shape[:2],np.uint8)
@@ -68,7 +68,7 @@ if __name__ == '__main__':
         hist_proc = cv2.cvtColor(hist_proc,cv2.COLOR_BGR2GRAY)
 
         # read msi data
-        msi_data,msi_size,_,mzs=ImzmlFileReader(os.path.join(dir_msi,str(RegID),msi_file),bin_size=bin_size)
+        msi_data,msi_size,_,mzs=ImzmlFileReader(os.path.join(dir_msi,str(datasetId),msi_file),bin_size=bin_size)
         # save MSI data in sparse matrix
         save_npz(process_file,msi_data)
 
@@ -181,6 +181,7 @@ if __name__ == '__main__':
             msi_transform = msi_list[1]
         else:
             msi_transform = msi_list[0]*255
+            msi_transform = cv2.cvtColor(msi_transform,cv2.COLOR_GRAY2BGR)
         #already perform reflection and big angle rotation in above 
         #msi_transform = cv2.warpAffine(msi_transform,M=M_init[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
         #msi_transform = cv2.warpAffine(msi_transform,M=M_scale[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
@@ -202,7 +203,7 @@ if __name__ == '__main__':
             "processed_data_file": os.path.basename(process_file)
             }
         requests.post(api_url+"/registrations/set_parameter", json=return_data)
-        
+
     except Exception as e:
         import traceback
         error_class = e.__class__.__name__

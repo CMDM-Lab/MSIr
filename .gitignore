@@ -30,3 +30,7 @@ tmp
 config.json
 
 script_env
+
+*TransformParameters*
+*log.txt*
+*__pycache__

@@ -13,7 +13,7 @@ def process_command():
     return parser.parse_args()
 
 if __name__ == '__main__':
-    #try:
+    try:
         ##### parameter setting #####
         args = process_command()
         RegID=args.RegistrationID
@@ -37,9 +37,14 @@ if __name__ == '__main__':
         msi_id = res['msi']['id']
         msi_file= res['msi']['imzml_file']
         bin_size = res['msi']['bin_size']
-        cnt_hist = res['roi']
         userId = res['userId']
         datasetId = res['datasetId']
+        if (res['roi']):
+            cnt_hist = res['roi']['points']
+            mask_id = res['roi']['id']
+        else:
+            cnt_hist = None
+            mask_id = None
 
         #set output file name
         process_file = os.path.join(dir_msi,str(datasetId),os.path.basename(msi_file).split('.')[0]+'.npz')
@@ -52,18 +57,20 @@ if __name__ == '__main__':
             cnt_hist = np.round(np.array(cnt_hist)*[hist_ori.shape[1],hist_ori.shape[0]]).astype(int)
             hist_mask = np.zeros(hist_ori.shape[:2],np.uint8)
             hist_mask = cv2.drawContours(hist_mask,[cnt_hist],0,1,-1)
-            hist_proc = hist_ori*hist_mask
+            hist_proc = hist_ori*hist_mask.reshape((hist_mask.shape[0],hist_mask.shape[1],1))
         else:
             hist_proc, hist_mask = he_preprocessing(hist_ori)
             cnt_hist, _ = cv2.findContours(hist_mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
             cnt_hist = sort_cnt_by_area(cnt_hist)[0]
             # send new roi
-            requests.post(api_url+"/roi/new", json={
+            res_mask = requests.post(api_url+"/roi/new", json={
                 "histologyImageId": histology_id,
                 "roi_type":"Mask", 
                 "points":(cnt_hist.astype(np.float32)/np.array([hist_ori.shape[1],hist_ori.shape[0]])).tolist() , 
                 "userId":userId,
                 "datasetId":datasetId})
+            res_mask = res_mask.json()
+            mask_id = res_mask['id']
         #generate histology represent image
         hist_proc = cv2.cvtColor(hist_proc,cv2.COLOR_BGR2GRAY)
 
@@ -200,7 +207,8 @@ if __name__ == '__main__':
             "max_mz":mzs[-1],
             "msi_h":msi_size[0],
             "msi_w": msi_size[1],
-            "processed_data_file": os.path.basename(process_file)
+            "processed_data_file": os.path.basename(process_file),
+            "mask_id": mask_id
             }
         requests.post(api_url+"/registrations/set_parameter", json=return_data)
 
@@ -220,4 +228,5 @@ if __name__ == '__main__':
             "message":errMsg
             }
         requests.post(api_url+"/jobs/error", json=return_data)
+        print(errMsg)
         pass

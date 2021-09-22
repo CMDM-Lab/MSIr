@@ -5,6 +5,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useHistory } from "react-router";
 import { handleResponse } from "../../utils/handleResponse";
+import running from '../../stylesheet/running.png';
 
 const RegistrationItem = ({datasetId, registration})=>{
 
@@ -55,10 +56,22 @@ const RegistrationItem = ({datasetId, registration})=>{
                 <br />
             </td>
             <td>
-                <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${registration.roi.blend_img_file}`} />
+                {
+                    registration.histologyroi?
+                    registration.histologyroi.blend_img_file?
+                    <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${registration.histologyroi.blend_img_file}`} />:
+                    <img className="img-fluid img-thumbnail" src={running} />
+                    :<img className="img-fluid img-thumbnail" src={running} />
+                    
+                }
             </td>
             <td>
-                <img className="img-fluid img-thumbnail viewer" src={configData.API_URL+`/upload/${datasetId}/${registration.result_file}`} />
+                {
+                    registration.result_file?
+                    <img className="img-fluid img-thumbnail viewer" src={configData.API_URL+`/upload/${datasetId}/${registration.result_file}`} />
+                    :<img className="img-fluid img-thumbnail" src={running} />
+                }
+                
             </td>
             <td>
                 <p>{registration.status}</p>
@@ -66,7 +79,7 @@ const RegistrationItem = ({datasetId, registration})=>{
             <td>
                 <div className="btn-group">
                     {
-                        registration.status === 'finish'?(
+                        registration.status === 'finished'?(
                             <a className='col-lg-6 col-6' href={configData.API_URL+`/upload/${datasetId}/${registration.transform_matrix_file}`}>
                                 <button className="btn btn-outline-primary">
                                     Transform Matrix 

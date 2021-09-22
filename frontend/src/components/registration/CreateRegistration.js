@@ -28,8 +28,9 @@ const CreateRegistration = () =>{
         const {data} = res.data
         console.log(data)
         if (res.status >= 200 && res.status <300){
-          const newMasks = masks
-          newMasks.concat(data)
+          var newMasks = masks
+          newMasks = newMasks.concat(data)
+          console.log(newMasks)
           setMasks(newMasks)
         } else{
           handleResponse(res,MySwal,history)

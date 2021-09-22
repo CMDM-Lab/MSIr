@@ -14,7 +14,6 @@ import UploadButton from "@rpldy/upload-button";
 import configData from '../../config.json'
 import authHeader from '../../services/auth-header'
 import RegisterCard from './RegisterCard'
-import running from '../../stylesheet/running.png';
 import ExtractCard from './ExtractCard'
 import { handleResponse } from '../../utils/handleResponse'
 
@@ -24,7 +23,6 @@ const UploadProgress = ({setState}) => {
   
     const progressData = useItemProgressListener();
     useItemFinishListener((item)=>{
-        console.log(item)
         setState({res:item.uploadResponse, status: item.uploadStatus})
         history.go(0)
     })
@@ -70,7 +68,6 @@ const DatasetRender = () => {
                 setDataset(data.dataset)
                 setHist(data.histologyImage)
                 setMsi(data.msi)
-                console.log({...data.dataset,msi:data.msi,histologyImage:data.histologyImage})
             } else{
                 if (res_dataset.status===404){
                     MySwal.fire({
@@ -86,14 +83,12 @@ const DatasetRender = () => {
             }
             const res_regist = await registrationService.all({datasetId})
             if (res_regist.status >= 200 && res_regist.status <300){
-                console.log(res_regist.data.data)
                 setRegistrations([...res_regist.data.data])
             } else{
                 handleResponse(res_regist, MySwal, history)
             }
             const res_extract = await extractionService.all({datasetId})
             if (res_extract.status >= 200 && res_extract.status <300){
-                console.log(res_extract.data.data)
                 setExtractions([...res_extract.data.data])
             } else{
                 handleResponse(res_extract, MySwal, history)
@@ -170,6 +165,7 @@ const DatasetRender = () => {
                         {hist? <button onClick={()=>{history.push(`/datasets/${datasetId}/image/roi`)}} className='btn btn-outline-primary  col-lg-2 col-2'>Create ROI</button>:null}
                     </div>
                 </h3>
+                <br />
                 {hist?
                 <div className='images card-columns'>
                     <div className='card'>

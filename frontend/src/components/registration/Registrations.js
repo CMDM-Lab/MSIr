@@ -13,7 +13,7 @@ const Registrations = () => {
 
     const {datasetId} = useParams()
     const history = useHistory()
-    const [registrations, setRegistrations] = useState([{id:1,perform_type:'intensity',roi:{blend_img_file:'test_slide[2709].jpg'},result_file:'test_slide[2709].jpg',transform_matrix_file:'as',status:'finish'}])
+    const [registrations, setRegistrations] = useState([])
 
     const getData = async ()=>{
       try {
@@ -21,7 +21,7 @@ const Registrations = () => {
         const {data} = res.data
         console.log(data)
         if (res.status >= 200 && res.status <300){
-          //setRegistrations(data)
+          setRegistrations(data)
         } else{
           handleResponse(res,MySwal,history)
         }

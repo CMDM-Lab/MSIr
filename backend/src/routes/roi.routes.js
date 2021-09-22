@@ -6,7 +6,7 @@ let router = express.Router();
 
 router.post('/new', controller.newROI)
 
-router.get('/show', authJwt.verifyToken, controller.show)
+//router.get('/show', authJwt.verifyToken, controller.show)
 
 router.get('/all', authJwt.verifyToken, controller.all)
 

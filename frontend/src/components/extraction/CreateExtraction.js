@@ -70,7 +70,7 @@ const CreateExtraction = () =>{
           return
         }
         const res = await extractionService.create({datasetId, histologyroiId: roiId, registrationId: regId, normalization: norm})
-        const {data} = res.data
+        const data = res.data
         if (res.status >= 200 && res.status <300){
           MySwal.fire({
             icon: 'success',
@@ -83,7 +83,7 @@ const CreateExtraction = () =>{
           handleResponse(res,MySwal,history)
         }
       } catch (error) {
-        console.log()
+        console.log(error)
       }
 
     }

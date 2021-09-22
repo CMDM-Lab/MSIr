@@ -1,5 +1,12 @@
 import { HistologyImage, HistologyROI } from "../db/db";
 import path from 'path'
+import fs from 'fs'
+import { runDrawROIScript } from "../utils/runScript";
+import dotenv from 'dotenv-defaults'
+
+dotenv.config()
+
+const histDir = process.env.DIR_HIST
 
 const newROI = async (req, res) => {
     const data = req.body
@@ -11,9 +18,9 @@ const newROI = async (req, res) => {
             histologyImageId: data.histologyImageId,
             datasetId: data.datasetId
         })
-        res.json({message:'ROI was created successfully!'})
+        res.json({message:'ROI was created successfully!', id:roi.id})
         // run draw roi script
-
+        runDrawROIScript(roi.id)
 
     } catch (error) {
         console.log(error.message)
@@ -25,7 +32,6 @@ const newROI = async (req, res) => {
 const newROIs = async (req,res)=>{
     const data = req.body
     try {
-        console.log(data.rois)
         data.rois.forEach(async(roi)=>{
             const roi_tmp = await HistologyROI.create({
                 userId: req.userId,
@@ -33,7 +39,8 @@ const newROIs = async (req,res)=>{
                 points: roi.points,
                 histologyImageId: data.histology.id,
                 datasetId: data.datasetId
-            }) 
+            })
+            runDrawROIScript(roi_tmp.id) 
         })
         
     } catch (error) {
@@ -48,18 +55,20 @@ const deletROIs = async (req, res) => {
         data.roiIds.forEach(async(idx)=>{
             const roi_tmp = await HistologyROI.findByPk(idx)
             if (roi_tmp.roi_type!='Mask'){
+                if (roi_tmp.blend_img_file){
+                    fs.unlink(path.join(histDir,roi_tmp.datasetId.toString(),roi_tmp.blend_img_file), function (err) {
+                        if (err) throw err;
+                        // if no error, file has been deleted successfully
+                        console.log('File deleted!');
+                    });
+                }
                 roi_tmp.destroy()
             }
-            
         })
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ message: error.message });
     }
-}
-
-const show = (req, res) => {
-    
 }
 
 const all = async (req, res) => {
@@ -98,9 +107,9 @@ const allmask = async (req, res) => {
                 roi_type: 'Mask',
                 datasetId: data.datasetId
             },
-            attributes:['id','blend_img_file','histologyImageId']
+            attributes: {exclude: ['points']}
         })
-        if (masks){
+        if (masks.length>0){
             if (masks[0].userId !== req.userId){
                 return res.status(403).json({
                     message: "Access is denied!"
@@ -123,12 +132,13 @@ const allROI = async (req, res) => {
             where:{
                 roi_type: 'ROI',
                 datasetId: data.datasetId
-            }
+            },
+            attributes: {exclude: ['points']}
         })
         if (rois.length>0){
             if (rois[0].userId !== req.userId){
-                return res.status(401).json({
-                    message: "Unauthorized!"
+                return res.status(403).json({
+                    message: "Access is denied!"
                 });
             }
         }
@@ -177,4 +187,7 @@ const setParameter = async (req, res) => {
     
 }
 
-export default  {newROI, show, all, allmask, allROI, getParameter, setParameter, newROIs, deletROIs}
+/*const show = (req, res) => {
+    
+}*/
+export default  {newROI, all, allmask, allROI, getParameter, setParameter, newROIs, deletROIs}

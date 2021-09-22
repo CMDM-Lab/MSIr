@@ -1,6 +1,12 @@
 import { HistologyImage, HistologyROI, Job, MSI, Registration } from "../db/db";
 import fs from 'fs'
+import path from 'path'
 import { finishJob, runJobs } from "../utils/util";
+import dotenv from 'dotenv-defaults'
+
+dotenv.config()
+
+const histDir = process.env.DIR_HIST
 
 const newRegistration = async (req, res) => {
     const data = req.body
@@ -49,7 +55,14 @@ const deleteRegistration = async (req, res) => {
             return res.status(404).json({message:'This registration is being implement, please retry after a while.'})
         }
         if (registration.transform_matrix_file){
-            fs.unlink(registration.transform_matrix_file, function (err) {
+            fs.unlink(path.join(histDir,registration.datasetId.toString(),registration.transform_matrix_file), function (err) {
+                if (err) throw err;
+                // if no error, file has been deleted successfully
+                console.log('File deleted!');
+            });
+        }
+        if (registration.result_file){
+            fs.unlink(path.join(histDir,registration.datasetId.toString(),registration.result_file), function (err) {
                 if (err) throw err;
                 // if no error, file has been deleted successfully
                 console.log('File deleted!');
@@ -72,6 +85,7 @@ const all = async (req, res) => {
             where: {
                 datasetId: data.datasetId,
             },
+            include: HistologyROI
         })
         if (registrations.length===0){
             return res.json({data:[]})
@@ -93,7 +107,7 @@ const all = async (req, res) => {
 const show = async (req, res) => {
     const data = req.query
     try {
-        const registration = await Registration.findByPk(data.registrationId)
+        const registration = await Registration.findByPk(data.registrationId,{include:HistologyROI})
             //attributes: { exclude: ['userId',]}
         if (!registration){
             return res.status(404).json({message: "Not Found"})
@@ -132,7 +146,7 @@ const getParameter = async (req, res) => {
                 msi: msi,
                 perform_type: registration.perform_type,
                 transform_type: registration.transform_type,
-                roi: roi.points
+                roi: {points:roi.points, id:roi.id}
             })
         }else{
             res.json({
@@ -163,6 +177,7 @@ const setParameter = async (req, res) => {
             registration.status = 'finished'
             registration.transform_matrix_file = data.transform_matrix_file
             registration.result_file = data.result_file
+            registration.histologyroiId = data.mask_id
             registration.save()
             msi.min_mz = data.min_mz
             msi.max_mz = data.max_mz

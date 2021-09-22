@@ -13,7 +13,7 @@ const Extractions = () => {
 
   const {datasetId} = useParams()
   const history = useHistory()
-  const [extractions, setExtractions] = useState([{id:1, normaliztion:'none',registrationId:3,registration:{result_file:'123'},roi:{blend_img_file:'123'},status:'finish',extract_file:'111'}])
+  const [extractions, setExtractions] = useState([])
   
   const getData = async ()=>{
     try {
@@ -21,7 +21,7 @@ const Extractions = () => {
       const {data} = res.data
       console.log(data)
       if (res.status >= 200 && res.status <300){
-        //setExtractions(data)
+        setExtractions(data)
       } else{
         handleResponse(res,MySwal,history)
       }

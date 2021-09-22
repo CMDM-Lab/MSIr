@@ -1,6 +1,12 @@
 import { Extraction, HistologyROI, MSI, Dataset, Registration, Job } from "../db/db";
 import fs from 'fs'
 import { finishJob, runJobs } from "../utils/util";
+import path from 'path'
+import dotenv from 'dotenv-defaults'
+
+dotenv.config()
+
+const histDir = process.env.DIR_HIST
 
 const newExtraction = async (req, res) => {
     const data = req.body
@@ -44,7 +50,7 @@ const deleteExtraction = async (req, res) => {
                 message: "Access is denied!"
             });
         }
-        fs.unlink(extract.extract_file, function (err) {
+        fs.unlink(path.join(histDir,extract.datasetId.toString(),extract.extract_file), function (err) {
             if (err) throw err;
             // if no error, file has been deleted successfully
             console.log('File deleted!');
@@ -66,7 +72,7 @@ const all = async (req, res) => {
             where: {
                 datasetId: data.datasetId,
             },
-            //attributes: { exclude: ['userId',]}
+            include:[{model:HistologyROI, attributes: {exclude: ['points']}},{model:Registration}]
         })
         if (extracts.length===0){
             return res.json({data:[]})

@@ -49,21 +49,28 @@ const ExtractionItem = ({datasetId,extraction}) =>{
         <tr>
             <td>
                 <div className="btn btn-success">ID: {extraction.id}</div><br /><br />
-                <p>Data Normalization Type: {extraction.normaliztion}</p>
+                <p>Data Normalization Type: {extraction.normalization}</p>
                 
             </td>
             <td>
                 <a href={`/datasets/${datasetId}/registrations/${extraction.registrationId}`}><p>Registration ID: {extraction.registrationId}</p></a>
-                <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${extraction.registration.result_file}`}/>
+                {extraction?.registration?.result_file?
+                    <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${extraction.registration.result_file}`}/>:
+                    <img className='card-img-top' src={running}/>
+                }
             </td>
             <td>
-                <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${extraction.roi.blend_img_file}`}  />
+                {extraction?.histologyroi?.blend_img_file?
+                    <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${extraction.histologyroi.blend_img_file}`}  />:
+                    <img className='card-img-top' src={running}/>
+                }
+                
             </td>
             <td>{extraction.status}</td>
             <td>
                 <div className="btn-group ">
                     {
-                        extraction.status === 'finish'?
+                        extraction.status === 'finished'?
                             (<>
                                 <a href={configData.API_URL+`/upload/${datasetId}/${extraction.extract_file}`} className='col-lg-6 col-6'>
                                     <button className="btn btn-outline-primary">

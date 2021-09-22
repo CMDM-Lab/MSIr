@@ -13,13 +13,12 @@ const RegistrationRender = () => {
   const MySwal = withReactContent(Swal)
   const history = useHistory()
   const {datasetId, regId} = useParams()
-  const [registration ,setRegistration] = useState({id:1,perform_type:'intensity',roi:{blend_img_file:'test_slide[2709].jpg'},result_file:'test_slide[2709].jpg',transform_matrix_file:'as',status:'running'})
+  const [registration ,setRegistration] = useState()
 
   const getData = async () =>{
     try{
       const res = await registrationService.show({registrationId: regId})
       const {data} = res.data
-        console.log(data)
         if (res.status >= 200 && res.status <300){
           setRegistration(data)
         } else{
@@ -109,7 +108,7 @@ const RegistrationRender = () => {
             </div>
             <div className="col-lg-3 col-md-9">
               {
-                registration? registration.status==='finish'?
+                registration? registration.status==='finished'?
                 <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${registration.result_file}`} />:
                 <img className="img-fluid img-thumbnail" src={running} />:null
               }
@@ -126,14 +125,21 @@ const RegistrationRender = () => {
                   </tr>
                   <tr>
                     <td>Status</td>
-                    <td>{registration.status}</td>
+                    <td>{registration?.status? registration.status:null}</td>
                   </tr>
                   <tr>
                     <td>Registration type:</td>
-                    <td>{registration.perform_type}</td>
+                    <td>{registration?.perform_type? registration.perform_type:null}</td>
                   </tr><tr>
                     <td>Mask image:</td>
-                    <td><a href={configData.API_URL+`/upload/${datasetId}/${registration.roi.blend_img_file}`}><button className="btn btn-outline-primary">View</button></a></td>
+                    <td>
+                      {
+                        registration?.histologyroi?.blend_img_file?
+                        <a href={configData.API_URL+`/upload/${datasetId}/${registration.histologyroi.blend_img_file}`}><button className="btn btn-outline-primary">View</button></a>:
+                        <p>Generating!</p>
+                      }
+                      
+                    </td>
                   </tr>
                   
                   </tbody></table>
@@ -143,11 +149,15 @@ const RegistrationRender = () => {
                   <tr>
                     <td width='40%'>Transform Matrix:</td>
                     <td width='60%'>
-                      <a className='col-lg-6 col-6' href={configData.API_URL+`/upload/${datasetId}/${registration.transform_matrix_file}`}>
-                        <button className="btn btn-outline-primary">
-                          Download
-                        </button>
-                      </a><br/>
+                      {
+                        registration?.transform_matrix_file?
+                        <><a className='col-lg-6 col-6' href={configData.API_URL+`/upload/${datasetId}/${registration.transform_matrix_file}`}>
+                          <button className="btn btn-outline-primary">
+                            Download
+                          </button>
+                        </a><br/></>:<p>Generating!</p>
+                      }
+                      
                     </td>
                   </tr>
                   <tr>

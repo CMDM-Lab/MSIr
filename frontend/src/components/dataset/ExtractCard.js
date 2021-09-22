@@ -8,8 +8,8 @@ const ExtractCard = ({extractData}) =>{
         <div className='card mb-3'>
                     <div className='row no-gutters'>
                         <div className='col-6'>
-                            {extractData.roi.blend_img_file?(
-                                <img className='card-img-top' src={configData.API_URL+`/upload/${extractData.datasetId}/${extractData.roi.blend_img_file}`}/>
+                            {extractData?.histologyroi?.blend_img_file?(
+                                <img className='card-img-top' src={configData.API_URL+`/upload/${extractData.datasetId}/${extractData.histologyroi.blend_img_file}`}/>
                             ):(
                                 <img className='card-img-top' src={running}/>
                             )}
@@ -23,7 +23,7 @@ const ExtractCard = ({extractData}) =>{
                                     </h5>
                                 </a>
                                 <p>ROI ID: {extractData.histologyroiId}</p>
-                                <p>Registration ID: {extractData.registerationId}</p>
+                                <p>Registration ID: {extractData.registrationId}</p>
                                 <p>Normalization: {extractData.normalization}</p>
                                 <p>Status: {extractData.status}</p>
                                 {

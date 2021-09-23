@@ -63,7 +63,7 @@ const Register = (props) => {
             text: 'Please sign in!',
             confirmButtonText: 'OK'
           }).then(()=>{
-            history.push("/users/sign_in"); 
+            history.goBack(); 
           })
         }
         else{
@@ -171,7 +171,7 @@ const Register = (props) => {
             <div className='container-login100-form-btn'>
                 <div className='wrap-login100-form-btn'>
                   <div className='signup100-form-bgbtn'></div>
-                    <a className='form-input text-decoration-none' href='/users/sign_in'>
+                    <a className='form-input text-decoration-none' onClick ={()=>history.goBack()}>
                       <button className='login100-form-btn'>Sign In</button>
                     </a>
                 </div>

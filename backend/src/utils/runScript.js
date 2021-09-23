@@ -1,5 +1,7 @@
 import {spawn} from 'child_process'
 import dotenv from 'dotenv-defaults'
+import { Job, Registration, Extraction } from '../db/db'
+import {runJobs} from './util'
 
 dotenv.config()
 
@@ -9,8 +11,21 @@ export const runRegistrationScript = (id) => {
     python.stdout.on('data', function (data) {
         console.log(data.toString())
     });
-    python.stderr.on('data', function (data) {
+    python.stderr.on('data', async (data) => {
+        const job = await Job.findOne({where:{
+            taskId: id,
+            task: "R"
+        }})
+        if (job){
+            job.status = "ERROR"
+            job.message = data.toString()
+            job.save()
+            const registration = await Registration.findByPk(id)
+            registration.status = "error"
+            await registration.save()
+        }
         console.log(data.toString())
+        runJobs()
     });
     python.on('close', (code) => {
         console.log(`child process close all stdio with code ${code}`);})
@@ -22,8 +37,21 @@ export const runExtractionScript = (id) => {
     python.stdout.on('data', function (data) {
         console.log(data.toString())
     });
-    python.stderr.on('data', function (data) {
+    python.stderr.on('data', async (data) => {
+        const job = await Job.findOne({where:{
+            taskId: id,
+            task: "E"
+        }})
+        if (job){
+            job.status = "ERROR"
+            job.message = data.toString()
+            job.save()
+            const extraction = await Extraction.findByPk(id)
+            extraction.status = "error"
+            await extraction.save()
+        }
         console.log(data.toString())
+        runJobs()
     });
     python.on('close', (code) => {
         console.log(`child process close all stdio with code ${code}`);})

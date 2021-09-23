@@ -44,6 +44,13 @@ const newRegistration = async (req, res) => {
 const deleteRegistration = async (req, res) => {
     const data = req.body
     try {
+        const job = await Job.findOne({
+            where:{
+                task:'R',
+                taskId: data.registrationId
+            }
+        })
+        job.destroy()
         const registration = await Registration.findByPk(data.registrationId)
         if (!registration){
             return res.status(404).json({message:'This registration is not found.'})

@@ -114,9 +114,6 @@ const submitMSI = async (req, res) => {
     try {
 
         const msiData = await MSI.findByPk(data.msiId)
-        console.log(msiData)
-        console.log(req.userId)
-        
         if (msiData.userId !== req.userId){
             return res.status(403).json({
                 message: "Access is denied!"

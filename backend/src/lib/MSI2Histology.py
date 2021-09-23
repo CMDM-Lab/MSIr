@@ -223,10 +223,9 @@ if __name__ == '__main__':
         return_data = {
             "taskId":RegID,
             "key":api_key,
-            "task": 'registration',
+            "task": 'R',
             "status":"ERROR",
             "message":errMsg
             }
         requests.post(api_url+"/jobs/error", json=return_data)
-        print(errMsg)
         pass

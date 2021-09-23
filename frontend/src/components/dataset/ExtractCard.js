@@ -17,11 +17,9 @@ const ExtractCard = ({extractData}) =>{
                         </div>
                         <div className='col-6'>
                             <div className='card-body'>
-                                <a href={`/datasets/${extractData.datasetId}/extrations/${extractData.id}`}>
-                                    <h5 className='card-title'>
+                                <h5 className='card-title'>
                                         ID: {extractData.id}
-                                    </h5>
-                                </a>
+                                </h5>
                                 <p>ROI ID: {extractData.histologyroiId}</p>
                                 <p>Registration ID: {extractData.registrationId}</p>
                                 <p>Normalization: {extractData.normalization}</p>

@@ -81,6 +81,34 @@ const example = async (req, res) => {
         fs.mkdir(path.join(msiDir,dataset.id.toString()),{ recursive: true }, (err) => {
             if (err) throw err;
           })
+        //create MSI with information into db and copy example imzML and ibd file to dataset dir 
+        const msi = await MSI.create({
+            data_type:'imzML',
+            imzml_file: 'example.imzml',
+            ibd_file: 'example.ibd',
+            bin_size: 0.01,
+            pixel_size: 150,
+            datasetId:dataset.id,
+            userId: req.userId
+        })
+        //copy example imzML file
+        fs.copyFile(path.join(),path.join(msiDir,dataset.id.toString(),'example.imzml'),(err) => {
+            if (err) throw err;
+          })
+        //copy example ibd file
+        fs.copyFile(path.join(),path.join(msiDir,dataset.id.toString(),'example.ibd'),(err) => {
+            if (err) throw err;
+          })
+        //create histology image into db and copy example image file to dataset dir 
+        const hist = await histologyImage.create({
+            file: 'example.png',
+            datasetId: dataset.id,
+            userId: req.userId
+        })
+        //copy example histology image file
+        fs.copyFile(path.join(),path.join(histDir,dataset.id.toString(),'example.png'),(err) => {
+            if (err) throw err;
+          })
         res.json({message: "Dataset was created successfully!", datasetId: dataset.id})
 
     } catch (error) {

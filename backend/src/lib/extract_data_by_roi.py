@@ -92,7 +92,7 @@ if __name__ == '__main__':
         return_data = {
             "taskId":ExtractID,
             "key":api_key,
-            "task": 'extraction',
+            "task": 'E',
             "status":"ERROR",
             "message":errMsg
             }

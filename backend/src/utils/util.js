@@ -1,5 +1,7 @@
 import { Job } from "../db/db";
 import { runExtractionScript, runRegistrationScript } from "./runScript";
+import pkg from 'sequelize';
+const { Op } = pkg
 
 const runWaitingJob = async () => {
     try {
@@ -41,7 +43,8 @@ const rerunErrorJob = async () => {
         }
         const job = await Job.findOne({
             where:{
-                status: 'ERROR'
+                status: 'ERROR',
+                attempts:{[Op.lt]:3}
             }
         })
         if (job){

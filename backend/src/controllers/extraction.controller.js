@@ -41,6 +41,13 @@ const newExtraction = async (req, res) => {
 const deleteExtraction = async (req, res) => {
     const data = req.body
     try {
+        const job = await Job.findOne({
+            where:{
+                task:'E',
+                taskId: data.extractionId
+            }
+        })
+        job.destroy()
         const extract = await Extraction.findByPk(data.extractionId)
         if (!extract){
             return res.status(404).json({message:'Extraction not found'})

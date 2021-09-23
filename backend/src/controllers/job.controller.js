@@ -1,6 +1,7 @@
 import { Extraction, Job, Registration } from "../db/db";
 
 const errorHandler = async (req, res) => {
+    console.log('error')
     const data = req.body
     try {
         const job = await Job.findOne({

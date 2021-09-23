@@ -155,7 +155,7 @@ const DatasetRender = () => {
                         multiple = {false}
                         destination={{ url: configData.API_URL+`/histology/new?datasetId=${datasetId}` , headers:authHeader()}}
                         accept=".png,.tif,.jpg,.jpeg"
-                        fileFilter={(file)=>{return file.size < 1e+7}}
+                        fileFilter={(file)=>{return file.size < configData.MAX_BTYE_HISTOLOGY_FILE}}
                         sendWithFormData = {true}
                         >
                             <UploadButton className='btn btn-outline-secondary col-lg-2 col-2'>{hist?'Remove & Re-upload':'Select File & Upload'}</UploadButton> 

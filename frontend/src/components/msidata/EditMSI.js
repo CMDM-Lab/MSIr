@@ -8,7 +8,6 @@ import UploadButton from "@rpldy/upload-button";
 import { useHistory, useParams } from "react-router-dom";
 import authHeader from "../../services/auth-header";
 import configData from '../../config.json'
-import path from "path";
 import msi_service from "../../services/msi_service";
 import { handleResponse } from "../../utils/handleResponse";
 
@@ -138,7 +137,7 @@ const EditMSI = (props) => {
                         multiple = {false}
                         destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
                         accept=".imzML"
-                        fileFilter={(file)=>{return file.size < 1e+7}}
+                        fileFilter={(file)=>{return file.size < configData.MAX_BYTE_IMZML_FILE}}
                         maxGroupSize = {1}
                     >
                         <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>{imzmlRes?'Remove & Re-upload':'Select Files & Upload' }</UploadButton> 
@@ -165,7 +164,7 @@ const EditMSI = (props) => {
                         multiple = {false}
                         destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
                         accept=".ibd"
-                        fileFilter={(file)=>{return file.size < 1e+7}}
+                        fileFilter={(file)=>{return file.size < configData.MAX_BTYE_IBD_FILE}}
                         maxGroupSize = {1}
                     >
                         <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>{ibdRes?'Remove & Re-upload':'Select Files & Upload' }</UploadButton>

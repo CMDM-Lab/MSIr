@@ -21,7 +21,8 @@ const newRegistration = async (req, res) => {
             msiId: msi.id,
             histologyImageId: hist.id,
             histologyroiId: data.histologyroiId,
-            userId: req.userId
+            userId: req.userId,
+            DR_method: data.DR_method
         })
         res.json({message: "Registration was created successfully!"})
 
@@ -153,7 +154,8 @@ const getParameter = async (req, res) => {
                 msi: msi,
                 perform_type: registration.perform_type,
                 transform_type: registration.transform_type,
-                roi: {points:roi.points, id:roi.id}
+                roi: {points:roi.points, id:roi.id},
+                DR_method: registration.DR_method
             })
         }else{
             res.json({
@@ -163,7 +165,8 @@ const getParameter = async (req, res) => {
                 msi: msi,
                 perform_type: registration.perform_type,
                 transform_type: registration.transform_type,
-                roi: null
+                roi: null,
+                DR_method: registration.DR_method
             })
         }
         registration.status = 'running'

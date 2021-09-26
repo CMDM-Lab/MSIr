@@ -138,7 +138,7 @@ const CreateExtraction = () =>{
                     />
                 </div>
               </div>
-              <div className="form-group row">
+              {/*<div className="form-group row">
                 <label className="col-3 col-form-label">Data Normalization Type</label>
                 <div className="col-9">
                     <select value={norm} onChange={onChangeNorm}>
@@ -147,6 +147,7 @@ const CreateExtraction = () =>{
                     </select>
                 </div>
               </div>
+            */}
               <div className="form-group row py-2">
                 <div className="col-lg-3 col-3" />
                 <button onClick={handleSubmit} className='btn btn-primary col-lg-2 col-1'>Submit</button>

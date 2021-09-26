@@ -160,22 +160,6 @@ const HistologyROI = sequelize.define('histologyroi',{
   })
 
 const Registration = sequelize.define('registration',{
-    /*dataset_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    histologyimage_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    histologymask_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    msidata: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },*/
     status: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -205,10 +189,15 @@ const Registration = sequelize.define('registration',{
     },
     result_file: {
         type: DataTypes.STRING, 
-    }
-    /*registered_index_file: {
-        type: DataTypes.STRING
-    }*/
+    },
+    DR_method: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'UMAP',
+        validate: {
+            isIn: [['UMAP', 'PCA']]
+        }
+    },
 })
 
 const Extraction = sequelize.define('extraction',{

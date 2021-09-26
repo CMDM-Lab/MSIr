@@ -21,6 +21,7 @@ const CreateRegistration = () =>{
     const [maskId, setMaskId] = useState()
     const [regType, setRegType] = useState('intensity')
     const [masks, setMasks] = useState([{id:null, blend_img_file:not_select}])
+    const [DR, setDR] = useState('UMAP')
 
     const getMask = async () =>{
       try {
@@ -47,7 +48,9 @@ const CreateRegistration = () =>{
     const onChangeRegType = (e) => {
         setRegType(e.target.value)
     }
-
+    const onChangeDR = (e) => {
+        setDR(e.target.value)
+    }
     const onPick = (img) => {
         setMaskId(img.value)
     }
@@ -56,6 +59,7 @@ const CreateRegistration = () =>{
       try {
         const res = await registrationService.create({
           perform_type: regType,
+          DR_method: DR,
           datasetId: Number(datasetId),
           histologyroiId: maskId
         })
@@ -116,6 +120,19 @@ const CreateRegistration = () =>{
                     </select>
                 </div>
               </div>
+              {
+                regType === 'intensity'?(
+                  <div className="form-group row">
+                    <label className="col-3 col-form-label">Dimensional Reduction</label>
+                    <div className="col-9">
+                      <select value={DR} onChange={onChangeDR}>
+                          <option value="UMPA">UMAP</option>
+                          <option value="PCA">PCA</option>
+                      </select>
+                    </div>
+                  </div>
+                ):null
+              }
               <div className="form-group row">
                 <label className="col-3 col-form-label">Select the mask of histology image</label>
                 <div className="col-9">

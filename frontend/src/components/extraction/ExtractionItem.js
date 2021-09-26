@@ -49,7 +49,7 @@ const ExtractionItem = ({datasetId,extraction}) =>{
         <tr>
             <td>
                 <div className="btn btn-success">ID: {extraction.id}</div><br /><br />
-                <p>Data Normalization Type: {extraction.normalization}</p>
+                {/*<p>Data Normalization Type: {extraction.normalization}</p>*/}
                 
             </td>
             <td>

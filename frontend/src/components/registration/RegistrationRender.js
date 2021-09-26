@@ -130,7 +130,16 @@ const RegistrationRender = () => {
                   <tr>
                     <td>Registration type:</td>
                     <td>{registration?.perform_type? registration.perform_type:null}</td>
-                  </tr><tr>
+                  </tr>
+                  {
+                    registration?.perform_type? registration.perform_type === 'intensity'?(
+                      <tr>
+                        <td>Dimensional Reduction:</td>
+                        <td>{registration?.DR_method? registration.DR_method:null}</td>
+                      </tr>
+                    ):null:null
+                  }
+                  <tr>
                     <td>Mask image:</td>
                     <td>
                       {

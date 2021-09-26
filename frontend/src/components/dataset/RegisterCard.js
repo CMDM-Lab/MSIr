@@ -20,6 +20,12 @@ const RegisterCard = ({registerData}) =>{
                                     </h5>
                                 </a>
                                 <p>Registration Type: {registerData.perform_type}</p>
+                                {
+                                    registerData.perform_type === 'intensity'?(
+                                    <p>Dimensional Reduction: {registerData.DR_method}</p>
+                                    ):null
+                                }
+                                
                             </div>
                         </div>
                     </div>
@@ -40,6 +46,7 @@ const RegisterCard = ({registerData}) =>{
                                    
                                 </a>
                                 <p>Registration Type: {registerData.perform_type}</p>
+                                <p>Dimensional Reduction: {registerData.DR_method}</p>
                                 <p>Status: {registerData.status}</p>
                                 
                             </div>

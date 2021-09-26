@@ -22,7 +22,7 @@ const ExtractCard = ({extractData}) =>{
                                 </h5>
                                 <p>ROI ID: {extractData.histologyroiId}</p>
                                 <p>Registration ID: {extractData.registrationId}</p>
-                                <p>Normalization: {extractData.normalization}</p>
+                                {/*<p>Normalization: {extractData.normalization}</p>*/}
                                 <p>Status: {extractData.status}</p>
                                 {
                                     extractData.extract_file? 

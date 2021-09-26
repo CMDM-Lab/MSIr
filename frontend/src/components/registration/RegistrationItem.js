@@ -53,6 +53,11 @@ const RegistrationItem = ({datasetId, registration})=>{
                 </a><br />
                 <br />
                 <p>Registration type: {registration.perform_type}</p>
+                {
+                    registration.perform_type === 'intensity'?
+                    <p>Dimensional Reduction: {registration.DR_method}</p>
+                    :null
+                }
                 <br />
             </td>
             <td>

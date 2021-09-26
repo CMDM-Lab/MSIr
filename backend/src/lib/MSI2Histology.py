@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.sparse import vstack, save_npz
-import cv2,os, requests, argparse, json, sys, umap 
+import cv2,os, requests, argparse, sys
 from itk import ParameterObject, elastix_registration_method
 from dotenv import load_dotenv
 from Reg_functions import ImzmlFileReader, data2bgr, sort_cnt_by_area, \
@@ -39,6 +39,7 @@ if __name__ == '__main__':
         bin_size = res['msi']['bin_size']
         userId = res['userId']
         datasetId = res['datasetId']
+        dr_method = res['DR_method']
         if (res['roi']):
             cnt_hist = res['roi']['points']
             mask_id = res['roi']['id']
@@ -111,11 +112,18 @@ if __name__ == '__main__':
             if bin_size == 0.01:
                 data_proc=binning(data_proc,mzs,peak_idx,bin_tol)
 
-            #UMAP 
-            try:
-                DR_result=umap.UMAP(n_components=3,min_dist=0.001,metric='cosine',random_state=128,verbose=0).fit_transform(data_proc)
-            except:
-                DR_result=umap.UMAP(n_components=3,min_dist=0.001,metric='cosine',random_state=11,verbose=0).fit_transform(data_proc)
+            if dr_method == 'UMAP':
+                #UMAP
+                import umap 
+                try:
+                    DR_result=umap.UMAP(n_components=3,min_dist=0.001,metric='cosine',random_state=128,verbose=0).fit_transform(data_proc)
+                except:
+                    DR_result=umap.UMAP(n_components=3,min_dist=0.001,metric='cosine',random_state=11,verbose=0).fit_transform(data_proc)
+            elif dr_method == 'PCA':
+                from sklearn.decomposition import PCA
+                from sklearn.preprocessing import StandardScaler
+                data_proc = StandardScaler().fit_transform(data_proc)
+                DR_result = PCA(n_components=3).fit_transform(data_proc)
 
             #DR result into rgb image
             DR_result=data2bgr(DR_result)

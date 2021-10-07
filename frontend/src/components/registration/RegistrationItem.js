@@ -58,6 +58,11 @@ const RegistrationItem = ({datasetId, registration})=>{
                     <p>Dimensional Reduction: {registration.DR_method}</p>
                     :null
                 }
+                {
+                    registration.DR_method === 'UMAP'?
+                    <p>Embedding Dimension: {registration.n_dim}</p>
+                    :null
+                }
                 <br />
             </td>
             <td>

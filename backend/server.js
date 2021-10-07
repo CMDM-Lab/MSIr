@@ -2,9 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import {auth, histology, dataset, msi, extract, registration, job} from './src/routes'
 import roi from './src/routes/roi.routes'
-import db from './src/db/db'
+import db, { User } from './src/db/db'
 import dotenv from 'dotenv-defaults'
-import { activatePyvevn } from './src/utils/runScript';
+import bcrypt from 'bcrypt'
+//import { activatePyvevn } from './src/utils/runScript';
 
 const app = express();
 
@@ -34,15 +35,24 @@ app.use('/api/registrations', registration)
 app.use('/api/extractions', extract)
 app.use('/api/job', job)
 
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
+app.get("/api", (req, res) => {
+  res.json({ message: "Welcome to MSI Registrar II API." });
 });
 
 app.use((error, req, res, next) => {
   console.log('This is the rejected field ->', error.field);
 });
 
+//connect DB
 db.sync()
+
+//Create guest user
+const guest = User.findOrCreate({
+  where: {
+    email: 'guest@guest.com',
+  },
+  defaults: {encrypted_password: bcrypt.hashSync('guestguest', 8)}
+})
 
 const server = app.listen(process.env.PORT || 8080, function () {
     console.log('Listening on port ' + server.address().port);

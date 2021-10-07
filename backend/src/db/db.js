@@ -198,6 +198,14 @@ const Registration = sequelize.define('registration',{
             isIn: [['UMAP', 'PCA']]
         }
     },
+    n_dim: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 3,
+        validate: {
+            isIn: [[1, 3]]
+        } 
+    }
 })
 
 const Extraction = sequelize.define('extraction',{

@@ -15,7 +15,7 @@ const Home = (prop) =>{
                 <h6>Image Registration between MSI and Histology</h6>
                 <h2>What is MSI Registrar II?</h2>
               </div>
-              <p>MSI Registrar II is a web service for automatic image registration between MSI and Histology. Based on automatic registration, MSI spectrum data are extracted from region of interest in Histology. </p>
+              <p>MSI Registrar II is a web service for automatic image registration between MSI and Histology. Based on automatic registration, MSI spectrum Indices are extracted from region of interest in Histology. </p>
             </div>
           </div>
           {/*<div class="col-lg-6 challange_img">

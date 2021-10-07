@@ -1,13 +1,9 @@
-from pyimzml.ImzMLParser import ImzMLParser
 import numpy as np
-from scipy.sparse import csc_matrix
-import scipy.ndimage as ndi
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import normalize
 import cv2
-from itertools import product
 
 def ImzmlFileReader(file_path,bin_size=0.01,mz_max=None,mz_min=None): #20210802
+    from pyimzml.ImzMLParser import ImzMLParser
+    from scipy.sparse import csc_matrix
     precision=int(np.round(-np.log10(bin_size)))
     imzmldata=ImzMLParser(file_path)
     size=imzmldata.imzmldict['max count of pixels y'],imzmldata.imzmldict['max count of pixels x']
@@ -81,16 +77,17 @@ def binning(data,mzs,target_peak_idx,bin_size=0.02):
         out_data.append(np.array(tmp).reshape(len(tmp)))
     return np.array(out_data).T
 
-def get_combinations_list(k):
+def get_combinations_list(label_set):
     def ppowerset(iterable):
+        from itertools import product
         for sl in product(*[[[], [i]] for i in iterable]):
             yield tuple(j for i in sl for j in i)
 
     result =[]
-    for j in ppowerset(range(1,k+1)):
+    for j in ppowerset(label_set):
         result.append(j)
     result = sorted(result,key=lambda x:len(x))
-    return result[1:-1]
+    return result
 
 def generate_msi_mask(msi_data, hist_cnt, shape):
     '''
@@ -99,30 +96,36 @@ def generate_msi_mask(msi_data, hist_cnt, shape):
 
     Through kmeans clustring with cosine distance (from k=2 to k=5), try to generate msi data mask of tissue region and use the similarity with hist_cnt as evaluation
     '''
+    from sklearn.preprocessing import normalize
+    from sklearn.cluster import KMeans
     #unit norm
     data_norm=normalize(msi_data)
     #k-means clustering (k=2~5) stop when detected contour is similar with hist_cnt
     min_diff = 100
     better_mask = None
     #kernel_size = np.max([int(np.log10(msi_data.shape[0]))-1,3])
+    v_threshold = 0.12
     for k in range(2,5):
+        v_threshold = 0.13 - (k-1)*0.005
         #kmeans result
-        label = KMeans(n_clusters=k, random_state=112,verbose=0).fit_predict(data_norm).reshape(shape)+1
+        label = KMeans(n_clusters=k, random_state=99,verbose=0).fit_predict(data_norm).reshape(shape)+1
         #generate powerset of all value in label (exclude the all removed or all saved)
-        comb_list = get_combinations_list(k)
+        label_list = [i+1 for i in range(k)]
         sample_border=np.unique([*label[0,:],*label[:,-1],*label[-1,:],*label[:,0]],return_counts=True)
-        label[label == sample_border[0][np.argmax(sample_border[1])]] = 0
+        background_label = sample_border[0][np.argmax(sample_border[1])]
+        label[label == background_label] = 0
+        label_list.remove(background_label)
+        comb_list = get_combinations_list(label_list)
         for subset in comb_list:
             label_tmp = label.copy()
             label_tmp[np.logical_or.reduce([label_tmp==i for i in subset])]=0
             label_tmp[label_tmp!=0]=1
-            #label_tmp = cv2.morphologyEx(np.uint8(label_tmp),cv2.MORPH_CLOSE,np.ones((kernel_size,kernel_size),np.uint8))
             cnts, _ = cv2.findContours(np.uint8(label_tmp),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
             cnts = sort_cnt_by_area(cnts)
             if len(cnts)<1:
                 continue
             cnts_diff = cv2.matchShapes(hist_cnt,cnts[0],3, 0.0)
-            if cnts_diff <= 0.15:      
+            if cnts_diff <= v_threshold and cv2.contourArea(cnts[0])<0.95*label_tmp.shape[0]*label_tmp.shape[1]:      
                 return label_tmp
             else:
                 if min_diff > cnts_diff:
@@ -285,6 +288,7 @@ def color_metric_edge_detection(img, sigma=0.33):
     The source code of skimage.feature.canny 
     Detect the edge from RGB image through color metric, Non-maximum suppression, and Edge Tracking by Hysteresis
     '''
+    import scipy.ndimage as ndi
 
     def hyab(p):
         value=np.abs(p[:,:,0])+(np.power(p[:,:,1],2)+np.power(p[:,:,2],2))**0.5
@@ -441,18 +445,17 @@ def he_preprocessing(img):
     _,img_cp=cv2.decolor(img_cp)
     #colorful edge detection
     img_edge=color_metric_edge_detection(img_cp)
-    #mask initial 
-    mask=np.zeros(img_edge.shape[:2],np.uint8)
+    
     #close operation to remove small hole
     img_edge=cv2.morphologyEx(np.uint8(img_edge),cv2.MORPH_CLOSE,
-        cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(15,15)),
+        cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)),
         borderType=cv2.BORDER_REPLICATE)
         
     #coontour detect in binary img
     contours, _ = cv2.findContours(np.uint8(img_edge),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     contours=sorted(contours,key=lambda x: cv2.contourArea(x),reverse=True)
-    #draw the largest contour 
-    cv2.drawContours(mask,contours,0,1,-1)
+    #mask initial and draw the largest contour
+    mask = draw_mask(contours,img_edge.shape[:2],[0])
     #draw other contour depend on area size 
     for i in range(1,len(contours)):
         if cv2.contourArea(contours[i])>0.15*img_edge.shape[0]*img_edge.shape[1] or cv2.contourArea(contours[i])>cv2.contourArea(contours[0])*0.5:
@@ -465,3 +468,67 @@ def he_preprocessing(img):
     img_cp= img_cp*mask.reshape((mask.shape[0],mask.shape[1],1))
     
     return img_cp,mask
+
+def processing_intensity_reg(msi_data, msi_mask, mzs, msi_size, bin_size, dr_method, n_dim):
+    from scipy.sparse import vstack
+    from ms_peak_picker import pick_peaks
+    #MSI get tissue region pixel and background pixel
+    idx_tissue=np.where(msi_mask.reshape((-1,1))==1)[0]
+    idx_bg=np.where(msi_mask.reshape((-1,1))==0)[0]
+    #MSI stack ROI data and the mean of background data
+    data_proc=vstack([msi_data[idx_tissue],np.array(msi_data[idx_bg].mean(axis=0)[0])]).tocsc()
+
+    #Peak picking based on based on the tissue region signal
+    intensity_mzs=np.array(data_proc[:-1].mean(axis=0))[0]
+    peak_idx=pick_peaks(mzs, intensity_mzs, fit_type="quadratic",signal_to_noise_threshold=5) #"quadratic", "gaussian", "lorentzian", or "apex"
+    bin_tol = np.median([peak_idx[i].full_width_at_half_max for i in range(len(peak_idx))])*2
+    peak_idx=np.array([peak_idx[i].index for i in range(len(peak_idx))])
+
+    #Data binning based on peak picking result
+    if bin_size == 0.01:
+        data_proc=binning(data_proc,mzs,peak_idx,bin_tol)
+
+    if dr_method == 'UMAP':
+        #UMAP
+        import umap 
+        try:
+            DR_result=umap.UMAP(n_components=n_dim,min_dist=0.001,metric='cosine',random_state=128,verbose=0).fit_transform(data_proc)
+        except:
+            DR_result=umap.UMAP(n_components=n_dim,min_dist=0.001,metric='cosine',random_state=11,verbose=0).fit_transform(data_proc)
+    elif dr_method == 'PCA':
+        from sklearn.decomposition import PCA
+        from sklearn.preprocessing import StandardScaler
+        data_proc = StandardScaler().fit_transform(data_proc)
+        DR_result = PCA(n_components=n_dim).fit_transform(data_proc)
+
+    #DR result into rgb image
+    DR_result=data2bgr(DR_result)
+    msi_dr=np.full((msi_size[0]*msi_size[1],n_dim),DR_result[-1])
+    msi_dr[idx_tissue]=DR_result[:-1]
+    msi_dr=np.uint8(msi_dr.reshape((msi_size[0],msi_size[1],-1)))
+    if n_dim == 1:
+        msi_dr = np.squeeze(msi_dr)
+
+    return msi_dr
+
+def elastix_parameter_object():
+    from itk import ParameterObject
+    parameter_object = ParameterObject.New()
+    parameter_map_affine = parameter_object.GetDefaultParameterMap('affine')
+    parameter_map_affine['MaximumNumberOfIterations']=['500']
+    parameter_map_affine['Transform']=['SimilarityTransform']
+    parameter_map_affine['FinalBSplineInterpolationOrder']=['0']
+    parameter_map_affine['AutomaticTransformInitialization']=['true']
+    parameter_map_affine['AutomaticTransformInitializationMethod']=['CenterOfGravity']
+    parameter_map_affine['MaximumStepLength'] = ['50','10','1']
+    parameter_map_affine['RequiredRatioOfValidSamples'] =['0.15']
+    parameter_object.AddParameterMap(parameter_map_affine)
+
+    return parameter_object
+
+def draw_mask(cnts, size, idx_list):
+    mask = np.zeros(size[:2],np.uint8)
+    for i in idx_list:
+        cv2.drawContours(mask, cnts, i, 1, -1)
+    return mask
+    

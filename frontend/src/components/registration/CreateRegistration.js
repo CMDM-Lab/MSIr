@@ -22,6 +22,7 @@ const CreateRegistration = () =>{
     const [regType, setRegType] = useState('intensity')
     const [masks, setMasks] = useState([{id:null, blend_img_file:not_select}])
     const [DR, setDR] = useState('UMAP')
+    const [nDim, setNDim] = useState(3)
 
     const getMask = async () =>{
       try {
@@ -51,6 +52,9 @@ const CreateRegistration = () =>{
     const onChangeDR = (e) => {
         setDR(e.target.value)
     }
+    const onChangeNDim = (e) => {
+      setNDim(e.target.value)
+    }
     const onPick = (img) => {
         setMaskId(img.value)
     }
@@ -60,6 +64,7 @@ const CreateRegistration = () =>{
         const res = await registrationService.create({
           perform_type: regType,
           DR_method: DR,
+          n_dim: n_dim,
           datasetId: Number(datasetId),
           histologyroiId: maskId
         })
@@ -128,6 +133,19 @@ const CreateRegistration = () =>{
                       <select value={DR} onChange={onChangeDR}>
                           <option value="UMPA">UMAP</option>
                           <option value="PCA">PCA</option>
+                      </select>
+                    </div>
+                  </div>
+                ):null
+              }
+              {
+                DR === 'UMAP'?(
+                  <div className="form-group row">
+                    <label className="col-3 col-form-label">Embedding Dimension</label>
+                    <div className="col-9">
+                      <select value={n_dim} onChange={onChangeNDim}>
+                          <option value={1}>1</option>
+                          <option value={3}>3</option>
                       </select>
                     </div>
                   </div>

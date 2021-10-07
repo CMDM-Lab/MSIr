@@ -72,7 +72,7 @@ const HistologyROI = () =>{
 
     return (
         <>
-        <Banner subtitle = {`Draw mask of tissue region or region of interest (ROI).`} />
+        <Banner subtitle = {`Draw masks of tissue region or region of interest (ROI).`} />
         <section className="challange_area">
             {
                 histology?(

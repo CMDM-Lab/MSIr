@@ -136,6 +136,7 @@ const RegistrationRender = () => {
                       <tr>
                         <td>Dimensional Reduction:</td>
                         <td>{registration?.DR_method? registration.DR_method:null}</td>
+                        <td>{registration?.DR_method? registration.DR_method === 'UMAP'?  registration.n_dim:null:null}</td>
                       </tr>
                     ):null:null
                   }

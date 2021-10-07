@@ -25,7 +25,11 @@ const RegisterCard = ({registerData}) =>{
                                     <p>Dimensional Reduction: {registerData.DR_method}</p>
                                     ):null
                                 }
-                                
+                                {
+                                    registration.DR_method === 'UMAP'?
+                                    <p>Embedding Dimension: {registration.n_dim}</p>
+                                    :null
+                                }
                             </div>
                         </div>
                     </div>

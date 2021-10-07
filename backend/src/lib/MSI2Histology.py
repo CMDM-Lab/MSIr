@@ -1,11 +1,11 @@
 import numpy as np
-from scipy.sparse import vstack, save_npz
+from scipy.sparse import save_npz
 import cv2,os, requests, argparse, sys
-from itk import ParameterObject, elastix_registration_method
+from itk import elastix_registration_method
 from dotenv import load_dotenv
-from Reg_functions import ImzmlFileReader, data2bgr, sort_cnt_by_area, \
-    binning, generate_msi_mask, tic_normalization, getorient, he_preprocessing, get_elastix_transform_matrix, get_inital_transform_matrix
-from ms_peak_picker import pick_peaks
+from Reg_functions import ImzmlFileReader, sort_cnt_by_area, \
+    generate_msi_mask, tic_normalization, getorient, get_elastix_transform_matrix, get_inital_transform_matrix, \
+    processing_intensity_reg, elastix_parameter_object
 
 def process_command():
     parser = argparse.ArgumentParser()
@@ -40,6 +40,7 @@ if __name__ == '__main__':
         userId = res['userId']
         datasetId = res['datasetId']
         dr_method = res['DR_method']
+        n_dim = res['n_dim']
         if (res['roi']):
             cnt_hist = res['roi']['points']
             mask_id = res['roi']['id']
@@ -55,11 +56,12 @@ if __name__ == '__main__':
         # read histology image and mask
         hist_ori = cv2.imread(os.path.join(dir_hist, str(datasetId), histology_file))
         if cnt_hist:
+            from Reg_functions import draw_mask
             cnt_hist = np.round(np.array(cnt_hist)*[hist_ori.shape[1],hist_ori.shape[0]]).astype(int)
-            hist_mask = np.zeros(hist_ori.shape[:2],np.uint8)
-            hist_mask = cv2.drawContours(hist_mask,[cnt_hist],0,1,-1)
-            hist_proc = hist_ori*hist_mask.reshape((hist_mask.shape[0],hist_mask.shape[1],1))
+            hist_mask = draw_mask([cnt_hist],hist_ori, [0])
+            hist_proc = hist_ori*np.expand_dims(hist_mask,axis=2)
         else:
+            from Reg_functions import he_preprocessing
             hist_proc, hist_mask = he_preprocessing(hist_ori)
             cnt_hist, _ = cv2.findContours(hist_mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
             cnt_hist = sort_cnt_by_area(cnt_hist)[0]
@@ -79,96 +81,56 @@ if __name__ == '__main__':
         msi_data,msi_size,_,mzs=ImzmlFileReader(os.path.join(dir_msi,str(datasetId),msi_file),bin_size=bin_size)
         # save MSI data in sparse matrix
         save_npz(process_file,msi_data)
-
         # TIC normaliztion
         msi_data= tic_normalization(msi_data)
 
-        #MSI list include msi_mask、msi_dr、msi_repr
-        msi_list = []
         #Generate MSI mask
         msi_mask = generate_msi_mask(msi_data,cnt_hist,msi_size).astype(np.uint8)
         #clean border pixel
         msi_mask[0,:]=0;msi_mask[-1,:]=0;msi_mask[:,0]=0;msi_mask[:,-1]=0
+        # detect contour and draw largest contour
         cnt_msi,_ = cv2.findContours(msi_mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
         cnt_msi = sort_cnt_by_area(cnt_msi)[0]
         cv2.drawContours(msi_mask,[cnt_msi],0,1,-1)
-        msi_list.append(msi_mask)
+        
 
         #contour based data processing stop here
         if perform_type != 'contour':
-            #MSI get tissue region pixel and background pixel
-            idx_tissue=np.where(msi_mask.reshape((-1,1))==1)[0]
-            idx_bg=np.where(msi_mask.reshape((-1,1))==0)[0]
-            #MSI stack ROI data and the mean of background data
-            data_proc=vstack([msi_data[idx_tissue],np.array(msi_data[idx_bg].mean(axis=0)[0])]).tocsc()
-
-            #Peak picking based on based on the tissue region signal
-            intensity_mzs=np.array(data_proc[:-1].mean(axis=0))[0]
-            peak_idx=pick_peaks(mzs, intensity_mzs, fit_type="quadratic",signal_to_noise_threshold=5) #"quadratic", "gaussian", "lorentzian", or "apex"
-            bin_tol = np.median([peak_idx[i].full_width_at_half_max for i in range(len(peak_idx))])*2
-            peak_idx=np.array([peak_idx[i].index for i in range(len(peak_idx))])
-
-            #Data binning based on peak picking result
-            if bin_size == 0.01:
-                data_proc=binning(data_proc,mzs,peak_idx,bin_tol)
-
-            if dr_method == 'UMAP':
-                #UMAP
-                import umap 
-                try:
-                    DR_result=umap.UMAP(n_components=3,min_dist=0.001,metric='cosine',random_state=128,verbose=0).fit_transform(data_proc)
-                except:
-                    DR_result=umap.UMAP(n_components=3,min_dist=0.001,metric='cosine',random_state=11,verbose=0).fit_transform(data_proc)
-            elif dr_method == 'PCA':
-                from sklearn.decomposition import PCA
-                from sklearn.preprocessing import StandardScaler
-                data_proc = StandardScaler().fit_transform(data_proc)
-                DR_result = PCA(n_components=3).fit_transform(data_proc)
-
-            #DR result into rgb image
-            DR_result=data2bgr(DR_result)
-            msi_dr=np.full((msi_size[0]*msi_size[1],3),DR_result[-1])
-            msi_dr[idx_tissue]=DR_result[:-1]
-            msi_dr=np.uint8(msi_dr.reshape((msi_size[0],msi_size[1],-1)))
-            #add msi_dr to msi_list
-            msi_list.append(msi_dr)
-
+            #data processing and dimensional reduction
+            msi_dr = processing_intensity_reg(msi_data, msi_mask, mzs, msi_size, bin_size, dr_method, n_dim)
+            
+            # add msi_dr to msi_list
             # add msi represent image to msi_list
-            msi_list.append(cv2.cvtColor(msi_dr,cv2.COLOR_BGR2GRAY)*msi_mask)
+            # MSI list include msi_mask、msi_dr、msi_repr
+            msi_list = []
+            msi_list.append(msi_mask)
+            if n_dim == 1:
+                msi_list.append(cv2.applyColorMap(msi_dr,cv2.COLORMAP_VIRIDIS))
+                msi_list.append(msi_dr*msi_mask)
+            else:
+                msi_list.append(msi_dr)
+                msi_list.append(cv2.cvtColor(msi_dr,cv2.COLOR_BGR2GRAY)*msi_mask)
         
         #detect the relation between MSI and H&E to solve the big angle rotation(90,180,270) and the flip situation
-        scale_ratio=round(cv2.minEnclosingCircle(cnt_hist)[-1]/cv2.minEnclosingCircle(cnt_msi)[-1])
+        scale_ratio = cv2.minEnclosingCircle(cnt_hist)[-1]/cv2.minEnclosingCircle(cnt_msi)[-1]
         rotate_stat=getorient(hist_proc,msi_list[0],scale_ratio)
+        #Calculate initial registration matrix
+        M_scale = np.array([[scale_ratio,0,0],[0,scale_ratio,0],[0,0,1.0]],dtype=np.float32)
+        M_init = get_inital_transform_matrix(rotate_stat,msi_size)
         #simple registration (scale, big angle rotation, and flip)
         #rotation
-        if rotate_stat//2==1:
-            for i in range(len(msi_list)):
-                msi_list[i]=cv2.rotate(msi_list[i], cv2.ROTATE_90_CLOCKWISE)
-        elif rotate_stat//2==2:
-            for i in range(len(msi_list)):
-                msi_list[i]=cv2.rotate(msi_list[i], cv2.ROTATE_180)
-        elif rotate_stat//2==3:
-            for i in range(len(msi_list)):
-                msi_list[i]=cv2.rotate(msi_list[i], cv2.ROTATE_90_COUNTERCLOCKWISE)
-        #flip
-        if rotate_stat%2==1:
-            for i in range(len(msi_list)):
-                msi_list[i]=cv2.flip(msi_list[i],0)
+        for i in range(len(msi_list)):
+            if rotate_stat//2==1 or rotate_stat//2==3:
+                msi_list[i]=cv2.warpAffine(msi_list[i],M=M_init[:2],dsize=(int(round(msi_size[0]*scale_ratio)),int(round(msi_size[1]*scale_ratio))),flags=cv2.INTER_NEAREST)
+            else:
+                msi_list[i]=cv2.warpAffine(msi_list[i],M=M_init[:2],dsize=(int(round(msi_size[1]*scale_ratio)),int(round(msi_size[0]*scale_ratio))),flags=cv2.INTER_NEAREST)
+
         # scale
         for i in range(len(msi_list)):
-            msi_list[i]=cv2.resize(msi_list[i],None, fx=scale_ratio, fy=scale_ratio,interpolation=cv2.INTER_NEAREST)
+            msi_list[i] = cv2.warpAffine(msi_list[i],M=M_scale[:2],dsize=(msi_list[i].shape[1],msi_list[i].shape[0]),flags=cv2.INTER_NEAREST)
 
         #Automatic registration through intensity-based registration using Elastix
-        parameter_object = ParameterObject.New()
-        parameter_map_affine = parameter_object.GetDefaultParameterMap('affine')
-        parameter_map_affine['MaximumNumberOfIterations']=['500']
-        parameter_map_affine['Transform']=['SimilarityTransform']
-        parameter_map_affine['FinalBSplineInterpolationOrder']=['0']
-        parameter_map_affine['AutomaticTransformInitialization']=['true']
-        parameter_map_affine['AutomaticTransformInitializationMethod']=['CenterOfGravity']
-        parameter_map_affine['MaximumStepLength'] = ['50','10','1']
-        parameter_map_affine['RequiredRatioOfValidSamples'] =['0.15']
-        parameter_object.AddParameterMap(parameter_map_affine)
+        parameter_object = elastix_parameter_object()
         if perform_type == 'contour':
             _, result_transform_parameters = elastix_registration_method(
                 hist_proc.astype(np.float32), msi_list[0].astype(np.float32),
@@ -182,11 +144,6 @@ if __name__ == '__main__':
 
         #Convert elastix transform parameter to transform matrix
         M_elastix = get_elastix_transform_matrix(result_transform_parameters)
-        
-        #Calculate initial registration matrix
-        M_scale = np.array([[scale_ratio,0,0],[0,scale_ratio,0],[0,0,1.0]],dtype=np.float32)
-        M_init = get_inital_transform_matrix(rotate_stat,msi_size)
-        #M_init = M_scale @ M_init
 
         #save transform matrix parameter
         np.savetxt(transform_matrix_file,np.vstack([M_init, M_scale, M_elastix]))
@@ -198,8 +155,6 @@ if __name__ == '__main__':
             msi_transform = msi_list[0]*255
             msi_transform = cv2.cvtColor(msi_transform,cv2.COLOR_GRAY2BGR)
         #already perform reflection and big angle rotation in above 
-        #msi_transform = cv2.warpAffine(msi_transform,M=M_init[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
-        #msi_transform = cv2.warpAffine(msi_transform,M=M_scale[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
         msi_transform = cv2.warpAffine(msi_transform,M=M_elastix[:2],dsize=(hist_ori.shape[1],hist_ori.shape[0]),flags=cv2.INTER_NEAREST)
         img_result = cv2.addWeighted(hist_ori,0.45,msi_transform,0.55,0)
         cv2.imwrite(result_file,img_result)

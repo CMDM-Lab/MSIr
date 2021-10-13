@@ -19,17 +19,17 @@ const RegisterCard = ({registerData}) =>{
                                         ID: {registerData.id}
                                     </h5>
                                 </a>
-                                <p>Registration Type: {registerData.perform_type}</p>
+                                <p><b>Registration Type</b>: {registerData.perform_type}</p>
                                 {
                                     registerData.perform_type === 'intensity'?(
-                                    <p>Dimensional Reduction: {registerData.DR_method}</p>
+                                    <p><b>Dimensional Reduction</b>: {registerData.DR_method}</p>
                                     ):null
                                 }
-                                {
-                                    registration.DR_method === 'UMAP'?
-                                    <p>Embedding Dimension: {registration.n_dim}</p>
+                                {/*
+                                    (registerData.perform_type === 'intensity')&(registerData.DR_method === 'UMAP')?
+                                    <p><b>Embedding Dimensions</b>: {registerData.n_dim}</p>
                                     :null
-                                }
+                                */}
                             </div>
                         </div>
                     </div>
@@ -49,9 +49,18 @@ const RegisterCard = ({registerData}) =>{
                                     <h5 className='card-title'>ID: {registerData.id}</h5>
                                    
                                 </a>
-                                <p>Registration Type: {registerData.perform_type}</p>
-                                <p>Dimensional Reduction: {registerData.DR_method}</p>
-                                <p>Status: {registerData.status}</p>
+                                <p><b>Registration Type</b>: {registerData.perform_type}</p>
+                                {
+                                    registerData.perform_type === 'intensity' ?(
+                                    <p><b>Dimensional Reduction</b>: {registerData.DR_method}</p>
+                                    ):null
+                                }
+                                {/*
+                                    (registerData.perform_type === 'intensity')&(registerData.DR_method === 'UMAP')?
+                                    <p><b>Embedding Dimensions</b>: {registerData.n_dim}</p>
+                                    :null
+                                */}
+                                <p><b>Status</b>: {registerData.status}</p>
                                 
                             </div>
                         </div>

@@ -47,13 +47,14 @@ app.use((error, req, res, next) => {
 db.sync()
 
 //Create guest user
-const guest = User.findOrCreate({
-  where: {
-    email: 'guest@guest.com',
-  },
-  defaults: {encrypted_password: bcrypt.hashSync('guestguest', 8)}
-})
+
 
 const server = app.listen(process.env.PORT || 8080, function () {
     console.log('Listening on port ' + server.address().port);
+    const guest = User.findOrCreate({
+    where: {
+      email: 'guest@guest.com',
+    },
+    defaults: {encrypted_password: bcrypt.hashSync('guestguest', 8)}
+  })
   });

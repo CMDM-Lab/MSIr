@@ -52,15 +52,15 @@ const RegistrationItem = ({datasetId, registration})=>{
                     ID: {registration.id}
                 </a><br />
                 <br />
-                <p>Registration type: {registration.perform_type}</p>
+                <p><b>Registration type</b>: {registration.perform_type}</p>
                 {
                     registration.perform_type === 'intensity'?
-                    <p>Dimensional Reduction: {registration.DR_method}</p>
+                    <p><b>Dimensional Reduction</b>: {registration.DR_method}</p>
                     :null
                 }
                 {
-                    registration.DR_method === 'UMAP'?
-                    <p>Embedding Dimension: {registration.n_dim}</p>
+                    (registration.perform_type === 'intensity')&(registration.DR_method === 'UMAP')?
+                    <p><b>Embedding Dimension</b>: {registration.n_dim}</p>
                     :null
                 }
                 <br />

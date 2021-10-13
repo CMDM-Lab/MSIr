@@ -2,9 +2,9 @@ import { Dataset, MSI } from "../db/db";
 import {uploadMSIMiddleware} from '../middleware'
 import path from 'path'
 import fs from 'fs'
-/*import dotenv from 'dotenv-defaults'
+import dotenv from 'dotenv-defaults'
 dotenv.config()
-const DIR_MSI = process.env.DIR_MSI*/
+const DIR_MSI = process.env.DIR_MSI
 
 const newMSI = async (req, res) => {
 
@@ -43,7 +43,7 @@ const newMSI = async (req, res) => {
             }
             if (req.file.filename.toLowerCase().endsWith('imzml')){
                 if (msi.imzml_file!==''){
-                     fs.unlink(msi.imzml_file, function (err) {
+                     fs.unlink(path.join(DIR_MSI,String(dataset.id),msi.imzml_file), function (err) {
                         if (err) throw err;
                         console.log('imzML file deleted!');
                     });
@@ -61,7 +61,7 @@ const newMSI = async (req, res) => {
             }
             if (req.file.filename.toLowerCase().endsWith('ibd')){
                 if (msi.ibd_file!==''){
-                    fs.unlink(msi.ibd_file, function (err) {
+                    fs.unlink(path.join(DIR_MSI,String(dataset.id),msi.ibd_file), function (err) {
                         if (err) throw err;
                         console.log('ibd file deleted!');
                     });

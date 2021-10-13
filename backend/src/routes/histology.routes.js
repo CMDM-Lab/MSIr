@@ -6,8 +6,8 @@ let router = express.Router();
 
 router.post('/new', authJwt.verifyToken ,controller.newHistologyImg)
 
-//router.post('/update',authJwt.verifyToken, controller.update)
+router.post('/submit',authJwt.verifyToken, controller.submit)
 
-router.get('/show', authJwt.verifyToken, controller.show)
+router.get('/information', authJwt.verifyToken, controller.information)
 
 export default router

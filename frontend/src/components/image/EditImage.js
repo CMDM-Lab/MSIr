@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import Banner from "../public/Banner";
 import {Line} from "rc-progress"
 import Uploady, { useItemFinishListener, useItemProgressListener } from "@rpldy/uploady";
 import UploadButton from "@rpldy/upload-button";
-import Banner from "../public/Banner";
 import { useHistory, useParams } from "react-router-dom";
 import authHeader from "../../services/auth-header";
 import configData from '../../config.json'
-import msi_service from "../../services/msi_service";
+import histology_service from "../../services/histology_service";
 import { handleResponse } from "../../utils/handleResponse";
 
 const UploadProgress = ({setState}) => {
@@ -16,7 +16,6 @@ const UploadProgress = ({setState}) => {
   
     const progressData = useItemProgressListener();
     useItemFinishListener((item)=>{
-        console.log(item)
         setState({data:item.uploadResponse.data, status: item.uploadStatus})
     })
   
@@ -40,43 +39,46 @@ const UploadProgress = ({setState}) => {
       );
 };
 
-const UploadMSI = (props) => {
+const EditImage = (props) => {
 
     const MySwal = withReactContent(Swal)
     const {datasetId} = useParams()
     const history = useHistory()
 
-    const [axisSize, setAxisSize] = useState(-1)
-    //const [msiFiles, setMsiFiles] = useState([])
-    const [binSize, setBinSize] = useState(0.01)
-    const [imzmlRes, setImzmlRes] = useState()
-    const [ibdRes, setIbdRes] = useState()
+    const [resolution, setResolution] = useState(-1)
+    const [imageRes, setImageRes] = useState()
     //const [fileStatus, setfileStatus] = useState('init') //'init','uploading', 'finish', 'error'
 
-    const onChangeAxis = (e)=>{
-        const value = e.target.value;
-        setAxisSize(value)
+    const getInformation = async () =>{
+        const res = await histology_service.getInformation({datasetId})
+        if (res.status >= 200 && res.status <300){
+            setImageRes({data:res.data})
+            setResolution(res.data.image.resolution)
+        } else{
+            handleResponse(res, MySwal, history)
+        }
     }
 
-    const onChangeBinSize = (e)=>{
+    useEffect(()=>{
+        getInformation()
+    },[])
+
+    const onChangeResolution = (e)=>{
         const value = e.target.value;
-        setBinSize(value)
+        setResolution(value)
     }
 
     const handleSubmit = async () => {
         try {
-            console.log(imzmlRes)
-            console.log(ibdRes)
-            if (!imzmlRes || !ibdRes){
-                MySwal.fire('Error','Please upload MSI data first or wait for finishing uploading','error')
+            console.log(imageRes)
+            if (!imageRes){
+                MySwal.fire('Error','Please upload a histology image first or wait for finishing uploading','error')
                 return
             }
             /*axios post接後端回傳response*/
-            const res = await msi_service.submit({
-                msiId: imzmlRes.data.msi.msiId,
-                bin_size: binSize,
-                pixel_size: axisSize,
-                datasetId: datasetId
+            const res = await histology_service.submit({
+                histologyImageId: imageRes.data.image.histologyImageId,
+                resolution:resolution
             })
             const {data} = res
             if (res.status >= 200 && res.status <300){
@@ -96,7 +98,7 @@ const UploadMSI = (props) => {
 
     return (
     <>
-    <Banner title={'Upload MSI data'} />
+    <Banner title={'Upload a histology image'} />
     <section className="challange_area">
         <div className="container-fluid">
             <div className="row">
@@ -113,12 +115,12 @@ const UploadMSI = (props) => {
                             <a href={`/datasets/${datasetId}`}>ID: {datasetId}</a>
                         </li>
                         <li className="breadcrumb-item active">
-                            <p>Upload MSI data</p>
+                            <p>Upload a histology image</p>
                         </li>
                     </ol></div></div>
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Upload MSI file (*.imzML)*</label>
+                <label className="col-3 col-form-label">Upload histology file*</label>
                 <div className="col-6">
                     {/*<input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.ibd"/>
                     <div className='btn btn-outline-secondary  col-lg-2 col-2'>
@@ -126,15 +128,15 @@ const UploadMSI = (props) => {
                     </div>*/}
                     <Uploady
                         multiple = {false}
-                        destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
-                        accept=".imzML"
-                        fileFilter={(file)=>{return file.size < configData.MAX_BYTE_IMZML_FILE}}
-                        maxGroupSize = {1}
-                    >
-                        <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>{imzmlRes?'Remove & Re-upload':'Select Files & Upload' }</UploadButton> 
-                        {imzmlRes? <p>{imzmlRes.data.msi.imzml_file} Upload Finish</p>:null}
-                        <UploadProgress setState={setImzmlRes}/>
-                    </Uploady>
+                        destination={{ url: configData.API_URL+`/histology/new?datasetId=${datasetId}` , headers:authHeader()}}
+                        accept=".png,.tif,.jpg,.jpeg"
+                        fileFilter={(file)=>{return file.size < configData.MAX_BTYE_HISTOLOGY_FILE}}
+                        sendWithFormData = {true}
+                        >
+                            <UploadButton className='btn btn-outline-secondary col-lg-6 col-6'>{imageRes?'Remove & Re-upload':'Select File & Upload'}</UploadButton> 
+                            {imageRes? <p>{imageRes.data.image.file} Upload Finish</p>:null} 
+                            <UploadProgress setState={setImageRes} />
+                        </Uploady>
 
                 </div>
                 <div className="col-lg-5 col-3" />
@@ -145,56 +147,19 @@ const UploadMSI = (props) => {
             </div>
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Upload MSI file (*.ibd)*</label>
-                <div className="col-6">
-                    {/*<input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.ibd"/>
-                    <div className='btn btn-outline-secondary  col-lg-2 col-2'>
-                        <button onClick={onUploadMsiFiles} disabled={!msiFiles.some(e=>/\.imzML/.test(e.name)) || !msiFiles.some(e=>/\.ibd/.test(e.name))}>Upload</button>
-                    </div>*/}
-                    <Uploady
-                        multiple = {false}
-                        destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
-                        accept=".ibd"
-                        fileFilter={(file)=>{return file.size < configData.MAX_BTYE_IBD_FILE}}
-                        maxGroupSize = {1}
-                    >
-                        <UploadButton className='btn btn-outline-secondary  col-lg-6 col-6'>{ibdRes?'Remove & Re-upload':'Select Files & Upload' }</UploadButton>
-                        {ibdRes? <p>{ibdRes.data.msi.ibd_file} Upload Finish</p>:null} 
-                        <UploadProgress setState={setIbdRes}/>
-                    </Uploady>
-
-                </div>
-                <div className="col-lg-5 col-3" />
-                {/*<small className="form-text text-muted col-7">In imzML data format, *.imzML and *.ibd files should be uploaded simultaneously </small>
-                <div className="col-lg-5 col-3" />
-                <small className="form-text text-muted col-7">In Analyze 7.5 data format, *.img, *.hdr, and *.t2m files should be uploaded </small>
-                */}
-            </div>
-            <div className="form-group row py-2">
-                <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">MSI datacube bin size*</label>
-                <div className="col-6">
-                    <select value={binSize} onChange={onChangeBinSize}>
-                        <option value={0.01}>0.01 m/z</option>
-                        <option value={0.1}>0.1 m/z</option>
-                        <option value={1}>1 m/z</option>
-                    </select>
-                </div>
-            </div>
-            <div className="form-group row py-2">
-                <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Spatial Resolution of MSI</label>
+                <label className="col-3 col-form-label">Spatial Resolution</label>
                 <div className="col-6">
                     <input 
                     type='number'
-                    name='axisSize'
-                    value={axisSize}
+                    name='resolution'
+                    value={resolution}
                     className='form-control input50'
-                    placeholder='Type Spatial Resolution of MSI'
-                    id="xAxisSize"
-                    onChange={onChangeAxis}
+                    placeholder='Type Image Spatial Resolution'
+                    id="resolution"
+                    onChange={onChangeResolution}
+                    step="0.0001"
                     />
-                    <small className="form-text text-muted">Please fill the spatial resolution of MSI.</small>
+                    <small className="form-text text-muted">Please fill the spatial resolution of the uploaded image.</small>
                 </div>
             </div>
             
@@ -209,4 +174,4 @@ const UploadMSI = (props) => {
     )
 }
 
-export default UploadMSI
+export default EditImage

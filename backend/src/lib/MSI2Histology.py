@@ -40,25 +40,25 @@ if __name__ == '__main__':
         userId = res['userId']
         datasetId = res['datasetId']
         dr_method = res['DR_method']
-        n_dim = res['n_dim']
+        n_dim = int(res['n_dim'])
+        hist_resolution = float(res['image']['resolution'])
+        msi_resolution = float(res['msi']['pixel_size'])
         if (res['roi']):
             cnt_hist = res['roi']['points']
             mask_id = res['roi']['id']
         else:
             cnt_hist = None
             mask_id = None
-
         #set output file name
         process_file = os.path.join(dir_msi,str(datasetId),os.path.basename(msi_file).split('.')[0]+'.npz')
         transform_matrix_file = os.path.join(dir_hist,str(datasetId),f'transform_matrix_{RegID}.txt')
         result_file = os.path.join(dir_hist,str(datasetId),f'result_img_{RegID}.png')
-
         # read histology image and mask
         hist_ori = cv2.imread(os.path.join(dir_hist, str(datasetId), histology_file))
         if cnt_hist:
             from Reg_functions import draw_mask
             cnt_hist = np.round(np.array(cnt_hist)*[hist_ori.shape[1],hist_ori.shape[0]]).astype(int)
-            hist_mask = draw_mask([cnt_hist],hist_ori, [0])
+            hist_mask = draw_mask([cnt_hist],hist_ori.shape[:2], [0])
             hist_proc = hist_ori*np.expand_dims(hist_mask,axis=2)
         else:
             from Reg_functions import he_preprocessing
@@ -92,7 +92,8 @@ if __name__ == '__main__':
         cnt_msi,_ = cv2.findContours(msi_mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
         cnt_msi = sort_cnt_by_area(cnt_msi)[0]
         cv2.drawContours(msi_mask,[cnt_msi],0,1,-1)
-        
+        msi_list = []
+        msi_list.append(msi_mask)
 
         #contour based data processing stop here
         if perform_type != 'contour':
@@ -102,18 +103,23 @@ if __name__ == '__main__':
             # add msi_dr to msi_list
             # add msi represent image to msi_list
             # MSI list include msi_mask、msi_dr、msi_repr
-            msi_list = []
-            msi_list.append(msi_mask)
             if n_dim == 1:
                 msi_list.append(cv2.applyColorMap(msi_dr,cv2.COLORMAP_VIRIDIS))
                 msi_list.append(msi_dr*msi_mask)
             else:
                 msi_list.append(msi_dr)
                 msi_list.append(cv2.cvtColor(msi_dr,cv2.COLOR_BGR2GRAY)*msi_mask)
-        
+
         #detect the relation between MSI and H&E to solve the big angle rotation(90,180,270) and the flip situation
-        scale_ratio = cv2.minEnclosingCircle(cnt_hist)[-1]/cv2.minEnclosingCircle(cnt_msi)[-1]
-        rotate_stat=getorient(hist_proc,msi_list[0],scale_ratio)
+        if hist_resolution>0 and msi_resolution > 0:
+            scale_ratio = msi_resolution/hist_resolution
+            print('use resolution')
+        else:
+            scale_ratio = cv2.minEnclosingCircle(cnt_hist)[-1]/cv2.minEnclosingCircle(cnt_msi)[-1]
+        if perform_type != 'contour':
+            rotate_stat=getorient(hist_proc,msi_list[2],scale_ratio)
+        else:
+            rotate_stat=getorient(hist_proc,msi_list[0],scale_ratio)
         #Calculate initial registration matrix
         M_scale = np.array([[scale_ratio,0,0],[0,scale_ratio,0],[0,0,1.0]],dtype=np.float32)
         M_init = get_inital_transform_matrix(rotate_stat,msi_size)

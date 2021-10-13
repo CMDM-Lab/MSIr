@@ -192,18 +192,18 @@ const EditMSI = (props) => {
             </div>
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />
-                <label className="col-3 col-form-label">Pixel size of MSI</label>
+                <label className="col-3 col-form-label">Spatial Resolution of MSI</label>
                 <div className="col-6">
                     <input 
                     type='number'
                     name='axisSize'
                     value={axisSize}
                     className='form-control input50'
-                    placeholder='Type Pixel Size of MSI'
+                    placeholder='Type Spatial Resolution of MSI'
                     id="xAxisSize"
                     onChange={onChangeAxis}
                     />
-                    <small className="form-text text-muted">Please fill the pixel resolution of MSI in x-axis.</small>
+                    <small className="form-text text-muted">Please fill the spatial resolution of MSI.</small>
                 </div>
             </div>
             

@@ -13,7 +13,16 @@ const newRegistration = async (req, res) => {
     try {
         //const dataset = await Dataset.findByPk(data.datasetId)
         const msi = await MSI.findOne({where:{datasetId:data.datasetId}})
+        if (!msi){
+            return res.status(404).json({message: "Please upload MSI data first!"})
+        }
+        if ((!msi.imzml_file)|(!msi.ibd_file)){
+            return res.status(404).json({message: "Please upload MSI data (*.imzML and *.ibd) first!"})
+        }
         const hist = await HistologyImage.findOne({where:{datasetId:data.datasetId}})
+        if (!hist){
+            return res.status(404).json({message: "Please upload a histology image first!"})
+        }
         const registration = await Registration.create({
             perform_type: data.perform_type,
             transform_type: data.transform_type,
@@ -140,11 +149,11 @@ const getParameter = async (req, res) => {
         const registration = await Registration.findByPk(data.id)
         const image = await HistologyImage.findOne({
             where:{id:registration.histologyImageId},
-            attributes:['id', 'file']
+            attributes:['id', 'file', 'resolution']
         })
         const msi = await MSI.findOne({
             where:{id:registration.msiId},
-            attributes:['id', 'imzml_file', 'bin_size']
+            attributes:['id', 'imzml_file', 'bin_size', 'pixel_size']
         })
         if (registration.histologyroiId){
             const roi = await HistologyROI.findByPk(registration.histologyroiId)
@@ -172,6 +181,7 @@ const getParameter = async (req, res) => {
                 n_dim: registration.n_dim
             })
         }
+        console.log('send parameter')
         registration.status = 'running'
         registration.save()
     } catch (error) {

@@ -64,11 +64,10 @@ const CreateRegistration = () =>{
         const res = await registrationService.create({
           perform_type: regType,
           DR_method: DR,
-          n_dim: n_dim,
+          n_dim: nDim,
           datasetId: Number(datasetId),
           histologyroiId: maskId
         })
-        console.log(res)
         const data = res.data
         if (res.status >= 200 && res.status <300){
           MySwal.fire({
@@ -82,6 +81,7 @@ const CreateRegistration = () =>{
           handleResponse(res,MySwal,history)
         }
       } catch (error) {
+        console.log('error')
         console.log(error) 
       }
     }
@@ -139,11 +139,11 @@ const CreateRegistration = () =>{
                 ):null
               }
               {
-                DR === 'UMAP'?(
+                DR === 'UMAP' & regType === 'intensity'?(
                   <div className="form-group row">
                     <label className="col-3 col-form-label">Embedding Dimension</label>
                     <div className="col-9">
-                      <select value={n_dim} onChange={onChangeNDim}>
+                      <select value={nDim} onChange={onChangeNDim}>
                           <option value={1}>1</option>
                           <option value={3}>3</option>
                       </select>

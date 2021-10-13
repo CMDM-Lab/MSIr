@@ -77,6 +77,11 @@ const HistologyImage = sequelize.define('histologyImage',{
         type: DataTypes.STRING,
         allowNull: false
     },
+    resolution: {
+        type:DataTypes.FLOAT,
+        defaultValue: -1,
+        allowNull: false
+    }
 }, {
     freezeTableName: true
   })
@@ -123,7 +128,11 @@ const MSI = sequelize.define('msi',{
     },
     msi_h:DataTypes.INTEGER,
     msi_w:DataTypes.INTEGER,
-    pixel_size: DataTypes.INTEGER,
+    pixel_size: {
+        type:DataTypes.INTEGER,
+        defaultValue: -1,
+        allowNull: false
+    },
     processed_data_file: {
         type: DataTypes.STRING,
     },

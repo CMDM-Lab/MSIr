@@ -1,0 +1,162 @@
+import React, { useState } from "react";
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import {Line} from "rc-progress"
+import Uploady, { useItemFinishListener, useItemProgressListener } from "@rpldy/uploady";
+import UploadButton from "@rpldy/upload-button";
+import Banner from "../public/Banner";
+import { useHistory, useParams } from "react-router-dom";
+import authHeader from "../../services/auth-header";
+import configData from '../../config.json'
+import histology_service from "../../services/histology_service";
+import { handleResponse } from "../../utils/handleResponse";
+
+const UploadProgress = ({setState}) => {
+    const [progress, setProgess] = useState(0);
+  
+    const progressData = useItemProgressListener();
+    useItemFinishListener((item)=>{
+        setState({res:item.uploadResponse, status: item.uploadStatus})
+    })
+  
+    if (progressData && progressData.completed > progress) {
+      setProgess(() => progressData.completed);
+    }
+
+    if (progressData &&progress==100){
+        return <></>
+    }
+
+    return (
+        progressData && (
+            <Line
+              style={{ height: "10px", marginTop: "20px" }}
+              strokeWidth={2}
+              strokeColor={progress === 100 ? "#00a626" : "#2db7f5"}
+              percent={progress}
+            />
+        )
+      );
+};
+
+const UploadImage = (props) => {
+
+    const MySwal = withReactContent(Swal)
+    const {datasetId} = useParams()
+    const history = useHistory()
+
+    const [resolution, setResolution] = useState(-1)
+    const [imageRes, setImageRes] = useState()
+    //const [fileStatus, setfileStatus] = useState('init') //'init','uploading', 'finish', 'error'
+
+    const onChangeResolution = (e)=>{
+        const value = e.target.value;
+        setResolution(value)
+    }
+
+    const handleSubmit = async () => {
+        try {
+            if (!imageRes){
+                MySwal.fire('Error','Please upload a histology image first or wait for finishing uploading','error')
+                return
+            }
+            /*axios post接後端回傳response*/
+            const res = await histology_service.submit({
+                histologyImageId: imageRes.res.data.histologyImage.histologyImageId,
+                resolution:resolution
+            })
+            const {data} = res
+            if (res.status >= 200 && res.status <300){
+                MySwal.fire('Success',data.message,'success').then(()=>history.goBack())
+            }else{
+                handleResponse(res, MySwal, history)
+            }
+        } catch (error) {
+            console.log(error)
+            MySwal.fire({
+              icon: 'error',
+              title: `Error`,
+              text: `Please retry after a while.`,
+            })
+        }
+    }
+
+    return (
+    <>
+    <Banner title={'Upload a histology image'} />
+    <section className="challange_area">
+        <div className="container-fluid">
+            <div className="row">
+                <div className="col-lg-2 col-3" />
+                <div className="col-lg-10 col-9">
+                    <ol className="breadcrumb">
+                        <li className="breadcrumb-item">
+                            <a href='/'>Home</a>
+                        </li>
+                        <li className="breadcrumb-item">
+                            <a href='/datasets'>Datasets</a>
+                        </li>
+                        <li className="breadcrumb-item">
+                            <a href={`/datasets/${datasetId}`}>ID: {datasetId}</a>
+                        </li>
+                        <li className="breadcrumb-item active">
+                            <p>Upload a histology image</p>
+                        </li>
+                    </ol></div></div>
+            <div className="form-group row py-2">
+                <div className="col-lg-2 col-3" />
+                <label className="col-3 col-form-label">Upload histology file*</label>
+                <div className="col-6">
+                    {/*<input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.ibd"/>
+                    <div className='btn btn-outline-secondary  col-lg-2 col-2'>
+                        <button onClick={onUploadMsiFiles} disabled={!msiFiles.some(e=>/\.imzML/.test(e.name)) || !msiFiles.some(e=>/\.ibd/.test(e.name))}>Upload</button>
+                    </div>*/}
+                    <Uploady
+                        multiple = {false}
+                        destination={{ url: configData.API_URL+`/histology/new?datasetId=${datasetId}` , headers:authHeader()}}
+                        accept=".png,.tif,.jpg,.jpeg"
+                        fileFilter={(file)=>{return file.size < configData.MAX_BTYE_HISTOLOGY_FILE}}
+                        sendWithFormData = {true}
+                        >
+                            <UploadButton className='btn btn-outline-secondary col-lg-6 col-6'>{imageRes?'Remove & Re-upload':'Select File & Upload'}</UploadButton>
+                            {imageRes? <p>{imageRes.res.data.histologyImage.file} Upload Finish</p>:null} 
+                            <UploadProgress setState={setImageRes} />
+                        </Uploady>
+
+                </div>
+                <div className="col-lg-5 col-3" />
+                {/*<small className="form-text text-muted col-7">In imzML data format, *.imzML and *.ibd files should be uploaded simultaneously </small>
+                <div className="col-lg-5 col-3" />
+                <small className="form-text text-muted col-7">In Analyze 7.5 data format, *.img, *.hdr, and *.t2m files should be uploaded </small>
+                */}
+            </div>
+            <div className="form-group row py-2">
+                <div className="col-lg-2 col-3" />
+                <label className="col-3 col-form-label">Spatial Resolution</label>
+                <div className="col-6">
+                    <input 
+                    type='number'
+                    name='resolution'
+                    value={resolution}
+                    className='form-control input50'
+                    placeholder='Type Image Spatial Resolution'
+                    id="resolution"
+                    onChange={onChangeResolution}
+                    step="0.0001"
+                    />
+                    <small className="form-text text-muted">Please fill the spatial resolution of the uploaded image.</small>
+                </div>
+            </div>
+            
+            <div className="form-group row py-2">
+                <div className="col-lg-5 col-3" />
+                <button onClick={handleSubmit} className='btn btn-primary col-lg-1 col-1'>Submit</button>
+                {/*<button onClick={handleReset} className='btn btn-secondary col-lg-1 col-1'>Reset</button>*/}
+            </div>
+        </div>
+      </section>
+      </>
+    )
+}
+
+export default UploadImage

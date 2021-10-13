@@ -10,6 +10,9 @@ import DatasetEdit from '../components/dataset/DatasetEdit'
 import UploadMSI from '../components/msidata/UploadMSI'
 import EditMSI from '../components/msidata/EditMSI'
 import HistologyROI from '../components/roi/HistologyROI'
+import UploadImage from '../components/image/UploadImage'
+import EditImage from '../components/image/EditImage'
+
 
 
 const routes =[
@@ -23,11 +26,16 @@ const routes =[
     component: EditMSI,
     //isPrivate: true,
   },
-  /*{
-    path:'/datasets/:datasetId/image',
-    component: ,
+  {
+    path:'/datasets/:datasetId/image/new',
+    component: UploadImage,
     isPrivate: true,
-  },*/
+  },
+  {
+    path:'/datasets/:datasetId/image/edit',
+    component: EditImage,
+    isPrivate: true,
+  },
   {
     path:'/datasets/:datasetId/image/roi',
     component: HistologyROI,

@@ -8,15 +8,15 @@ import extractionService from '../../services/extraction_service'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
-import {Circle} from "rc-progress"
-import Uploady, { useItemProgressListener, useItemFinishListener} from "@rpldy/uploady";
-import UploadButton from "@rpldy/upload-button";
+//import {Circle} from "rc-progress"
+//import Uploady, { useItemProgressListener, useItemFinishListener} from "@rpldy/uploady";
+//import UploadButton from "@rpldy/upload-button";
 import configData from '../../config.json'
-import authHeader from '../../services/auth-header'
+//import authHeader from '../../services/auth-header'
 import RegisterCard from './RegisterCard'
 import ExtractCard from './ExtractCard'
 import { handleResponse } from '../../utils/handleResponse'
-
+/*
 const UploadProgress = ({setState}) => {
     const [progress, setProgess] = useState(0);
     const history = useHistory()
@@ -45,7 +45,7 @@ const UploadProgress = ({setState}) => {
           />
         )
       );
-};
+};*/
 
 const DatasetRender = () => {
     const MySwal = withReactContent(Swal)
@@ -149,22 +149,26 @@ const DatasetRender = () => {
                     <li>ibd: {msi? msi.ibd_file:null}</li>
                 </ul>
                 <h3>
-                    Histological Image <span/>
+                    Histological Image {hist? null:
+                    <><span/>
                     <div className='btn-group'>
-                        <Uploady
-                        multiple = {false}
-                        destination={{ url: configData.API_URL+`/histology/new?datasetId=${datasetId}` , headers:authHeader()}}
-                        accept=".png,.tif,.jpg,.jpeg"
-                        fileFilter={(file)=>{return file.size < configData.MAX_BTYE_HISTOLOGY_FILE}}
-                        sendWithFormData = {true}
-                        >
-                            <UploadButton className='btn btn-outline-secondary col-lg-2 col-2'>{hist?'Remove & Re-upload':'Select File & Upload'}</UploadButton> 
-                            <UploadProgress setState={setHist} />
-                        </Uploady>
+                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/image/new`}>
+                            {'Select File & Upload'}
+                        </a>
                         <span/>
-                        {hist? <button onClick={()=>{history.push(`/datasets/${datasetId}/image/roi`)}} className='btn btn-outline-primary  col-lg-2 col-2'>Create ROI</button>:null}
-                    </div>
+                    </div></>}
                 </h3>
+                {hist?
+                (
+                    <div className='btn-group col-lg-6 col-6'>
+                        <a className='btn btn-secondary text-left' style={{'color':'white'}} href={`/datasets/${datasetId}/image/edit`}>
+                            {'Edit'}
+                        </a>
+                        <span/>
+                        <button onClick={()=>{history.push(`/datasets/${datasetId}/image/roi`)}} className='btn btn-outline-primary  col-lg-2 col-2'>Create ROI</button>
+                    </div>
+                ):null
+                }
                 <br />
                 {hist?
                 <div className='images card-columns'>

@@ -1,7 +1,7 @@
 import numpy as np
-import cv2,os, requests, argparse, json, sys
+import cv2, os, requests, argparse, sys
 from dotenv import load_dotenv
-from scipy.sparse import data
+#from scipy.sparse import data
 
 def process_command():
     parser = argparse.ArgumentParser()

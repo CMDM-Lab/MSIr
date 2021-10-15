@@ -1,8 +1,8 @@
 from Reg_functions import ImzmlFileReader
 import numpy as np
-import pandas as pd
+#import pandas as pd
 from dotenv import load_dotenv
-import cv2, os, requests, argparse, json, sys
+import cv2, os, requests, argparse, sys
 from Reg_functions import tic_normalization
 
 def process_command():
@@ -27,7 +27,7 @@ if __name__ == '__main__':
         get_data={"id":ExtractID,"key":api_key}
         res = requests.post(api_url+"/extractions/get_parameter", json=get_data)
         res = res.json()
-        print(res)
+        #print(res)
 
         # set parameter
         normalization =  res['normalization']

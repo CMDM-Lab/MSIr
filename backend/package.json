@@ -12,7 +12,6 @@
     "multer": "^1.4.3",
     "nodemailer": "^6.6.3",
     "sequelize": "^6.6.5",
-    "sequelize-cli": "^6.2.0",
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {

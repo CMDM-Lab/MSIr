@@ -1,6 +1,8 @@
 import React from "react";
 import Banner from "./Banner";
-import matrixResult from "../../stylesheet/matrix_result.png"
+import registrationResult from "../../stylesheet/registration_result.png"
+import registrationPage from "../../stylesheet/registration_result_page.png"
+import extractionPage from "../../stylesheet/extraction_result_page.png"
 const Doc = (prop)=>{
   return (
       <>
@@ -29,13 +31,7 @@ const Doc = (prop)=>{
                               <li>Create a dataset</li>
                               <li>Upload a histology image</li>
                               <li>Upload MSI data</li>
-                              <li>Create a registration
-                                <ol>
-                                  <li>Select used histology mask (optional)</li>
-                                  <li>Select used dimensionality reduction method</li>
-                                  <li>Select embedding dimensions</li>
-                                </ol>
-                              </li>
+                              <li>Create a registration</li>
                               <li>Download results</li>
                           </ol>
                         </div>
@@ -43,12 +39,7 @@ const Doc = (prop)=>{
                         <h5>Extraction workflow</h5><br/>
                           <ol>
                               <li>Create a ROI in the histology</li>
-                              <li>Create an extraction
-                                <ol>
-                                  <li>Select a ROI</li>
-                                  <li>Select a registration result</li>
-                                </ol>
-                              </li>
+                              <li>Create an extraction</li>
                               <li>Download results</li>
                           </ol>
                         </div>
@@ -96,10 +87,10 @@ const Doc = (prop)=>{
                             </dd>
                             <dt>Download results</dt>
                             <dd>- After the registration process is finished, the result is shown like following:
-                              {/*<img></img>*/}
+                              <img src={registrationPage} className="card-img-top"></img>
                             </dd>
                             <dd>- The registration transformation matrices are stored in a text format file, and the detail as following: 
-                              <img src={matrixResult } className="card-img-top"></img>
+                              <img src={registrationResult} className="card-img-top"></img>
                             </dd>
                           </dl>
                         </div>
@@ -117,7 +108,7 @@ const Doc = (prop)=>{
                             </dd>
                             <dt>Download results</dt>
                             <dd>- After the extraction process is finished, the result is shown like following:
-                              {/*<img></img>*/}
+                              <img src={extractionPage} className="card-img-top"></img>
                             </dd>
                             <dd>- The spectral indices of MSI data in the ROI are stored in a text format file </dd>
                           </dl>

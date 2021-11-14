@@ -133,11 +133,16 @@ const RegistrationRender = () => {
                   </tr>
                   {
                     registration?.perform_type? registration.perform_type === 'intensity'?(
-                      <tr>
-                        <td>Dimensional Reduction:</td>
-                        <td>{registration?.DR_method? registration.DR_method:null}</td>
-                        <td>{registration?.DR_method? registration.DR_method === 'UMAP'?  registration.n_dim:null:null}</td>
-                      </tr>
+                      <>
+                        <tr>
+                          <td>Dimensional Reduction:</td>
+                          <td>{registration?.DR_method? registration.DR_method:null}</td>
+                        </tr>
+                        <tr>
+                          <td>Embedding Dimensions:</td>
+                          <td>{registration?.DR_method? registration.n_dim?  registration.n_dim:null:null}</td>
+                        </tr>
+                      </>
                     ):null:null
                   }
                   <tr>

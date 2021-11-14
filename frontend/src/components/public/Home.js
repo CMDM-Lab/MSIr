@@ -7,15 +7,19 @@ const Home = (prop) =>{
     <section class="challange_area">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-lg-6">
-            <div class="challange_text_inner">
+          <div className='col-lg-1 col-md-1'></div>
+          <div class="col-lg-8">
+            <div>
               <div class="l_title">
                 <span class="fa-stack fa-2x">
                 </span>
                 <h6>Image Registration between MSI and Histology</h6>
-                <h2>What is MSI Registrar II?</h2>
+                <h2>What is MSI Registrar II?</h2><br/>
+                <p>MSI Registrar II is a web service for automatic image registration between MSI and Histology.<br/> 
+                      MSI Registrar II helps users to reduce manipulation complexity required in the image-registration procedure. <br/>
+                      Based on automatic registration, MSI spectrum Indices are extracted from regions of interest in Histology.
+                </p>
               </div>
-              <p>MSI Registrar II is a web service for automatic image registration between MSI and Histology. Based on automatic registration, MSI spectrum Indices are extracted from region of interest in Histology. </p>
             </div>
           </div>
           {/*<div class="col-lg-6 challange_img">

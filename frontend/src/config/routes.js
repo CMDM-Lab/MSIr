@@ -44,17 +44,17 @@ const routes =[
   {
     path:'/datasets/:datasetId/extractions/new',
     component: CreateExtraction,
-    //isPrivate: true,
+    isPrivate: true,
   },
   {
     path:'/datasets/:datasetId/registrations/new',
     component: CreateRegistration,
-    //isPrivate: true,
+    isPrivate: true,
   },
   {
     path:'/datasets/:datasetId/registrations/:regId',
     component: RegistrationRender,
-    //isPrivate: true,
+    isPrivate: true,
   },
   /*{
     path:'/datasets/:datasetId/extracts/:extractId',
@@ -63,33 +63,33 @@ const routes =[
   {
     path:'/datasets/:datasetId/edit',
     component: DatasetEdit,
-    //isPrivate: true,
+    isPrivate: true,
   },
   {
     path:'/datasets/:datasetId/registrations',
     component: Registrations,
-    //isPrivate: true,
+    isPrivate: true,
   },
   {
     path:'/datasets/:datasetId/extractions',
     component: Extractions,
-    //isPrivate: true,
+    isPrivate: true,
   },
   {
     path:'/datasets/new',
     component: CreateDataset,
-    //isPrivate: true,
+    isPrivate: true,
   },
   {
     path:'/datasets/:datasetId',
     component: DatasetRender,
-    //isPrivate: true,
+    isPrivate: true,
   },
   
   {
     path:'/datasets',
     component: Datasets,
-    //isPrivate: true,
+    isPrivate: true,
   },/*
   {
     path:'/users/password/edit',

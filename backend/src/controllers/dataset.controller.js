@@ -7,6 +7,9 @@ dotenv.config()
 
 const histDir = process.env.DIR_HIST
 const msiDir = process.env.DIR_MSI
+const exampleImzML = process.env.EXAMPLE_IMZML
+const exampleIdb = process.env.EXAMPLE_IDB
+const exampleHistology = process.env.EXAMPLE_HISTOLOGY
 
 const all = async (req, res) => {
     try {
@@ -92,11 +95,11 @@ const example = async (req, res) => {
             userId: req.userId
         })
         //copy example imzML file
-        fs.copyFile(path.join(),path.join(msiDir,dataset.id.toString(),'example.imzml'),(err) => {
+        fs.copyFile(exampleImzML,path.join(msiDir,dataset.id.toString(),'example.imzml'),(err) => {
             if (err) throw err;
           })
         //copy example ibd file
-        fs.copyFile(path.join(),path.join(msiDir,dataset.id.toString(),'example.ibd'),(err) => {
+        fs.copyFile(exampleIdb,path.join(msiDir,dataset.id.toString(),'example.ibd'),(err) => {
             if (err) throw err;
           })
         //create histology image into db and copy example image file to dataset dir 
@@ -106,7 +109,7 @@ const example = async (req, res) => {
             userId: req.userId
         })
         //copy example histology image file
-        fs.copyFile(path.join(),path.join(histDir,dataset.id.toString(),'example.png'),(err) => {
+        fs.copyFile(exampleHistology,path.join(histDir,dataset.id.toString(),'example.png'),(err) => {
             if (err) throw err;
           })
         res.json({message: "Dataset was created successfully!", datasetId: dataset.id})

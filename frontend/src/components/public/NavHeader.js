@@ -13,7 +13,7 @@ const NavHeader = ({currentState,setCurrentState})=>{
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <a className="navbar-brand" href="/">
                     {/*<img height={150} src={logo} width={211} />*/}
-                    <h2>MSI Registrar II</h2>
+                    <h2>MSI Registrar</h2>
                 </a>
                 <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" className="navbar-toggler" data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
                     <span />

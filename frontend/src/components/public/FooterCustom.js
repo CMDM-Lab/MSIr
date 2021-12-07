@@ -5,7 +5,7 @@ const footerCustom = ()=>{
         <footer className="footr_area p_t_100">
             <div className="footer_widget_area">
                 <div className="container">
-                    <h5>MSI Registrar 2 is developed by CMDM Lab at National Taiwan University.</h5>
+                    <h5>MSI Registrar is developed by CMDM Lab at National Taiwan University.</h5>
                     <div className="row footer_widget_inner">
                         <div className="col-lg-3 col-sm-3">
                             <aside className="f_widget f_about_widget">

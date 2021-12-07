@@ -13,9 +13,9 @@ const Doc = (prop)=>{
             <div className='col-lg-10 col-md-10'>
               <div className='l_title'>
                 <div className='doc'>
-                  <h3> What is MSI Registrar II? </h3>
-                  <p>MSI Registrar II is a web-based service for automatic registration between MSI and Histology.<br/> 
-                      MSI Registrar II helps users to reduce manipulation complexity required in the image-registration procedure. <br/>
+                  <h3> What is MSI Registrar? </h3>
+                  <p>MSI Registrar is a web-based service for automatic registration between MSI and Histology.<br/> 
+                      MSI Registrar helps users to reduce manipulation complexity required in the image-registration procedure. <br/>
                       Based on automatic registration, MSI spectrum Indices are extracted from region of interest in Histology.
                   </p>
                   <br/>

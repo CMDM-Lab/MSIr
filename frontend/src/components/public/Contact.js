@@ -16,7 +16,7 @@ const Contact = ()=>{
                     </span>
                     <h3>Contact us via E-mail</h3>
                 </div>
-                <p>Please email us at: msiregistrar2@cmdm.csie.ntu.edu.tw</p>
+                <p>Please email us at: msiregistrar@cmdm.csie.ntu.edu.tw</p>
               </div>
             </div>
             <div className="col-lg-6 challange_img" />

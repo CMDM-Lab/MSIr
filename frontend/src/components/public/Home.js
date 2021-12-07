@@ -3,7 +3,7 @@ import Banner from "./Banner";
 const Home = (prop) =>{
   return(
     <>
-    <Banner title={'MSI Registrar II'} subtitle={null}/>
+    <Banner title={'MSI Registrar'} subtitle={null}/>
     <section class="challange_area">
       <div class="container-fluid">
         <div class="row">
@@ -14,9 +14,9 @@ const Home = (prop) =>{
                 <span class="fa-stack fa-2x">
                 </span>
                 <h6>Image Registration between MSI and Histology</h6>
-                <h2>What is MSI Registrar II?</h2><br/>
-                <p>MSI Registrar II is a web service for automatic image registration between MSI and Histology.<br/> 
-                      MSI Registrar II helps users to reduce manipulation complexity required in the image-registration procedure. <br/>
+                <h2>What is MSI Registrar?</h2><br/>
+                <p>MSI Registrar is a web service for automatic image registration between MSI and Histology.<br/> 
+                      MSI Registrar helps users to reduce manipulation complexity required in the image-registration procedure. <br/>
                       Based on automatic registration, MSI spectrum Indices are extracted from regions of interest in Histology.
                 </p>
               </div>

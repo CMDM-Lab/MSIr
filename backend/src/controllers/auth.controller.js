@@ -85,8 +85,7 @@ export const resetRequire = async (req, res) => {
     user.reset_password_sent_at = reset_password_sent_at
     user.save()
 
-    const res_mail = sendResetMail(user.email, reset_token)
-    console.log(res_mail)
+    sendResetMail(user.email, reset_token)
     if (res_mail){
         console.log('error')
         return res.status(500).json({message: error.message})
@@ -109,9 +108,6 @@ export const resetPassword = async (req, res) => {
     if (!user){
         return res.status(400).json({ message: "Invalid reset token. Please try to require reset again." })
     }
-    console.log(user.reset_password_sent_at)
-    console.log(Date.now())
-    console.log(Date.now()-user.reset_password_sent_at)
     if (Date.now()-user.reset_password_sent_at > 14400000){
         return res.status(400).json({ message: "Expired Reset token. Please try to require reset again." })
     }

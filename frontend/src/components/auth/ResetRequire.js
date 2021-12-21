@@ -46,8 +46,7 @@ const ResetRequire = ()=>{
                 MySwal.fire({
                   icon: 'error',
                   title: res.data.message,
-                  text: 'Please check again or try to reset password.',
-                  footer: '<a href="/users/password/reset">Reset your password?</a>'
+                  text: 'Please check again.',
                 })
               }else{
                   MySwal.fire({

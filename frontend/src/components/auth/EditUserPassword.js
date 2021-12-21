@@ -46,6 +46,8 @@ const EditUserPassword = ()=>{
     
         if (checkBtn.current.context._errors.length === 0) {
           try {
+            console.log(password)
+            console.log(reset_password_token)
             const res = await resetPassword({password, reset_password_token})
             if (res.status >= 200 && res.status <300){
               MySwal.fire({

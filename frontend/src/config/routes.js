@@ -12,6 +12,8 @@ import EditMSI from '../components/msidata/EditMSI'
 import HistologyROI from '../components/roi/HistologyROI'
 import UploadImage from '../components/image/UploadImage'
 import EditImage from '../components/image/EditImage'
+import EditUserPassword from '../components/auth/EditUserPassword'
+import ResetUserPassword from '../components/auth/ResetRequire'
 
 
 
@@ -92,7 +94,7 @@ const routes =[
     isPrivate: true,
   },/*
   {
-    path:'/users/password/edit',
+    path:'/users/password/edit/:reset_password_token',
     component: EditUserPassword
   },
   {

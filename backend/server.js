@@ -56,6 +56,6 @@ db.sync().then(()=>{
 //Create guest user
 
 
-const server = app.listen(process.env.PORT || 8080, function () {
+const server = app.listen(process.env.DEV_PORT || 8080, function () {
     console.log('Listening on port ' + server.address().port);
   });

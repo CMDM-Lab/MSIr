@@ -60,6 +60,10 @@ export const signin = async (req, res) => {
 };
 
 export const resetRequire = async (req, res) => {
+    if (req.body.email=='guest@guest.com'){
+        return res.status(400).json({ message: "Error! The password of guest account cannot be changed." });
+    }
+
     const user = await User.findOne({
         where:{
             email: req.body.email
@@ -71,7 +75,7 @@ export const resetRequire = async (req, res) => {
         return res.status(400).json({ message: "Invalid mail. Please sign up first." });
     }
 
-    reset_password_sent_at = Date.now()
+    const reset_password_sent_at = Date.now()
 
     var reset_token = jwt.sign({ id: user.id, email:user.email, reset_password_sent_at, expire_at:reset_password_sent_at+14400 }, process.env.SECRET, {
         expiresIn: 14400 // 1.5 hours
@@ -81,8 +85,14 @@ export const resetRequire = async (req, res) => {
     user.reset_password_sent_at = reset_password_sent_at
     user.save()
 
-    //sendResetMail(user.email, reset_token)
-    return res.json({message: 'Password reset email has been sent!'})
+    const res_mail = sendResetMail(user.email, reset_token)
+    console.log(res_mail)
+    if (res_mail){
+        console.log('error')
+        return res.status(500).json({message: error.message})
+    }
+    
+    return res.json({message: 'Password reset email would be sent! Please check!'})
 
 }
 
@@ -92,23 +102,31 @@ export const resetPassword = async (req, res) => {
             reset_password_token: req.body.reset_password_token
         }
     }).catch(err => {
+        console.log(err)
         res.status(500).json({ message: err.message });
     });
 
     if (!user){
         return res.status(400).json({ message: "Invalid reset token. Please try to require reset again." })
     }
-
-    if (Date.now()-user.reset_password_sent_at > 14400){
+    console.log(user.reset_password_sent_at)
+    console.log(Date.now())
+    console.log(Date.now()-user.reset_password_sent_at)
+    if (Date.now()-user.reset_password_sent_at > 14400000){
         return res.status(400).json({ message: "Expired Reset token. Please try to require reset again." })
     }
 
     user.encrypted_password = bcrypt.hashSync(req.body.password, 8)
     user.reset_password_token = null
-    user.reset_password_sent_at = 0
+    user.reset_password_sent_at = new Date(0)
     user.save()
 
-    //sendPasswordChangeMail(user.email)
+    
+    try {
+        sendPasswordChangeMail(user.email)
+    }catch (error){
+        return res.status(500).json({message: error.message})
+    }
 
     return res.json({message: "Password has been reset! Please use new password to sign in."})
 } 

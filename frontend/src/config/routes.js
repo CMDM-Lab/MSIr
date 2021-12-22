@@ -92,15 +92,7 @@ const routes =[
     path:'/datasets',
     component: Datasets,
     isPrivate: true,
-  },/*
-  {
-    path:'/users/password/edit/:reset_password_token',
-    component: EditUserPassword
   },
-  {
-    path:'/users/password/reset',
-    component: ResetUserPassword
-  },*/
 ]
  
 export default routes

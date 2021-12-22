@@ -3,7 +3,7 @@ import numpy as np
 #import pandas as pd
 from dotenv import load_dotenv
 import cv2, os, requests, argparse, sys
-from Reg_functions import tic_normalization
+#from Reg_functions import tic_normalization
 
 def process_command():
     parser = argparse.ArgumentParser()
@@ -30,7 +30,7 @@ if __name__ == '__main__':
         #print(res)
 
         # set parameter
-        normalization =  res['normalization']
+        #normalization =  res['normalization']
         imzml_file = res['msi']['imzml_file']
         points = res['roi']['points']
         blend_img_file = res['roi']['blend_img_file']
@@ -42,11 +42,12 @@ if __name__ == '__main__':
         output_file = os.path.join(dir_hist,str(datasetId),f'extraction_{ExtractID}.txt')
 
         # read msi data
-        msi_data,msi_size,msi_index,mzs=ImzmlFileReader(os.path.join(dir_msi,str(datasetId),imzml_file),bin_size=bin_size)
+        #msi_data,msi_size,msi_index,mzs=ImzmlFileReader(os.path.join(dir_msi,str(datasetId),imzml_file),bin_size=bin_size)
+        _,msi_size,msi_index,_=ImzmlFileReader(os.path.join(dir_msi,str(datasetId),imzml_file),bin_size=bin_size)
         msi_index = np.array(msi_index).reshape(msi_size)
-        #TIC Normalization
+        '''#TIC Normalization
         if normalization == 'tic':
-            msi_data = tic_normalization(msi_data)
+            msi_data = tic_normalization(msi_data)'''
         # read blend_img_file
         img_blend = cv2.imread(os.path.join(dir_hist,str(datasetId),blend_img_file),cv2.IMREAD_GRAYSCALE)
         points = np.round(np.array(points)*np.array([img_blend.shape[1],img_blend.shape[0]])).astype(int)

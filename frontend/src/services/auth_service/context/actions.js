@@ -5,7 +5,6 @@ export async function loginUser(dispatch, loginPayload) {
     dispatch({ type: 'REQUEST_LOGIN' });
     let response = await instance.post('/auth/signin',loginPayload, { 'Content-Type': 'application/json' });
     let {data} = response
-    //let data = await response.json();
  
     if (data.user) {
       dispatch({ type: 'LOGIN_SUCCESS', payload: data });
@@ -30,7 +29,6 @@ export async function registerUser (signUpPayload) {
   try {
     
     let response = await instance.post('/auth/signup',signUpPayload, { 'Content-Type': 'application/json' });
-    //let data = await response.json();
 
     return response
 

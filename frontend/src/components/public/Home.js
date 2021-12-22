@@ -22,14 +22,11 @@ const Home = (prop) =>{
               </div>
             </div>
           </div>
-          {/*<div class="col-lg-6 challange_img">
-
-  </div>*/}
+          {/*<div class="col-lg-6 challange_img"></div>*/}
         </div>
       </div>
     </section>
     </>
   )
-
 }
 export default Home

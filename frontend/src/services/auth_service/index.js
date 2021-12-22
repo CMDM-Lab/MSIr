@@ -1,4 +1,3 @@
-//import { register } from './register'
 import instance from '../api'
 import { ContextProvider, useAuthState, useAuthDispatch, loginUser, logout, useInfoState, registerUser } from './context'
 

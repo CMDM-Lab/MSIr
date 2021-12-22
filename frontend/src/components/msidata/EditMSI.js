@@ -46,11 +46,9 @@ const EditMSI = (props) => {
     const history = useHistory()
 
     const [axisSize, setAxisSize] = useState(-1)
-    //const [msiFiles, setMsiFiles] = useState([])
     const [binSize, setBinSize] = useState(0.01)
     const [imzmlRes, setImzmlRes] = useState()
     const [ibdRes, setIbdRes] = useState()
-    //const [fileStatus, setfileStatus] = useState('init') //'init','uploading', 'finish', 'error'
 
     const getMSI = async () =>{
         const res = await msi_service.getMSI({datasetId})
@@ -156,10 +154,6 @@ const EditMSI = (props) => {
                 <div className="col-lg-2 col-3" />
                 <label className="col-3 col-form-label">Upload MSI file (*.ibd)*</label>
                 <div className="col-6">
-                    {/*<input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.ibd"/>
-                    <div className='btn btn-outline-secondary  col-lg-2 col-2'>
-                        <button onClick={onUploadMsiFiles} disabled={!msiFiles.some(e=>/\.imzML/.test(e.name)) || !msiFiles.some(e=>/\.ibd/.test(e.name))}>Upload</button>
-                    </div>*/}
                     <Uploady
                         multiple = {false}
                         destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
@@ -174,10 +168,6 @@ const EditMSI = (props) => {
 
                 </div>
                 <div className="col-lg-5 col-3" />
-                {/*<small className="form-text text-muted col-7">In imzML data format, *.imzML and *.ibd files should be uploaded simultaneously </small>
-                <div className="col-lg-5 col-3" />
-                <small className="form-text text-muted col-7">In Analyze 7.5 data format, *.img, *.hdr, and *.t2m files should be uploaded </small>
-                */}
             </div>
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />

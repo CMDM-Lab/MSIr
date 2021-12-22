@@ -8,44 +8,10 @@ import extractionService from '../../services/extraction_service'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
-//import {Circle} from "rc-progress"
-//import Uploady, { useItemProgressListener, useItemFinishListener} from "@rpldy/uploady";
-//import UploadButton from "@rpldy/upload-button";
 import configData from '../../config.json'
-//import authHeader from '../../services/auth-header'
 import RegisterCard from './RegisterCard'
 import ExtractCard from './ExtractCard'
 import { handleResponse } from '../../utils/handleResponse'
-/*
-const UploadProgress = ({setState}) => {
-    const [progress, setProgess] = useState(0);
-    const history = useHistory()
-  
-    const progressData = useItemProgressListener();
-    useItemFinishListener((item)=>{
-        setState({res:item.uploadResponse, status: item.uploadStatus})
-        history.go(0)
-    })
-  
-    if (progressData && progressData.completed > progress) {
-      setProgess(() => progressData.completed);
-    }
-
-    if (progressData &&progress==100){
-        return <></>
-    }
-
-    return (
-        progressData && (
-          <Circle
-            style={{ height: "50px", marginLeft: "20px" }}
-            strokeWidth={2}
-            strokeColor={progress === 100 ? "#00a626" : "#2db7f5"}
-            percent={progress}
-          />
-        )
-      );
-};*/
 
 const DatasetRender = () => {
     const MySwal = withReactContent(Swal)

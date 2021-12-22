@@ -1,9 +1,7 @@
-//import './App.css';
 import './stylesheet/theme_responsive.css'
 import './stylesheet/theme_style.css'
 import "bootstrap/dist/css/bootstrap.min.css";
 
-//import Banner from './components/public/Banner'
 import FooterCustom from './components/public/FooterCustom'
 import NavHeader from './components/public/NavHeader'
 import { Redirect, Route, Switch } from 'react-router-dom'
@@ -34,10 +32,6 @@ function App() {
           <Route path='/users/sign_up' component={Signup} />
           <Route path='/users/password/edit/:reset_password_token' component={EditUserPassword} />
           <Route path='/users/password/reset' component={ResetRequire} />
-          {/*<Route exact path='/datasets' component={Datasets} />
-          <Route exact path='/datasets/new' component={CreateDataset} />
-          <Route exact path='/datasets/:datasetId' component={DatasetRender} />
-  <Route exact path='/datasets/:datasetId/edit' component={DatasetEdit} />*/}
         {routes.map((route) => (
             <AppRoute
               key={route.path}
@@ -47,24 +41,6 @@ function App() {
               isExact = {route.isExact}
             />
           ))}
-          
-          {/* Dataset */}
-          {/*
-          <Route path='/datasets/new' component={createDataset}/>
-          <Route path='/datasets' component={Datasets}/>
-          <Route path='/datasets/:datasetId' component={datasetRender}/>
-          
-          <Route path='/doc' component={doc}/>
-          <Route path='/contact' component={contact}/>
-          */}
-          {/* User */}
-          {/*
-          <Route path='/users/sign_in' component={signin}/>
-          <Route path='/users/sign_up' component={createUser}/>
-          <Route path='/users/password/edit' component={editUserPassword}/>
-          <Route path='/users/password/reset' component={resetUserPassword}/>
-          <Redirect exact from='/datasets' to={userId?`/datasets/${userId}`:'/signin'} />
-          */}
           <Redirect from='/home' to='/' />
         </Switch>
         <FooterCustom />

@@ -4,7 +4,6 @@ import { initialState, AuthReducer } from "./reducer";
 const AuthStateContext = React.createContext();
 const AuthDispatchContext = React.createContext();
 const InfoStateContext = React.createContext([{}, () => {}]);
-//const InfoSetContext = React.createContext();
 
 export function useAuthState() {
     const context = React.useContext(AuthStateContext);
@@ -32,15 +31,6 @@ export function useInfoState() {
    
     return [info, setInfo];
   }
-
-/*export function setInfoState() {
-    const context = React.useContext(InfoSetContext);
-    if (context === undefined) {
-      throw new Error("setInfoState must be used within a ContextProvider");
-    }
-   
-    return context;
-  }*/
 
 export const ContextProvider = ({ children }) => {
     const [user, dispatch] = useReducer(AuthReducer, initialState);

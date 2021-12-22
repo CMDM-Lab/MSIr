@@ -187,7 +187,4 @@ const setParameter = async (req, res) => {
     
 }
 
-/*const show = (req, res) => {
-    
-}*/
 export default  {newROI, all, allmask, allROI, getParameter, setParameter, newROIs, deletROIs}

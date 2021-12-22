@@ -43,7 +43,7 @@ app.use((error, req, res, next) => {
   console.log('This is the rejected field ->', error.field);
 });
 
-//connect DB
+//connect DB and Create guest user
 db.sync().then(()=>{
   User.findOrCreate({
     where: {
@@ -52,9 +52,6 @@ db.sync().then(()=>{
       defaults: {encrypted_password: bcrypt.hashSync('guestguest', 8)}
   })
 })
-
-//Create guest user
-
 
 const server = app.listen(process.env.DEV_PORT || 8080, function () {
     console.log('Listening on port ' + server.address().port);

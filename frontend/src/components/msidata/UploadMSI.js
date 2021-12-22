@@ -47,11 +47,9 @@ const UploadMSI = (props) => {
     const history = useHistory()
 
     const [axisSize, setAxisSize] = useState(-1)
-    //const [msiFiles, setMsiFiles] = useState([])
     const [binSize, setBinSize] = useState(0.01)
     const [imzmlRes, setImzmlRes] = useState()
     const [ibdRes, setIbdRes] = useState()
-    //const [fileStatus, setfileStatus] = useState('init') //'init','uploading', 'finish', 'error'
 
     const onChangeAxis = (e)=>{
         const value = e.target.value;
@@ -120,10 +118,6 @@ const UploadMSI = (props) => {
                 <div className="col-lg-2 col-3" />
                 <label className="col-3 col-form-label">Upload MSI file (*.imzML)*</label>
                 <div className="col-6">
-                    {/*<input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.ibd"/>
-                    <div className='btn btn-outline-secondary  col-lg-2 col-2'>
-                        <button onClick={onUploadMsiFiles} disabled={!msiFiles.some(e=>/\.imzML/.test(e.name)) || !msiFiles.some(e=>/\.ibd/.test(e.name))}>Upload</button>
-                    </div>*/}
                     <Uploady
                         multiple = {false}
                         destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}
@@ -147,10 +141,6 @@ const UploadMSI = (props) => {
                 <div className="col-lg-2 col-3" />
                 <label className="col-3 col-form-label">Upload MSI file (*.ibd)*</label>
                 <div className="col-6">
-                    {/*<input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.ibd"/>
-                    <div className='btn btn-outline-secondary  col-lg-2 col-2'>
-                        <button onClick={onUploadMsiFiles} disabled={!msiFiles.some(e=>/\.imzML/.test(e.name)) || !msiFiles.some(e=>/\.ibd/.test(e.name))}>Upload</button>
-                    </div>*/}
                     <Uploady
                         multiple = {false}
                         destination={{ url: configData.API_URL+`/msi/new?datasetId=${datasetId}` , headers:authHeader()}}

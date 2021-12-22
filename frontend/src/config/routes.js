@@ -17,12 +17,12 @@ const routes =[
   {
     path:'/datasets/:datasetId/msi/new',
     component: UploadMSI,
-    //isPrivate: true,
+    isPrivate: true,
   },
   {
     path:'/datasets/:datasetId/msi/edit',
     component: EditMSI,
-    //isPrivate: true,
+    isPrivate: true,
   },
   {
     path:'/datasets/:datasetId/image/new',

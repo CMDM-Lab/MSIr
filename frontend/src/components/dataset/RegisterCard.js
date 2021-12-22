@@ -25,11 +25,6 @@ const RegisterCard = ({registerData}) =>{
                                     <p><b>Dimensional Reduction</b>: {registerData.DR_method}</p>
                                     ):null
                                 }
-                                {/*
-                                    (registerData.perform_type === 'intensity')&(registerData.DR_method === 'UMAP')?
-                                    <p><b>Embedding Dimensions</b>: {registerData.n_dim}</p>
-                                    :null
-                                */}
                             </div>
                         </div>
                     </div>
@@ -55,11 +50,6 @@ const RegisterCard = ({registerData}) =>{
                                     <p><b>Dimensional Reduction</b>: {registerData.DR_method}</p>
                                     ):null
                                 }
-                                {/*
-                                    (registerData.perform_type === 'intensity')&(registerData.DR_method === 'UMAP')?
-                                    <p><b>Embedding Dimensions</b>: {registerData.n_dim}</p>
-                                    :null
-                                */}
                                 <p><b>Status</b>: {registerData.status}</p>
                                 
                             </div>

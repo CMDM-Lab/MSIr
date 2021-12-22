@@ -39,9 +39,6 @@ const Register = (props) => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    //setMessage("");
-    //setSuccessful(false);
-
     form.current.validateAll();
 
     if (password !== passwordConfirmation) {
@@ -56,7 +53,6 @@ const Register = (props) => {
       try {
         const res = await registerUser({email, password})
         if (res.status >= 200 && res.status <300){
-          //setSuccessful(true);
           MySwal.fire({
             icon: 'success',
             title: res.data.message,

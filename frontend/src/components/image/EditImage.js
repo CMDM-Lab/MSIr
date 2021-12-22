@@ -47,7 +47,6 @@ const EditImage = (props) => {
 
     const [resolution, setResolution] = useState(-1)
     const [imageRes, setImageRes] = useState()
-    //const [fileStatus, setfileStatus] = useState('init') //'init','uploading', 'finish', 'error'
 
     const getInformation = async () =>{
         const res = await histology_service.getInformation({datasetId})
@@ -122,10 +121,6 @@ const EditImage = (props) => {
                 <div className="col-lg-2 col-3" />
                 <label className="col-3 col-form-label">Upload histology file*</label>
                 <div className="col-6">
-                    {/*<input className='col-lg-10 col-10' type='file' name='msiFiles' onChange={onChangeMsiFiles} multiple accept=".imzML,.ibd"/>
-                    <div className='btn btn-outline-secondary  col-lg-2 col-2'>
-                        <button onClick={onUploadMsiFiles} disabled={!msiFiles.some(e=>/\.imzML/.test(e.name)) || !msiFiles.some(e=>/\.ibd/.test(e.name))}>Upload</button>
-                    </div>*/}
                     <Uploady
                         multiple = {false}
                         destination={{ url: configData.API_URL+`/histology/new?datasetId=${datasetId}` , headers:authHeader()}}
@@ -140,10 +135,6 @@ const EditImage = (props) => {
 
                 </div>
                 <div className="col-lg-5 col-3" />
-                {/*<small className="form-text text-muted col-7">In imzML data format, *.imzML and *.ibd files should be uploaded simultaneously </small>
-                <div className="col-lg-5 col-3" />
-                <small className="form-text text-muted col-7">In Analyze 7.5 data format, *.img, *.hdr, and *.t2m files should be uploaded </small>
-                */}
             </div>
             <div className="form-group row py-2">
                 <div className="col-lg-2 col-3" />

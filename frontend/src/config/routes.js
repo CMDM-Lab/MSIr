@@ -12,10 +12,6 @@ import EditMSI from '../components/msidata/EditMSI'
 import HistologyROI from '../components/roi/HistologyROI'
 import UploadImage from '../components/image/UploadImage'
 import EditImage from '../components/image/EditImage'
-import EditUserPassword from '../components/auth/EditUserPassword'
-import ResetUserPassword from '../components/auth/ResetRequire'
-
-
 
 const routes =[
   {

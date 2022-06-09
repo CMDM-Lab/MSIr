@@ -107,7 +107,7 @@ const CreateRegistration = () =>{
                     <a href={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</a>
                 </li>
                 <li className="breadcrumb-item active">
-                    <a>Create a Registration</a>
+                    Create a Registration
                 </li>
               </ol>
             </div>

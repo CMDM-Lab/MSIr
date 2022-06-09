@@ -47,7 +47,7 @@ const Registrations = () => {
                 <li className="breadcrumb-item"><a href="/">Home</a></li>
                 <li className="breadcrumb-item"><a href="/datasets">Datasets</a></li>
                 <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</a></li>
-                <li className="breadcrumb-item active"><a>Registrations</a></li>
+                <li className="breadcrumb-item active">Registrations</li>
               </ol>
             </div>
           </div>
@@ -79,7 +79,6 @@ const Registrations = () => {
                   }):<tr>
                       <td>
                         <p>No Registration</p>
-                        <a href={`/datasets/${datasetId}/registrations/new`}></a>
                       </td>
                       <td></td>
                       <td></td>

@@ -167,9 +167,9 @@ const Register = (props) => {
             <div className='container-login100-form-btn'>
                 <div className='wrap-login100-form-btn'>
                   <div className='signup100-form-bgbtn'></div>
-                    <a className='form-input text-decoration-none' onClick ={()=>history.goBack()}>
-                      <button className='login100-form-btn'>Sign In</button>
-                    </a>
+                    <button className='form-input text-decoration-none login100-form-btn' onClick ={()=>history.goBack()}>
+                      Sign In
+                    </button>
                 </div>
             </div>
         </div>

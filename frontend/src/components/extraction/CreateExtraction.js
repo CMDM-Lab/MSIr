@@ -22,7 +22,8 @@ const CreateExtraction = () =>{
 
     const [regId, setRegId] = useState()
     const [roiId, setRoiId] = useState()
-    const [norm, setNorm] = useState('none')
+    //const [norm, setNorm] = useState('none')
+    const [norm,] = useState('none')
 
     const getData = async () => {
       try {
@@ -55,9 +56,9 @@ const CreateExtraction = () =>{
       setRegId(img.value)
     }
 
-    const onChangeNorm = (e) => {
-        setNorm(e.target.value)
-    }
+    //const onChangeNorm = (e) => {
+    //    setNorm(e.target.value)
+    //}
 
     const handleSubmit = async (e) => {
       try {
@@ -108,7 +109,7 @@ const CreateExtraction = () =>{
                     <a href={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</a>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">
-                    <a>Create an Extraction</a>
+                    Create an Extraction
                 </li>
               </ol>
             </div>

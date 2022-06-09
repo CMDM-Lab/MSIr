@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import DatasetItem from './DatasetItem'
-import { useAuthState } from '../../services/auth_service'
+//import { useAuthState } from '../../services/auth_service'
 import Banner from '../public/Banner'
 import datasetService from '../../services/datasets_service'
 import Swal from 'sweetalert2'
@@ -12,7 +12,7 @@ const Datasets = (prop)=>{
   
   const MySwal = withReactContent(Swal)
 
-  const userDetails = useAuthState()
+  //const userDetails = useAuthState()
   const history = useHistory()
   const [datasets, setDatasets] = useState([])
 
@@ -76,7 +76,7 @@ const Datasets = (prop)=>{
                 <a href='/'>Home</a>
               </li>
               <li className="breadcrumb-item">
-                <a>Datasets</a>
+                Datasets
               </li></ol></div></div>
         <div className="row">
           <div className="col-lg-2">
@@ -84,7 +84,7 @@ const Datasets = (prop)=>{
               <div className="l_title">
                 <h6>Quick menu</h6>
                 <div className="btn-group-vertical">
-                  <a className='btn btn-warning' onClick={onClickExample}>Import an example</a>
+                  <div className='btn btn-warning' onClick={onClickExample}>Import an example</div>
                   <a className='btn btn-primary' href='/datasets/new'>New Dataset</a>
                 </div></div></div></div>
           <div className="col-lg-10">

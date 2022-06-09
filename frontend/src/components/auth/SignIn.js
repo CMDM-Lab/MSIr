@@ -22,7 +22,7 @@ const SignIn = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useAuthDispatch()
-  const { loading, errorMessage } = useAuthState()
+  const { loading, } = useAuthState()
 
   const onChangeEmail = (e) => {
     const email = e.target.value;

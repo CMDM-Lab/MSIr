@@ -23,7 +23,7 @@ const UploadProgress = ({setState}) => {
       setProgess(() => progressData.completed);
     }
 
-    if (progressData &&progress==100){
+    if (progressData && progress === 100){
         return <></>
     }
 

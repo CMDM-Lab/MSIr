@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import logo from '../../stylesheet/logo.svg';
+import React from "react";
+//import logo from '../../stylesheet/logo.svg';
 import {NavLink} from 'react-router-dom'
 import { logout, useAuthState, useAuthDispatch } from '../../services/auth_service/context'
 

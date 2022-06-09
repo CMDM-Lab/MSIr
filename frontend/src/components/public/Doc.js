@@ -87,10 +87,10 @@ const Doc = (prop)=>{
                             </dd>
                             <dt>Download results</dt>
                             <dd>- After the registration process is finished, the result is shown like following:
-                              <img src={registrationPage} className="card-img-top"></img>
+                              <img src={registrationPage} className="card-img-top" alt="Registration page"></img>
                             </dd>
                             <dd>- The registration transformation matrices are stored in a text format file, and the detail as following: 
-                              <img src={registrationResult} className="card-img-top"></img>
+                              <img src={registrationResult} className="card-img-top" alt="Registration result"></img>
                             </dd>
                           </dl>
                         </div>
@@ -108,7 +108,7 @@ const Doc = (prop)=>{
                             </dd>
                             <dt>Download results</dt>
                             <dd>- After the extraction process is finished, the result is shown like following:
-                              <img src={extractionPage} className="card-img-top"></img>
+                              <img src={extractionPage} className="card-img-top" alt="Extraction page"></img>
                             </dd>
                             <dd>- The spectral indices of MSI data in the ROI are stored in a text format file </dd>
                           </dl>

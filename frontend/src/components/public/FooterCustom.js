@@ -10,14 +10,14 @@ const footerCustom = ()=>{
                         <div className="col-lg-3 col-sm-3">
                             <aside className="f_widget f_about_widget">
                                 <a href="https://www.cmdm.tw/">
-                                    <img height="125px" src="https://web.cmdm.tw/assets/images/cmdmlogo.png" />
+                                    <img height="125px" src="https://web.cmdm.tw/assets/images/cmdmlogo.png" alt="CMDM lab logo"/>
                                 </a>
                             </aside>
                         </div>
                         <div className="col-lg-3 col-sm-3">
                             <aside className="f_widget f_about_widget">
                                 <a href="https://www.ntu.edu.tw/">
-                                    <img height="125px" src="https://www.ntu.edu.tw/images/logo.png" />
+                                    <img height="125px" src="https://www.ntu.edu.tw/images/logo.png"  alt='NTU logo'/>
                                 </a>
                             </aside>
                         </div>

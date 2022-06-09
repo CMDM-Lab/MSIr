@@ -9,9 +9,9 @@ const ExtractCard = ({extractData}) =>{
                     <div className='row no-gutters'>
                         <div className='col-6'>
                             {extractData?.histologyroi?.blend_img_file?(
-                                <img className='card-img-top' src={configData.API_URL+`/upload/${extractData.datasetId}/${extractData.histologyroi.blend_img_file}`}/>
+                                <img className='card-img-top' src={configData.API_URL+`/upload/${extractData.datasetId}/${extractData.histologyroi.blend_img_file}`} alt='A histology with ROI label'/>
                             ):(
-                                <img className='card-img-top' src={running}/>
+                                <img className='card-img-top' src={running} alt='Job running'/>
                             )}
                                   
                         </div>

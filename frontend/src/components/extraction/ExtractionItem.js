@@ -55,14 +55,14 @@ const ExtractionItem = ({datasetId,extraction}) =>{
             <td>
                 <a href={`/datasets/${datasetId}/registrations/${extraction.registrationId}`}><p>Registration ID: {extraction.registrationId}</p></a>
                 {extraction?.registration?.result_file?
-                    <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${extraction.registration.result_file}`}/>:
-                    <img className='card-img-top' src={running}/>
+                    <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${extraction.registration.result_file}`} alt='The blended result between a histology and the registered MSI visualization'/>:
+                    <img className='card-img-top' src={running} alt='Job running'/>
                 }
             </td>
             <td>
                 {extraction?.histologyroi?.blend_img_file?
-                    <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${extraction.histologyroi.blend_img_file}`}  />:
-                    <img className='card-img-top' src={running}/>
+                    <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${extraction.histologyroi.blend_img_file}`} alt='A histology with ROI label' />:
+                    <img className='card-img-top' src={running} alt='Job running'/>
                 }
                 
             </td>

@@ -41,7 +41,6 @@ const DatasetItem = ({data})=>{
                     <td colSpan={3}>
                       <b>No datasets.</b>
                       <i className="fad fa-arrow-right" />
-                      <a href=''></a>
                     </td>
                 </tr>
             </>

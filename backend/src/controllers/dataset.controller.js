@@ -103,7 +103,7 @@ const example = async (req, res) => {
             if (err) throw err;
           })
         //create histology image into db and copy example image file to dataset dir 
-        const hist = await histologyImage.create({
+        const hist = await HistologyImage.create({
             file: 'example.png',
             datasetId: dataset.id,
             userId: req.userId

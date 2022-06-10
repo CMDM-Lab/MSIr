@@ -1,6 +1,7 @@
 import './stylesheet/theme_responsive.css'
 import './stylesheet/theme_style.css'
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle";
 
 import FooterCustom from './components/public/FooterCustom'
 import NavHeader from './components/public/NavHeader'

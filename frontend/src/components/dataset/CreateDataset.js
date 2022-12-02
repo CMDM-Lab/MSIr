@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import Banner from "../public/Banner";
-import { useAuthState } from "../../services/auth_service";
+//import { useAuthState } from "../../services/auth_service";
 import datasetService from "../../services/datasets_service";
 import { useHistory } from "react-router-dom";
 import { handleResponse } from "../../utils/handleResponse";
@@ -14,7 +14,7 @@ const CreateDataset = (props) => {
 
     const [name,setName] = useState('')
     const [description, setDescription] = useState('')
-    const { user } = useAuthState()
+    //const { user } = useAuthState()
 
     const onChangeName = (e)=>{
         const value = e.target.value;

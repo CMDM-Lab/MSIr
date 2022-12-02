@@ -89,7 +89,7 @@ const RegistrationRender = () => {
                 <li className="breadcrumb-item"><a href="/datasets">Datasets</a></li>
                 <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</a></li>
                 <li className="breadcrumb-item"><a href={`/datasets/${datasetId}/registrations`}>Registrations</a></li>
-                <li className="breadcrumb-item active"><a>Registration ID: {regId}</a></li>
+                <li className="breadcrumb-item active">Registration ID: {regId}</li>
               </ol>
             </div>
           </div>
@@ -109,8 +109,8 @@ const RegistrationRender = () => {
             <div className="col-lg-3 col-md-9">
               {
                 registration? registration.status==='finished'?
-                <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${registration.result_file}`} />:
-                <img className="img-fluid img-thumbnail" src={running} />:null
+                <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${registration.result_file}`} alt='Registration result'/>:
+                <img className="img-fluid img-thumbnail" src={running} alt='Job running'/>:null
               }
               
               <br />

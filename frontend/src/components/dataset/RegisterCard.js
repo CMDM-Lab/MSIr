@@ -10,7 +10,7 @@ const RegisterCard = ({registerData}) =>{
                 registerData.result_file?(
                     <div className='row no-gutters'>
                         <div className='col-6'>
-                            <img className='card-img-top' src={configData.API_URL+`/upload/${registerData.datasetId}/${registerData.result_file}`}/>
+                            <img className='card-img-top' src={configData.API_URL+`/upload/${registerData.datasetId}/${registerData.result_file}`} alt='The blended result between a histology and the registered MSI visualization '/>
                         </div>
                         <div className='col-6'>
                             <div className='card-body'>
@@ -34,7 +34,7 @@ const RegisterCard = ({registerData}) =>{
                         <div className='col-6'>
                             <a href={`/datasets/${registerData.datasetId}/registrations/${registerData.id}`}>
                                 <div>
-                                    <img className='card-img-top' src={running}/>
+                                    <img className='card-img-top' src={running} alt='Job running'/>
                                 </div>
                             </a>
                         </div>

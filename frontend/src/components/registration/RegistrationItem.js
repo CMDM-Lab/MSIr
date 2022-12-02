@@ -69,17 +69,17 @@ const RegistrationItem = ({datasetId, registration})=>{
                 {
                     registration.histologyroi?
                     registration.histologyroi.blend_img_file?
-                    <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${registration.histologyroi.blend_img_file}`} />:
-                    <img className="img-fluid img-thumbnail" src={running} />
-                    :<img className="img-fluid img-thumbnail" src={running} />
+                    <img className="img-fluid img-thumbnail" src={configData.API_URL+`/upload/${datasetId}/${registration.histologyroi.blend_img_file}`} alt='A histology with ROI label'/>:
+                    <img className="img-fluid img-thumbnail" src={running} alt='Job running'/>
+                    :<img className="img-fluid img-thumbnail" src={running} alt='Job running'/>
                     
                 }
             </td>
             <td>
                 {
                     registration.result_file?
-                    <img className="img-fluid img-thumbnail viewer" src={configData.API_URL+`/upload/${datasetId}/${registration.result_file}`} />
-                    :<img className="img-fluid img-thumbnail" src={running} />
+                    <img className="img-fluid img-thumbnail viewer" src={configData.API_URL+`/upload/${datasetId}/${registration.result_file}`} alt='Registration result'/>
+                    :<img className="img-fluid img-thumbnail" src={running} alt='Job running'/>
                 }
                 
             </td>

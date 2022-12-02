@@ -10,7 +10,5 @@
     "server": "cd backend && yarn server",
     "activate": "powershell -file ./script_env/Scripts/Activate.ps1"
   },
-  "dependencies": {
-    "@popperjs/core": "^2.9.3"
-  }
+  "dependencies": {}
 }

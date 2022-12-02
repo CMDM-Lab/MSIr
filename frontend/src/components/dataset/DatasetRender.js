@@ -84,7 +84,7 @@ const DatasetRender = () => {
                 <a href='/datasets'>Datasets</a>
               </li>
               <li className="breadcrumb-item">
-                <a>{dataset? `Dataset ID: ${dataset.id}` : null}</a>
+                {dataset? `Dataset ID:${dataset.id}` : null}
               </li>
               </ol></div></div>
         <div className="row p_b_100">
@@ -139,7 +139,7 @@ const DatasetRender = () => {
                 {hist?
                 <div className='images card-columns'>
                     <div className='card'>
-                        <img src={configData.API_URL+`/upload/${datasetId}/${hist.file}`} className='card-img-top viewer'/>
+                        <img src={configData.API_URL+`/upload/${datasetId}/${hist.file}`} className='card-img-top viewer' alt='a uplaoded histology'/>
                         <div className='card-body'><h5 className='card-title'>{hist.file}</h5></div>
                     </div>
                 </div>

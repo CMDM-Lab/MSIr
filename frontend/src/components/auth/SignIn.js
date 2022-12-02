@@ -9,7 +9,7 @@ import withReactContent from 'sweetalert2-react-content'
 
 import { useAuthDispatch, useAuthState, loginUser, logout } from "../../services/auth_service";
 import Banner from '../public/Banner';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 const SignIn = (props) => {
   const MySwal = withReactContent(Swal)

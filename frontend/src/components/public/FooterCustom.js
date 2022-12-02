@@ -1,6 +1,6 @@
 import React from "react";
 
-const footerCustom = ()=>{
+const footerCustom = () => {
     return (
         <footer className="footr_area p_t_100">
             <div className="footer_widget_area">
@@ -10,14 +10,14 @@ const footerCustom = ()=>{
                         <div className="col-lg-3 col-sm-3">
                             <aside className="f_widget f_about_widget">
                                 <a href="https://www.cmdm.tw/">
-                                    <img height="125px" src="https://web.cmdm.tw/assets/images/cmdmlogo.png" alt="CMDM lab logo"/>
+                                    <img height="125px" src="https://web.cmdm.tw/assets/images/cmdmlogo.png" alt="CMDM lab logo" />
                                 </a>
                             </aside>
                         </div>
                         <div className="col-lg-3 col-sm-3">
                             <aside className="f_widget f_about_widget">
                                 <a href="https://www.ntu.edu.tw/">
-                                    <img height="125px" src="https://www.ntu.edu.tw/images/logo.png"  alt='NTU logo'/>
+                                    <img height="125px" src="https://www.ntu.edu.tw/images/logo.png" alt='NTU logo' />
                                 </a>
                             </aside>
                         </div>
@@ -29,7 +29,7 @@ const footerCustom = ()=>{
                             Copyright © {new Date().getFullYear()} All rights reserved<br></br>
                             This template is made&ensp;
                             by&ensp;
-                            <a href="https://colorlib.com" target="_blank"  rel="noreferrer">Colorlib</a>
+                            <a href="https://colorlib.com" target="_blank" rel="noreferrer">Colorlib</a>
                         </h6>
                     </div>
                     <div className="float-sm-right" />

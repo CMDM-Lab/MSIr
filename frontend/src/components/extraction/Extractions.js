@@ -3,50 +3,51 @@ import { useParams, useHistory } from "react-router"
 import Banner from "../public/Banner"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import {handleResponse} from "../../utils/handleResponse"
+import { handleResponse } from "../../utils/handleResponse"
 import extractionService from "../../services/extraction_service"
 import ExtractionItem from "./ExtractionItem"
+import { Link } from "react-router-dom"
 
 const Extractions = () => {
 
   const MySwal = withReactContent(Swal)
 
-  const {datasetId} = useParams()
+  const { datasetId } = useParams()
   const history = useHistory()
   const [extractions, setExtractions] = useState([])
-  
-  const getData = async ()=>{
+
+  const getData = async () => {
     try {
-      const res = await extractionService.all({datasetId})
-      const {data} = res.data
+      const res = await extractionService.all({ datasetId })
+      const { data } = res.data
       console.log(data)
-      if (res.status >= 200 && res.status <300){
+      if (res.status >= 200 && res.status < 300) {
         setExtractions(data)
-      } else{
-        handleResponse(res,MySwal,history)
+      } else {
+        handleResponse(res, MySwal, history)
       }
     } catch (error) {
-      console.log(error) 
-    }  
+      console.log(error)
+    }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getData()
-  },[])
-  
+  }, [])
 
-    return (
-      <>
-        <Banner title = {'Extraction List'} />
-        <section className="challange_area">
+
+  return (
+    <>
+      <Banner title={'Extraction List'} />
+      <section className="challange_area">
         <div className="container-fluid">
           <div className="row">
             <div className="col-lg-1 col-3 ms-3" />
-            <div className="col-lg-6 col-6" style={{paddingLeft: 0}}>
+            <div className="col-lg-6 col-6" style={{ paddingLeft: 0 }}>
               <ol className="breadcrumb">
-                <li className="breadcrumb-item"><a href="/">Home</a></li>
-                <li className="breadcrumb-item"><a href="/datasets">Datasets</a></li>
-                <li className="breadcrumb-item"><a href={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</a></li>
+                <li className="breadcrumb-item"><Link to="/">Home</Link></li>
+                <li className="breadcrumb-item"><Link to="/datasets">Datasets</Link></li>
+                <li className="breadcrumb-item"><Link to={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</Link></li>
                 <li className="breadcrumb-item active">Extractions</li>
               </ol>
             </div>
@@ -57,8 +58,8 @@ const Extractions = () => {
                 <div className="l_title">
                   <h6>Quick menu</h6>
                   <div className="btn-group-vertical">
-                    <a className="btn btn-primary" href={`/datasets/${datasetId}/extractions/new`}>New Extraction</a>
-                    <a className="btn btn-secondary" href={`/datasets/${datasetId}`}>Back to Dataset</a>
+                    <Link className="btn btn-primary" to={`/datasets/${datasetId}/extractions/new`}>New Extraction</Link>
+                    <Link className="btn btn-secondary" to={`/datasets/${datasetId}`}>Back to Dataset</Link>
                   </div>
                 </div>
               </div>
@@ -76,10 +77,10 @@ const Extractions = () => {
                   </tr></thead>
                 <tbody>
                   {
-                    extractions.length>0?(extractions.map((extraction)=>{
+                    extractions.length > 0 ? (extractions.map((extraction) => {
                       return <ExtractionItem extraction={extraction} datasetId={datasetId} />
                     })
-                    ):(
+                    ) : (
                       <tr>
                         <td><p>No Extraction</p></td>
                         <td></td><td></td><td></td>
@@ -91,8 +92,8 @@ const Extractions = () => {
           </div>
         </div>
       </section>
-      </>
-    )
+    </>
+  )
 }
 
 export default Extractions

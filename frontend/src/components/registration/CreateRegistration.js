@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useParams, useHistory } from "react-router-dom"
+import { useParams, useHistory, Link } from "react-router-dom"
 import Banner from "../public/Banner"
 import ImagePicker from 'react-image-picker'
 import 'react-image-picker/dist/index.css'
@@ -9,105 +9,105 @@ import roi_service from "../../services/roi_service"
 import registrationService from "../../services/registration_service"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import {handleResponse} from "../../utils/handleResponse"
+import { handleResponse } from "../../utils/handleResponse"
 
-const CreateRegistration = () =>{
-    
-    const MySwal = withReactContent(Swal)
+const CreateRegistration = () => {
 
-    const {datasetId} = useParams()
-    const history = useHistory()
+  const MySwal = withReactContent(Swal)
 
-    const [maskId, setMaskId] = useState()
-    const [regType, setRegType] = useState('intensity')
-    const [masks, setMasks] = useState([{id:null, blend_img_file:not_select}])
-    const [DR, setDR] = useState('UMAP')
-    const [nDim, setNDim] = useState(3)
+  const { datasetId } = useParams()
+  const history = useHistory()
 
-    const getMask = async () =>{
-      try {
-        const res = await roi_service.allmask({datasetId})
-        const {data} = res.data
-        console.log(data)
-        if (res.status >= 200 && res.status <300){
-          var newMasks = masks
-          newMasks = newMasks.concat(data)
-          console.log(newMasks)
-          setMasks(newMasks)
-        } else{
-          handleResponse(res,MySwal,history)
-        }
-      } catch (error) {
-        console.log(error) 
-      }  
-    }
-    
-    useEffect(()=>{
-      getMask()
-    },[])
+  const [maskId, setMaskId] = useState()
+  const [regType, setRegType] = useState('intensity')
+  const [masks, setMasks] = useState([{ id: null, blend_img_file: not_select }])
+  const [DR, setDR] = useState('UMAP')
+  const [nDim, setNDim] = useState(3)
 
-    const onChangeRegType = (e) => {
-        setRegType(e.target.value)
-    }
-    const onChangeDR = (e) => {
-        setDR(e.target.value)
-    }
-    const onChangeNDim = (e) => {
-      setNDim(e.target.value)
-    }
-    const onPick = (img) => {
-        setMaskId(img.value)
-    }
-
-    const handleSubmit = async (e) => {
-      try {
-        const res = await registrationService.create({
-          perform_type: regType,
-          DR_method: DR,
-          n_dim: nDim,
-          datasetId: Number(datasetId),
-          histologyroiId: maskId
-        })
-        const data = res.data
-        if (res.status >= 200 && res.status <300){
-          MySwal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: data.message
-          }).then(()=>{
-            history.push(`/datasets/${datasetId}/registrations`)
-          })
-        } else{
-          handleResponse(res,MySwal,history)
-        }
-      } catch (error) {
-        console.log('error')
-        console.log(error) 
+  const getMask = async () => {
+    try {
+      const res = await roi_service.allmask({ datasetId })
+      const { data } = res.data
+      console.log(data)
+      if (res.status >= 200 && res.status < 300) {
+        var newMasks = masks
+        newMasks = newMasks.concat(data)
+        console.log(newMasks)
+        setMasks(newMasks)
+      } else {
+        handleResponse(res, MySwal, history)
       }
+    } catch (error) {
+      console.log(error)
     }
+  }
 
-    
+  useEffect(() => {
+    getMask()
+  }, [])
 
-    return (
+  const onChangeRegType = (e) => {
+    setRegType(e.target.value)
+  }
+  const onChangeDR = (e) => {
+    setDR(e.target.value)
+  }
+  const onChangeNDim = (e) => {
+    setNDim(e.target.value)
+  }
+  const onPick = (img) => {
+    setMaskId(img.value)
+  }
+
+  const handleSubmit = async (e) => {
+    try {
+      const res = await registrationService.create({
+        perform_type: regType,
+        DR_method: DR,
+        n_dim: nDim,
+        datasetId: Number(datasetId),
+        histologyroiId: maskId
+      })
+      const data = res.data
+      if (res.status >= 200 && res.status < 300) {
+        MySwal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: data.message
+        }).then(() => {
+          history.push(`/datasets/${datasetId}/registrations`)
+        })
+      } else {
+        handleResponse(res, MySwal, history)
+      }
+    } catch (error) {
+      console.log('error')
+      console.log(error)
+    }
+  }
+
+
+
+  return (
     <>
-    <Banner title = {"Create a new Registration"} />
-    <section className="challange_area">
+      <Banner title={"Create a new Registration"} />
+      <section className="challange_area">
         <div className="container-fluid">
           <div className="row">
             <div className="col-lg-2 col-sm-3" />
-            <div className="col-lg-8 col-sm-6" style={{paddingLeft: 0}}>
+            <div className="col-lg-8 col-sm-6" style={{ paddingLeft: 0 }}>
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
-                    <a href='/'>Home</a>
+                  <Link to='/'>Home</Link>
                 </li>
                 <li className="breadcrumb-item">
-                    <a href='/datasets'>Datasets</a>
+                  <Link to='/datasets'>Datasets</Link>
                 </li>
                 <li className="breadcrumb-item">
-                    <a href={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</a>
+                  <Link to={`/datasets/${datasetId}`}>Dataset ID: {datasetId}</Link>
                 </li>
                 <li className="breadcrumb-item active">
-                    Create a Registration
+                  Create a Registration
                 </li>
               </ol>
             </div>
@@ -119,50 +119,50 @@ const CreateRegistration = () =>{
               <div className="form-group row">
                 <label className="col-3 col-form-label">Registration type</label>
                 <div className="col-9">
-                    <select value={regType} onChange={onChangeRegType}>
-                        <option value="intensity">Intensity-based method</option>
-                        <option value="contour">Contour-based method</option>
-                    </select>
+                  <select value={regType} onChange={onChangeRegType}>
+                    <option value="intensity">Intensity-based method</option>
+                    <option value="contour">Contour-based method</option>
+                  </select>
                 </div>
               </div>
               {
-                regType === 'intensity'?(
+                regType === 'intensity' ? (
                   <div className="form-group row">
                     <label className="col-3 col-form-label">Dimensional Reduction</label>
                     <div className="col-9">
                       <select value={DR} onChange={onChangeDR}>
-                          <option value="UMPA">UMAP</option>
-                          <option value="PCA">PCA</option>
+                        <option value="UMPA">UMAP</option>
+                        <option value="PCA">PCA</option>
                       </select>
                     </div>
                   </div>
-                ):null
+                ) : null
               }
               {
-                DR === 'UMAP' & regType === 'intensity'?(
+                DR === 'UMAP' & regType === 'intensity' ? (
                   <div className="form-group row">
                     <label className="col-3 col-form-label">Embedding Dimension</label>
                     <div className="col-9">
                       <select value={nDim} onChange={onChangeNDim}>
-                          <option value={1}>1</option>
-                          <option value={3}>3</option>
+                        <option value={1}>1</option>
+                        <option value={3}>3</option>
                       </select>
                     </div>
                   </div>
-                ):null
+                ) : null
               }
               <div className="form-group row">
                 <label className="col-3 col-form-label">Select the mask of histology image</label>
                 <div className="col-9">
-                    <small className="form-text text-muted">
-                            If there is not any mask to select, mask would be generated automatically.
-                            If there are not satisfying mask, you can manually draw.
-                    </small><br />
-                    <ImagePicker 
-                      images={masks.map((mask) => (mask.id===null?{src: mask.blend_img_file, value: mask.id}
-                        :{src: configData.API_URL+`/upload/${datasetId}/${mask.blend_img_file}`, value: mask.id}))}
-                      onPick={onPick}
-                    />
+                  <small className="form-text text-muted">
+                    If there is not any mask to select, mask would be generated automatically.
+                    If there are not satisfying mask, you can manually draw.
+                  </small><br />
+                  <ImagePicker
+                    images={masks.map((mask) => (mask.id === null ? { src: mask.blend_img_file, value: mask.id }
+                      : { src: configData.API_URL + `/upload/${datasetId}/${mask.blend_img_file}`, value: mask.id }))}
+                    onPick={onPick}
+                  />
                 </div>
               </div>
               <div className="form-group row py-2">
@@ -174,8 +174,8 @@ const CreateRegistration = () =>{
           </div>
         </div>
       </section>
-      </>
-    )
+    </>
+  )
 }
 
 export default CreateRegistration

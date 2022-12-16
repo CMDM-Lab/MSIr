@@ -7,9 +7,9 @@ import { required, validEmail, validpassword } from '../../utils/validation'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
-import {useAuthDispatch, useAuthState, loginUser, logout} from "../../services/auth_service";
+import { useAuthDispatch, useAuthState, loginUser, logout } from "../../services/auth_service";
 import Banner from '../public/Banner';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 const SignIn = (props) => {
   const MySwal = withReactContent(Swal)
@@ -55,29 +55,29 @@ const SignIn = (props) => {
           title: 'Success!',
           text: 'Signed in successfully.',
           confirmButtonText: 'OK'
-        }).then(()=>{
-          history.goBack(); 
+        }).then(() => {
+          history.goBack();
         })
       } catch (error) {
-          MySwal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: error,
-          })
-        }
+        MySwal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
+        })
+      }
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     logout(dispatch)
-  },[])
+  }, [])
 
   return (
     <>
-    <Banner title={'Login'} />
-    <div className="limiter">
-      <div className="container-login100">
-        <div className='wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54'>
+      <Banner title={'Login'} />
+      <div className="limiter">
+        <div className="container-login100">
+          <div className='wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54'>
             <Form onSubmit={handleLogin} ref={form} className='login100-form validate-form'>
               <div className="wrap-input100 validate-input m-b-23">
                 <label htmlFor="email" className='label-input100 '>Email</label>
@@ -91,7 +91,7 @@ const SignIn = (props) => {
                   placeholder='Type your E-mail'
                   id="email"
                 />
-                <span className='focus-input100'/>
+                <span className='focus-input100' />
               </div>
 
               <div className="wrap-input100 validate-input">
@@ -106,11 +106,11 @@ const SignIn = (props) => {
                   placeholder='Type your password'
                   id="password"
                 />
-                <span className='focus-input100'/>
+                <span className='focus-input100' />
               </div>
 
               <div className='text-right p-t-8 p-b-31'>
-                <a href='/users/password/reset' className="text-decoration-none">Forgot your password?</a>
+                <Link to='/users/password/reset' className="text-decoration-none">Forgot your password?</Link>
               </div>
 
               <div className='text-center'>
@@ -132,19 +132,19 @@ const SignIn = (props) => {
               <CheckButton style={{ display: "none" }} ref={checkBtn} />
             </Form>
             <div className='flex-col-c p-t-155'>
-                <span className='txt1 p-b-17'>Or Sign Up Using</span>
+              <span className='txt1 p-b-17'>Or Sign Up Using</span>
+            </div>
+            <div className='container-login100-form-btn'>
+              <div className='wrap-login100-form-btn'>
+                <div className='signup100-form-bgbtn'></div>
+                <Link className='form-input text-decoration-none' to='/users/sign_up'>
+                  <button className='login100-form-btn'>Sign up</button>
+                </Link >
               </div>
-              <div className='container-login100-form-btn'>
-                <div className='wrap-login100-form-btn'>
-                  <div className='signup100-form-bgbtn'></div>
-                  <a className='form-input text-decoration-none' href='/users/sign_up'>
-                      <button className='login100-form-btn'>Sign up</button>
-                  </a>
-                </div>
-              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

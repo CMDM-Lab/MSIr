@@ -366,12 +366,13 @@ i:before {
 
 .banner_area:before {
   content: "";
-  background: url(./banner-bg.png) no-repeat scroll center right;
+  /* background: url(./banner-bg.png) no-repeat scroll center right; */
+  background-color: #f6ead6;
   position: absolute;
   right: 0px;
   top: 0px;
-  height: 100%;
-  max-width: 1233px;
+  height: 75%;
+  max-width: 2000px;
   width: 100%;
 }
 
@@ -392,8 +393,8 @@ i:before {
 }
 
 .banner_inner_text h2 {
-  font-size: 72px;
-  color: #1C92CA;
+  font-size: 70px;
+  color: #000000;
   font-family: "Roboto", sans-serif;
   font-weight: normal;
 }
@@ -2304,9 +2305,11 @@ i:before {
 /* Footer Area css
 ============================================================================================ */
 .footer_widget_area {
-  background: url(./footer-bg.jpg) no-repeat scroll center center;
+  /* background: url(./footer-bg.jpg) no-repeat scroll center center; */
+  background-color: #f6ead6;
   background-size: cover;
-  padding: 130px 0px 115px 0px;
+  height: 80%;
+  padding: 30px 0px 30px 0px;
 }
 
 .f_title {

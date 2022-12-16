@@ -1,5 +1,5 @@
 {
-    "API_URL":"http://localhost:8080/api",
+    "API_URL":"https://msir.cmdm.tw/api",
     "MAX_BYTE_IMZML_FILE": 1e+10,
     "MAX_BTYE_IBD_FILE": 1e+10,
     "MAX_BTYE_HISTOLOGY_FILE": 1e+10

@@ -1,0 +1,16 @@
+version: '3.4'
+services:
+  msir_frontend:
+    build: ./frontend
+    environment:
+      WEB_API: "https://msir.cmdm.tw/api"
+    ports:
+      - 13001:3000
+  msir_backend:
+    build: ./backend
+    environment:
+      API_URI: "https://msir.cmdm.tw/api"
+    ports:
+      - 13004:13004
+    volumes:
+      - ./backend:/usr/local/app/backend

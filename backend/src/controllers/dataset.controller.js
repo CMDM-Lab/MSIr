@@ -90,7 +90,7 @@ const example = async (req, res) => {
             imzml_file: 'example.imzml',
             ibd_file: 'example.ibd',
             bin_size: 0.01,
-            pixel_size: 150,
+            // pixel_size: 150,
             datasetId:dataset.id,
             userId: req.userId
         })

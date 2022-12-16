@@ -1,12 +1,7 @@
 # Setup
 
-1. Run
 
-```
-yarn install
-```
-
-2. Create './.env' file like './.env.defaults
+1. Create './.env' file like './.env.defaults
 
 ```
 .env
@@ -46,24 +41,7 @@ EXAMPLE_HISTOLOGY=
 
 ```
 
-3. Install python packages (../requirment.txt)
-
-```
-# Python >= 3.8.2
-# Package
-numpy==1.20.0
-numba==0.54.0
-itk-elastix==0.13.0
-umap-learn==0.5.1
-opencv-python==4.5.3.56
-scipy==1.7.1
-pyimzML==1.5.1
-scikit-learn==0.24.2
-requests==2.26.0
-python-dotenv==0.19.0
-ms-peak-picker==0.1.33
-
-```
+2. Build & start MSIr service through Docker Compose
 
 # API
 

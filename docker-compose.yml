@@ -3,13 +3,13 @@ services:
   msir_frontend:
     build: ./frontend
     environment:
-      WEB_API: "https://msir.cmdm.tw/api"
+      WEB_API: "https://localhost:13001/api"
     ports:
       - 13001:3000
   msir_backend:
     build: ./backend
     environment:
-      API_URI: "https://msir.cmdm.tw/api"
+      API_URI: "https://localhost:13004/api"
     ports:
       - 13004:13004
     volumes:
